@@ -1,0 +1,57 @@
+Source: qmsystem2
+Section: libdevel
+Priority: optional
+Maintainer: Yang Yang <ext-yang.25.yang@nokia.com>
+Uploaders: Philippe De Swert <philippe.de-swert@nokia.com>
+Build-Depends: debhelper (>=5), libqt4-dev (>= 4.5), libsensord-dev (>= 0.6.12), libiphb-dev (>= 0.1.4), doxygen, mce-dev (>= 1.10.15), libdbus-1-dev, libgconf2-dev, libbmeipc0, libbmeipc-dev (>= 0.9.26), libdsme0.2.0, libdsme0.2.0-dev, libtimed-dev (>= 1.3.20), libtimed-voland-dev (>= 1.3.20), libqmlog-dev, usb-moded-dev (>= 0.3), devicelock-dev (>= 0.2.11), aegis-builder (>= 1.4)
+Standards-Version: 3.7.3
+
+Package: libqmsystem2
+Section: libs
+Architecture: any
+Depends: sensord (>= 0.6.12), timed (>= 1.3.21), libiphb0 (>= 0.1.4), bme (>= 0.9.37), ${shlibs:Depends}, ${misc:Depends}, libqt4-network (>= 4.5), libqt4-dbus (>= 4.5), libgconf2-6, libbmeipc0, libdsme0.2.0
+Description: QmSystem library
+ This package contains the QmSystem library.
+
+Package: libqmsystem2-dbg
+Section: libdevel
+Priority: extra
+Architecture: any
+Depends: libqmsystem2 (= ${binary:Version}), ${misc:Depends}
+Description: QmSystem Library debug symbols
+ Debug symbols for QmSystem library.
+
+Package: libqmsystem2-dev
+Section: libdevel
+Priority: extra
+Architecture: any
+Depends: libqmsystem2 (= ${binary:Version}), libqt4-dev (>= 4.5), libtimed-dev (>= 1.3.20)
+Description: Development headers for QmSystem library
+ Development headers for compiling applications against the QmSystem library.
+
+Package: libqmsystem2-doc
+Section: doc
+Architecture: any
+Priority: optional
+Description: API documentation for libqmsystem2
+ Doxygen-generated API documentation for QmSystem library.
+
+Package: qmsystem2-api-all-binary
+Section: tests
+Architecture: any
+Depends: libqmsystem2 (= ${binary:Version})
+Description: Unit test cases for QmSystem library.
+
+Package: qmsystem2-api-all-binary-dbg
+Section: tests
+Architecture: any
+Depends: libqmsystem2 (= ${binary:Version})
+Description: debug stuff for qmsystem2-api-all-binary
+
+Package: qmsystem2-api-fast-tests
+Section: tests
+Architecture: any
+Depends: ci-testing, qmsystem2-api-all-binary (= ${binary:Version})
+XB-Maemo-CI-Packages: libqmsystem2
+XB-Maemo-CI-Stage: fast, staging, acceptance, validation
+Description: xml test description for libqmsystem2 library

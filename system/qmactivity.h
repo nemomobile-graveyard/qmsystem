@@ -1,0 +1,101 @@
+/*!
+* @file qmactivity.h
+* @brief Contains QmActivity
+
+   <p>
+   Copyright (C) 2009-2010 Nokia Corporation
+
+   @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
+   @author Raimo Vuonnala <raimo.vuonnala@nokia.com>
+   @author Timo Rongas <ext-timo.rongas.nokia.com>
+   @author Antonio Aloisio <antonio.aloisio@nokia.com>
+
+   @scope Nokia Meego
+
+   This file is part of SystemSW QtAPI.
+
+   SystemSW QtAPI is free software; you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License
+   version 2.1 as published by the Free Software Foundation.
+
+   SystemSW QtAPI is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with SystemSW QtAPI.  If not, see <http://www.gnu.org/licenses/>.
+   </p>
+*/
+#ifndef QMACTIVITY_H
+#define QMACTIVITY_H
+#include <QtCore/qobject.h>
+#include "system_global.h"
+
+QT_BEGIN_HEADER
+
+namespace MeeGo {
+
+class QmActivityPrivate;
+
+/*!
+ * @class QmActivity
+ *
+ * @scope Nokia Meego
+ *
+ * @brief QmActivity provides information about user activity
+ * @details QmActivity offers a getter method as well as a changed signal
+ * for the user activity state. The state is fetched from the mce daemon
+ */
+class MEEGO_SYSTEM_EXPORT QmActivity : public QObject
+{
+    Q_OBJECT
+    Q_ENUMS(Activity)
+    Q_PROPERTY(Activity status READ get)
+
+public:
+    //! Possible user activity states
+    enum Activity
+    {
+        Inactive = 0, //!< Inactive
+        Active        //!< Active
+    };
+
+public:
+    /*!
+     * @brief Constructor
+     * @param parent the possible parent object
+     */
+    QmActivity(QObject *parent = 0);
+
+    /*!
+     * @brief Destructor
+     */
+    ~QmActivity();
+
+    /*!
+     * @brief Get the current activity state.
+     * @return the current activity state.
+     */
+    Activity get() const;
+
+Q_SIGNALS:
+    /*!
+     * @brief Sent when activity state has changed.
+     * @param activity the new activity state.
+     */
+    void activityChanged(MeeGo::QmActivity::Activity activity);
+
+private:
+    Q_DISABLE_COPY(QmActivity)
+    MEEGO_DECLARE_PRIVATE(QmActivity)
+};
+
+} // MeeGo namespace
+
+QT_END_HEADER
+
+#endif /*QMACTIVITY_H*/
+
+// End of file
+
