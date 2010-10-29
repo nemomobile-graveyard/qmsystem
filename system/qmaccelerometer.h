@@ -3,7 +3,8 @@
  * @brief Contains QmAccelerometer, which provides raw accelerometer measurements.
 
    <p>
-   Copyright (C) 2009-2010 Nokia Corporation
+   @copyright (C) 2009-2010 Nokia Corporation
+   @license LGPL Lesser General Public License
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Timo Rongas <ext-timo.rongas.nokia.com>

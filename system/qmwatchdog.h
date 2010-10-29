@@ -3,7 +3,8 @@
  * @brief Contains QmWatchdog which provides an interface for the watchdog service.
 
    <p>
-   Copyright (C) 2009-2010 Nokia Corporation
+   @copyright (C) 2009-2010 Nokia Corporation
+   @license LGPL Lesser General Public License
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
 

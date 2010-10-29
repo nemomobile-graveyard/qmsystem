@@ -3,7 +3,8 @@
  * @brief Contains QmKeys which provides access to hardware key states.
 
    <p>
-   Copyright (C) 2009-2010 Nokia Corporation
+   @copyright (C) 2009-2010 Nokia Corporation
+   @license LGPL Lesser General Public License
 
    @author Ilya Dogolazky <ilya.dogolazky@nokia.com>
    @author Raimo Vuonnala <raimo.vuonnala@nokia.com>

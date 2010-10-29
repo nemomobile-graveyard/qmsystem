@@ -1,3 +1,10 @@
+qmsystem2 (0.0.2) unstable; urgency=low
+
+  * Fixes: NB#198843 - offline mode button state is not preserved after reboot.
+  * Fixes: NB#199370 - Copyright tag not defined in qmsystem
+	
+ -- Yang Yang <ext-yang.25.yang@nokia.com>  Fri, 29 Oct 2010 10:50:19 +0300
+
 qmsystem2 (0.0.1) unstable; urgency=low
 
   * Namespace change

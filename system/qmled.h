@@ -3,7 +3,8 @@
  * @brief Contains QmLed which provides information and actions on device LED.
 
    <p>
-   Copyright (C) 2009-2010 Nokia Corporation
+   @copyright (C) 2009-2010 Nokia Corporation
+   @license LGPL Lesser General Public License
 
    @author Antonio Aloisio <antonio.aloisio@nokia.com>
    @author Raimo Vuonnala <raimo.vuonnala@nokia.com>

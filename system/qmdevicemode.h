@@ -3,12 +3,14 @@
 * @brief Contains QmDeviceMode which provides information and actions on device operation mode and powersave mode
 
    <p>
-   Copyright (C) 2009-2010 Nokia Corporation
+   @copyright (C) 2009-2010 Nokia Corporation
+   @license LGPL Lesser General Public License
 
    @author Antonio Aloisio <antonio.aloisio@nokia.com>
    @author Raimo Vuonnala <raimo.vuonnala@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Timo Rongas <ext-timo.rongas.nokia.com>
+   @author Yang Yang <ext-yang.25.yang@nokia.com>
 
    @scope Nokia Meego
 

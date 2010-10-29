@@ -46,7 +46,7 @@ Signal emitted from the com.nokia.mce.signal interface
 Generic method calls provided by the com.nokia.mce.request interface
 
     Name                   get_powersave_mode
-    Parameters             -    
+    Parameters             -
     Errors / Return value  dbus_bool_t inactivity TRUE / FALSE
     Description            Get the current powersave mode. TRUE if the powersave mode is on,  FALSE if the powersave mode is off.
 
@@ -66,154 +66,156 @@ We also need to set the automatic PSM, GConf would be good as this is persistent
 namespace MeeGo {
 
 
-QmDeviceMode::QmDeviceMode(QObject *parent) : QObject(parent){
-    MEEGO_INITIALIZE(QmDeviceMode)
-    connect(priv, SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState)), this, SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState)));
-    connect(priv, SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode)), this, SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode)));
+    QmDeviceMode::QmDeviceMode(QObject *parent) : QObject(parent){
+        MEEGO_INITIALIZE(QmDeviceMode)
+                connect(priv, SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState)), this, SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState)));
+        connect(priv, SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode)), this, SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode)));
 
-}
-
-QmDeviceMode::~QmDeviceMode(){
-    MEEGO_UNINITIALIZE(QmDeviceMode) ;
-}
-
-QmDeviceMode::DeviceMode QmDeviceMode::getMode() const{
-    MEEGO_PRIVATE_CONST(QmDeviceMode)
-
-    QList<QVariant> list = priv->requestIf->get(MCE_DEVICE_MODE_GET);
-    QString tmp;
-
-    if (!list.isEmpty()) {
-        tmp = list[0].toString();
-    }
-    if (tmp == MCE_NORMAL_MODE) {
-        return Normal;
-    } else if (tmp == MCE_FLIGHT_MODE) {
-        return Flight;
-    } else {
-        return Error;
     }
 
-}
+    QmDeviceMode::~QmDeviceMode(){
+        MEEGO_UNINITIALIZE(QmDeviceMode) ;
+    }
 
-QmDeviceMode::PSMState QmDeviceMode::getPSMState() const {
-    MEEGO_PRIVATE_CONST(QmDeviceMode)
+    QmDeviceMode::DeviceMode QmDeviceMode::getMode() const{
+        MEEGO_PRIVATE_CONST(QmDeviceMode)
 
-    QList<QVariant> list = priv->requestIf->get(MCE_PSM_STATE_GET);
-    if (!list.isEmpty()) {
-        if (list.first().toBool()) {
-            return PSMStateOn;
+        QList<QVariant> list = priv->requestIf->get(MCE_RADIO_STATES_GET);
+        unsigned int state = 0;
+
+        if (!list.isEmpty()) {
+            state = list[0].toInt();
+        } else return Error;
+        if (state != 0) {
+            return Normal;
+        } else if (state == 0) {
+            return Flight;
         } else {
-            return PSMStateOff;
+            return Error;
         }
-    }
-    return PSMError;
-}
 
-
-bool QmDeviceMode::setMode(QmDeviceMode::DeviceMode mode){
-    MEEGO_PRIVATE(QmDeviceMode)
-
-    QString newMode;
-
-    switch (mode) {
-    case Normal:
-        newMode = MCE_NORMAL_MODE;
-        break;
-    case Flight:
-        newMode = MCE_FLIGHT_MODE;
-        break;
-    default:
-        return false;
     }
 
-    QList<QVariant> res = priv->requestIf->get(MCE_DEVICE_MODE_CHANGE_REQ, newMode);
-    if (!res.isEmpty() && res.at(0).toBool()) {
-        return true;
-    }
-    return false;
-}
+    QmDeviceMode::PSMState QmDeviceMode::getPSMState() const {
+        MEEGO_PRIVATE_CONST(QmDeviceMode)
 
-bool QmDeviceMode::setPSMState(QmDeviceMode::PSMState state) {
-    MEEGO_PRIVATE(QmDeviceMode)
-
-    gboolean val = FALSE;
-    if (state == PSMStateOff) {
-        val = FALSE;
-    } else if (state == PSMStateOn) {
-        val = TRUE;
-    } else {
-        return false;
+                QList<QVariant> list = priv->requestIf->get(MCE_PSM_STATE_GET);
+        if (!list.isEmpty()) {
+            if (list.first().toBool()) {
+                return PSMStateOn;
+            } else {
+                return PSMStateOff;
+            }
+        }
+        return PSMError;
     }
 
-    gboolean ret = gconf_client_set_bool(priv->gcClient, FORCE_POWER_SAVING, val, NULL);
-    if (ret == TRUE) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
-bool QmDeviceMode::setPSMBatteryMode(int percentages) {
-    MEEGO_PRIVATE(QmDeviceMode)
+    bool QmDeviceMode::setMode(QmDeviceMode::DeviceMode mode){
+        MEEGO_PRIVATE(QmDeviceMode)
 
-    if (percentages < 0 || percentages > 100) {
-        return false;
-    }
+        unsigned int state, mask;
 
-    int value = 0;
-    if (percentages > 0) {
-        GSList *list = gconf_client_get_list(priv->gcClient, THRESHOLDS, GCONF_VALUE_INT, NULL);
-        if (!list) {
+        switch (mode) {
+        case Normal:
+            state = 1;
+            mask = MCE_RADIO_STATE_MASTER;
+            break;
+        case Flight:
+            state = 0;
+            mask = MCE_RADIO_STATE_MASTER;
+            break;
+        default:
             return false;
         }
-        GSList *elem = list;
-        do {
-            int data = GPOINTER_TO_INT(elem->data);
-            if (percentages <= data || !elem->next) {
-                value = data;
-                break;
-            }
-        } while (elem = g_slist_next(elem));
-        g_slist_free(list);
+
+        QList<QVariant> res = priv->requestIf->get(MCE_RADIO_STATES_CHANGE_REQ, state, mask);
+        if (!res.isEmpty() && !res.at(0).toInt()) {
+            return true;
+        }
+        return false;
     }
 
-    gboolean ret = FALSE;
-    if (value == 0) {
-        ret = gconf_client_set_bool(priv->gcClient, ENABLE_POWER_SAVING, FALSE, NULL);
-    } else {
-        ret = gconf_client_set_bool(priv->gcClient, ENABLE_POWER_SAVING, TRUE, NULL);
+    bool QmDeviceMode::setPSMState(QmDeviceMode::PSMState state) {
+        MEEGO_PRIVATE(QmDeviceMode)
+
+                gboolean val = FALSE;
+        if (state == PSMStateOff) {
+            val = FALSE;
+        } else if (state == PSMStateOn) {
+            val = TRUE;
+        } else {
+            return false;
+        }
+
+        gboolean ret = gconf_client_set_bool(priv->gcClient, FORCE_POWER_SAVING, val, NULL);
         if (ret == TRUE) {
-            ret = gconf_client_set_int(priv->gcClient, THRESHOLD, value, NULL);
+            return true;
+        } else {
+            return false;
         }
     }
 
-    if (ret == TRUE) {
-        return true;
-    } else {
-        return false;
-    }
-}
+    bool QmDeviceMode::setPSMBatteryMode(int percentages) {
+        MEEGO_PRIVATE(QmDeviceMode)
 
-int QmDeviceMode::getPSMBatteryMode() {
-    MEEGO_PRIVATE(QmDeviceMode)
+                if (percentages < 0 || percentages > 100) {
+            return false;
+        }
 
-    GError *error = NULL;
-    gboolean ret = gconf_client_get_bool(priv->gcClient, ENABLE_POWER_SAVING, &error);
-    if (error) {
-        g_error_free(error);
-        return -1;
+        int value = 0;
+        if (percentages > 0) {
+            GSList *list = gconf_client_get_list(priv->gcClient, THRESHOLDS, GCONF_VALUE_INT, NULL);
+            if (!list) {
+                return false;
+            }
+            GSList *elem = list;
+            do {
+                int data = GPOINTER_TO_INT(elem->data);
+                if (percentages <= data || !elem->next) {
+                    value = data;
+                    break;
+                }
+            } while (elem = g_slist_next(elem));
+            g_slist_free(list);
+        }
+
+        gboolean ret = FALSE;
+        if (value == 0) {
+            ret = gconf_client_set_bool(priv->gcClient, ENABLE_POWER_SAVING, FALSE, NULL);
+        } else {
+            ret = gconf_client_set_bool(priv->gcClient, ENABLE_POWER_SAVING, TRUE, NULL);
+            if (ret == TRUE) {
+                ret = gconf_client_set_int(priv->gcClient, THRESHOLD, value, NULL);
+            }
+        }
+
+        if (ret == TRUE) {
+            return true;
+        } else {
+            return false;
+        }
     }
-    if (ret == FALSE) {
-        return 0;
+
+    int QmDeviceMode::getPSMBatteryMode() {
+        MEEGO_PRIVATE(QmDeviceMode)
+
+                GError *error = NULL;
+        gboolean ret = gconf_client_get_bool(priv->gcClient, ENABLE_POWER_SAVING, &error);
+        if (error) {
+            g_error_free(error);
+            return -1;
+        }
+        if (ret == FALSE) {
+            return 0;
+        }
+        int retVal = gconf_client_get_int(priv->gcClient, THRESHOLD, &error);
+        if (error) {
+            g_error_free(error);
+            return -1;
+        }
+        return retVal;
     }
-    int retVal = gconf_client_get_int(priv->gcClient, THRESHOLD, &error);
-    if (error) {
-        g_error_free(error);
-        return -1;
-    }
-    return retVal;
-}
 
 
 } // namespace MeeGo

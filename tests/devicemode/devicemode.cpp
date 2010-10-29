@@ -26,6 +26,7 @@
 #include <QObject>
 #include <qmdevicemode.h>
 #include <QTest>
+#include <QDebug>
 #include <QtDBus/qdbusinterface.h>
 
 /*
@@ -88,6 +89,7 @@ private slots:
             QVERIFY2(dm->setMode(MeeGo::QmDeviceMode::Normal), "Note that the system must be in the user state");
             QCOMPARE(dm->getMode(), MeeGo::QmDeviceMode::Normal);
             QTest::qWait(5000);
+            qDebug()<<signalDump.mode;
             QCOMPARE(signalDump.mode, MeeGo::QmDeviceMode::Normal);
         } else {
             QVERIFY2(dm->setMode(MeeGo::QmDeviceMode::Normal), "Note that the system must be in the user state");

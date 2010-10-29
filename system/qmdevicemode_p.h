@@ -68,7 +68,7 @@ namespace MeeGo
             g_type_init();
             gcClient = gconf_client_get_default();
 
-            signalIf->connect(MCE_DEVICE_MODE_SIG, this, SLOT(deviceModeChangedSlot(const QString&)));
+            signalIf->connect(MCE_RADIO_STATES_SIG, this, SLOT(deviceModeChangedSlot(const unsigned int)));
             signalIf->connect(MCE_PSM_STATE_SIG, this, SLOT(devicePSMChangedSlot(bool)));
         }
 
@@ -95,10 +95,10 @@ namespace MeeGo
                 emit devicePSMStateChanged(QmDeviceMode::PSMStateOff);
             }
         }
-        void deviceModeChangedSlot(const QString &mode) {
-            if (mode == MCE_NORMAL_MODE) {
+        void deviceModeChangedSlot(const unsigned int state) {
+            if (state != 0) {
                 emit deviceModeChanged(QmDeviceMode::Normal);
-            } else if (mode == MCE_FLIGHT_MODE) {
+            } else if (state == 0) {
                 emit deviceModeChanged(QmDeviceMode::Flight);
             }
         }
