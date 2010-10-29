@@ -4,34 +4,6 @@
   <suite name="libqmsystem2-tests" domain="System Software">
     <!-- At least one set per suite, name and description mandatory -->
 
-    <set name="act-dead-tests" description="Test in ACT DEAD mode" feature="System Control">
-
-      <environments>
-        <scratchbox>false</scratchbox>
-        <hardware>true</hardware>
-      </environments>
-
-      <pre_steps>
-        <step>telinit 5</step>
-      </pre_steps>
-
-      <case name="event_add" level="Component" type="Functional" description="Test basic event in ACT DEAD" subfeature="TimeAlarm" requirement="39951"  insignificant="true">
-        <step expected_result="0">/usr/share/qmsystem2-api-fast-tests/session alarm-test event_add</step>
-      </case>
-      <case name="user_mode_in_actdead" level="Component" type="Functional" description="user_mode_needed in ACT DEAD" subfeature="TimeAlarm" requirement="39951" insignificant="true">
-        <step expected_result="0">/usr/share/qmsystem2-api-fast-tests/session alarm-test user_mode_in_actdead</step>
-      </case>
-      <case name="user_mode_event_is_not_queued_in_actdead_mode" level="Component" type="Functional" description="user mode event is not queued in acting dead mode" subfeature="TimeAlarm" requirement="39951" insignificant="true">
-        <step expected_result="0">/usr/share/qmsystem2-api-fast-tests/session alarm-test user_mode_event_is_not_queued_in_actdead_mode</step>
-      </case>
-      <case name="user_mode_actdead_cancel" level="Component" type="Functional" description="an user mode event can be canceled even in acting dead mode." subfeature="TimeAlarm" requirement="39951" insignificant="true">
-        <step expected_result="0">/usr/share/qmsystem2-api-fast-tests/session alarm-test user_mode_actdead_cancel</step>
-      </case>
-      <post_steps>
-        <step>telinit 2</step>
-      </post_steps>
-    </set>
-
     <set name="Qt-API-subsystem-classes" description="Unit test cases for SystemSW APIs" feature="SystemSW Qt API">
         <!-- Run environment check test commands-->
       <pre_steps>
