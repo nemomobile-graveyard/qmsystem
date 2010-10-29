@@ -2,9 +2,9 @@ prefix=/usr
 includedir=${prefix}/include
 libdir=${prefix}/lib/
 
-Name: QmSystem
-Description: QmSystem Library
-Version: 0.2.12
+Name: QmSystem2
+Description: QmSystem2 Library
+Version: 0.0.2
 Requires:
 Libs: -L${libdir} -lqmsystem2 -ltimed -lQtCore
 Cflags: -I${includedir}/qmsystem -I${includedir}/qt4/QtCore -I${includedir}/qt4
