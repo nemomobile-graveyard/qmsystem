@@ -100,13 +100,11 @@
         <file>/var/log/syslog</file>
       </get>
 
-<!--
       <post_steps> 
         <step>umount /tmp/qmsystemstatejail/usr</step>
         <step>umount /tmp/qmsystemstatejail/lib</step>
         <step>umount /tmp/qmsystemstatejail/dev</step>
       </post_steps>
--->
     </set>
 
     <set name="Sensor-Service-API" description="Unit test cases for com.nokia.SensorService APIs" feature="SystemSW Qt API">
