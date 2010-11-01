@@ -1,3 +1,9 @@
+qmsystem2 (0.0.3) unstable; urgency=low
+
+  * Fixes: NB#201532 - /usr/lib/pkgconfig/qmsystem2.pc lists incorrect includepath
+	
+ -- Yang Yang <ext-yang.25.yang@nokia.com>  Mon, 1 Nov 2010 12:50:19 +0300
+
 qmsystem2 (0.0.2) unstable; urgency=low
 
   * Fixes: NB#198843 - offline mode button state is not preserved after reboot.
