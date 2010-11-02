@@ -656,6 +656,18 @@ int QmBattery::getRemainingIdleTime(QmBattery::RemainingTimeMode mode) const
     return pimpl_->getStat(BATTERY_TIME_IDLE) * 3600;
 }
 
+QmBattery::BatteryCondition QmBattery::getBatteryCondition() const
+{
+    switch (pimpl_->getStat(BATTERY_CONDITION)) {
+    case BATTERY_CONDITION_GOOD:
+	return ConditionGood;
+    case BATTERY_CONDITION_POOR:
+	return ConditionPoor;
+    default:
+	return ConditionUnknown;
+    }
+}
+
 int QmBattery::getBatteryEnergyLevel() const
 {
     /* Depreceated */

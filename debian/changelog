@@ -1,3 +1,9 @@
+qmsystem2 (0.0.4) unstable; urgency=low
+
+  * Added a method for querying battery condition
+	
+ -- Matti Halme <matti.halme@nokia.com>  Tue, 02 Nov 2010 10:56:12 +0200
+
 qmsystem2 (0.0.3) unstable; urgency=low
 
   * Fixes: NB#201532 - /usr/lib/pkgconfig/qmsystem2.pc lists incorrect includepath

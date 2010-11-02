@@ -123,6 +123,14 @@ public:
         RATE_5000ms             //!< Measure every 5000ms
     };
 
+    //! The battery condition
+    enum BatteryCondition
+    {
+        ConditionGood = 0,      //!< Battery condition is good
+        ConditionPoor,          //!< Battery might need to be replaced
+        ConditionUnknown = 0xff //!< Battery condition is not known
+    };
+
 public:
 
     QmBattery(QObject *parent = 0);
@@ -262,6 +270,12 @@ public:
      */
     int getRemainingIdleTime(RemainingTimeMode mode) const;
 
+    /*!
+     * @brief Get the battery condition
+     *
+     * @returns  Battery condition as QmBattery::BatteryCondition
+     */
+    BatteryCondition getBatteryCondition() const;
 
     /*!
      * @brief Depreceated, use getRemainingCapacityPct
