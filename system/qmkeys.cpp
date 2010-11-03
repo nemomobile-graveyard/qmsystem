@@ -89,6 +89,8 @@ namespace MeeGo
             return QmKeys::Pause;
         case KEY_RIGHTCTRL:
             return QmKeys::RightCtrl;
+        default:
+            return QmKeys::UnknownKey;
         }
     }
 
@@ -107,14 +109,16 @@ namespace MeeGo
             ev.type = EV_KEY;
             ev.code = KEY_VOLUMEDOWN;
             break;
-        /*case QmKeys::Phone:
+        case QmKeys::Phone:
         case QmKeys::PlayPause:
         case QmKeys::Play:
         case QmKeys::Stop:
         case QmKeys::Forward:
         case QmKeys::Rewind:
+        case QmKeys::Pause:
+        case QmKeys::RightCtrl:
         default:
-            break;*/
+            break;
         }
         return ev;
     }

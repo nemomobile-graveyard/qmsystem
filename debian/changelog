@@ -1,5 +1,8 @@
 qmsystem2 (0.0.4) unstable; urgency=low
 
+  [Yang Yang]
+  * Fixes: NB#201690 - qmsystem-api-fast-tests take 12 mins for execution
+  * Add QmKeys::UnknownKey
   * Added a method for querying battery condition
 	
  -- Matti Halme <matti.halme@nokia.com>  Tue, 02 Nov 2010 10:56:12 +0200

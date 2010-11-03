@@ -96,6 +96,7 @@ public:
   //! Supported keys
   enum Key
   {
+      UnknownKey = -1,
       KeyboardSlider = 0,
       Camera,
       VolumeUp,
