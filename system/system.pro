@@ -18,7 +18,7 @@ QMAKE_CXXFLAGS += -Wall -Wno-psabi
 # INCLUDEPATH += /usr/include/sensord \
 # /usr/include/sensord/filters \
 # /usr/include/sensord/datatypes
-CONFIG += sensord timed
+CONFIG += sensord timed qmlog
 CONFIG += link_pkgconfig
 PKGCONFIG += gconf-2.0
 
