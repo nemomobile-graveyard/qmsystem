@@ -1,3 +1,13 @@
+qmsystem2 (0.0.5) unstable; urgency=low
+
+  NOT RELEASED YET
+	
+  [Raimo Vuonnala]	
+
+  * Commented that QmKeys should be destructed when app does not expect key pressures
+
+ -- Raimo Vuonnala <raimo.vuonnala@nokia.com>  Wed, 03 Nov 2010 13:18:05 +0200
+
 qmsystem2 (0.0.4) unstable; urgency=low
 
   [Yang Yang]

@@ -134,6 +134,15 @@ public:
    * @param parent the possible parent object
    */
   QmKeys(QObject *parent = 0);
+
+
+  /*!
+   * @brief Destructor
+   *
+   * Destruct QmKeys when you do not expect key pressures (for 
+   * example when screen is blanked) to save battery.
+   *
+   */
   virtual ~QmKeys();
 
   /*!
