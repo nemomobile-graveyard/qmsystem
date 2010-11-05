@@ -346,36 +346,3 @@ QT_END_HEADER
 
 // End of file
 //
-#if 0
-TODO:
-1. Non blocking constructor
-2. Init-Info blah blah
-3. Flag "what": system time / settings
-
-
-{
-    QmTime(QObject *parent = 0);
-    ~QmTime();
-
-    QmTime::TimeFormat getTimeFormat();
-    bool setTimeFormat(QmTime::TimeFormat format);
-
-    bool getNetTime(QDateTime& time, QString& tz);
-
-    bool setTime(const QDateTime& time);
-    bool setTimezone(const QString tz);
-    bool getTimezone(QString& s);
-    bool getTZName(QString& s);
-    bool getRemoteTime(const QDateTime &moment, const QString &location, QDateTime &remoteTime);
-    int getUTCOffset(const QString &);
-
-    bool setAutosync(bool enable);
-    int getAutosync();
-    int isOperatorTimeAccessible(void);
-
-    int getTimeDiff(const QDateTime &moment, const QString &location1, const QString &location2) ;
-    int getDSTUsage(const QDateTime &moment, const QString &location) ;
-Q_SIGNALS:
-    void timeOrSettingsChanged(MeeGo::QmTimeWhatChanged what);
-};
-#endif
