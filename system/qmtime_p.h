@@ -82,7 +82,7 @@ namespace MeeGo {
             if (!ifc.isValid()) {
                 qWarning() << "Timed::Interface is not valid";
             }
-            if (!ifc.settings_changed_connect(this, SLOT(settings_changed(const MeeGo::Timed::WallClock::Info&,bool)))) {
+            if (!ifc.settings_changed_connect(this, SLOT(settings_changed(const Maemo::Timed::WallClock::Info&,bool)))) {
                 qWarning() << "Could not connect to Timed::Interface::settings_changed";
             }
         }
