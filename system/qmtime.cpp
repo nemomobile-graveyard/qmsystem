@@ -29,7 +29,6 @@
 #include <QDebug>
 #include <QDateTime>
 
-#include <qm/log>
 #include <gconf/gconf-client.h>
 #include "qmtime_p.h"
 #include "qmtime.h"
@@ -330,7 +329,8 @@ namespace MeeGo {
      */
     bool QmTime::setAutosync(bool enable)
     {
-        log_debug("This method is deprecated, DO NOT USE IT!") ;
+        qDebug() << "This method is deprecated, DO NOT USE IT!";
+
         MEEGO_PRIVATE(QmTime);
         WallClock::Settings s;
         if (enable) {
@@ -354,7 +354,8 @@ namespace MeeGo {
      */
     int QmTime::getAutosync()
     {
-        log_debug("This method is deprecated, DO NOT USE IT!") ;
+        qDebug() << "This method is deprecated, DO NOT USE IT!";
+
         MEEGO_PRIVATE(QmTime);
         InfoReply infoRes = priv->ifc.get_wall_clock_info_sync();
         if (!infoRes.isValid()) {
