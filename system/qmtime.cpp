@@ -63,10 +63,12 @@ namespace MeeGo {
 
     QmTime::~QmTime()
     {
-        MEEGO_UNINITIALIZE(QmTime);
         gconf_client_notify_remove (gc, notify_id);
         gconf_client_remove_dir (gc, TIME_FORMAT_KEY, NULL);
         g_object_unref(gc);
+
+        disconnect(this, SIGNAL(timeOrSettingsChanged(MeeGo::QmTimeWhatChanged)));
+        MEEGO_UNINITIALIZE(QmTime);
     }
 
     bool QmTime::getNetTime(QDateTime &time, QString &tz)

@@ -70,7 +70,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
   public:
 
     QmTime(QObject *parent = 0);
-    ~QmTime();
+    virtual ~QmTime();
 
     /** Format of time */
     enum TimeFormat
