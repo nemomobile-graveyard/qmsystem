@@ -4,6 +4,7 @@ qmsystem2 (0.0.5) unstable; urgency=low
   * Commented that QmKeys should be destructed when app does not expect key pressures
 
   [Matias Muhonen]
+  * Fixes: NB#201671 - COREWEB: /usr/bin/sysuid 'isSignalConnected QMetaObject::activate Maemo::QmTime::timeOrSettingsChanged Maemo::QmTimePrivate::gconfkey_changed notify_listeners_callback'
   * Fixes: NB#202311 - qmsystem2 tries to connect to slots that don't exist
 
  -- Raimo Vuonnala <raimo.vuonnala@nokia.com>  Wed, 03 Nov 2010 13:18:05 +0200
