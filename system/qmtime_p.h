@@ -125,12 +125,20 @@ namespace MeeGo {
             return ret;
         }
 
-        static void timeformat_gconfkey_changed(GConfClient* client, guint, GConfEntry*, gpointer data)
+    public Q_SLOTS:
+        void settings_changed(const Maemo::Timed::WallClock::Info &info, bool time_changed)
+        {
+            emit timeOrSettingsChanged(MeeGo::QmTimeTimeChanged);
+        }
+        static void gconfkey_changed(GConfClient* client, guint, GConfEntry*, gpointer data)
         {
             QmTime *time = (QmTime *)data;
-            if (time)
-                emit time->timeOrSettingsChanged(MeeGo::QmTimeOnlySettingsChanged);
+            emit time->timeOrSettingsChanged(MeeGo::QmTimeOnlySettingsChanged);
         }
+
+    Q_SIGNALS:
+        void timeOrSettingsChanged(MeeGo::QmTimeWhatChanged);
+
     };
 }
 
