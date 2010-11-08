@@ -129,12 +129,6 @@ namespace MeeGo {
         void settings_changed(const Maemo::Timed::WallClock::Info &info, bool time_changed)
         {
             emit timeOrSettingsChanged(MeeGo::QmTimeTimeChanged);
-            /*if (time_changed) {
-                emit timeOrSettingsChanged(MeeGo::QmTimeTimeChanged);
-            } else {
-                emit timeOrSettingsChanged(MeeGo::QmTimeOnlySettingsChanged);
-            }*/
-            //emit timeOrSettingsChanged(QmTimeOnlySettingsChanged);
         }
         static void gconfkey_changed(GConfClient* client, guint, GConfEntry*, gpointer data)
         {
