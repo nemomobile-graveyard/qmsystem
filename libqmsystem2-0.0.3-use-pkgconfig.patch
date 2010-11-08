@@ -1,16 +1,15 @@
 diff --git a/system/system.pro b/system/system.pro
-index d5e3322..750e5cc 100644
+index d5e3322..18a8866 100644
 --- a/system/system.pro
 +++ b/system/system.pro
-@@ -18,9 +18,9 @@ QMAKE_CXXFLAGS += -Wall -Wno-psabi
+@@ -18,9 +18,8 @@ QMAKE_CXXFLAGS += -Wall -Wno-psabi
  # INCLUDEPATH += /usr/include/sensord \
  # /usr/include/sensord/filters \
  # /usr/include/sensord/datatypes
 -CONFIG += sensord timed
-+CONFIG += timed
  CONFIG += link_pkgconfig
 -PKGCONFIG += gconf-2.0
-+PKGCONFIG += gconf-2.0 sensord usb_moded
++PKGCONFIG += gconf-2.0 sensord timed usb_moded
  
  # LIBS += $$system(pkg-config --libs alarm)
  LIBS += -lbmeipc \

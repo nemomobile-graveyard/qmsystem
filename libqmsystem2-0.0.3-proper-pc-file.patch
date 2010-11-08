@@ -1,11 +1,11 @@
 diff --git a/qmsystem2.pc b/qmsystem2.pc
-index a92e27d..a3b8fa0 100644
+index 4d4e305..77beed3 100644
 --- a/qmsystem2.pc
 +++ b/qmsystem2.pc
 @@ -5,6 +5,6 @@ libdir=${prefix}/lib/
  Name: QmSystem2
  Description: QmSystem2 Library
- Version: 0.0.3
+ Version: 0.0.4
 -Requires:
 -Libs: -L${libdir} -lqmsystem2 -ltimed -lQtCore
 -Cflags: -I${includedir}/qmsystem2 -I${includedir}/qt4/QtCore -I${includedir}/qt4

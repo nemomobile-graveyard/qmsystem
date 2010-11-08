@@ -1,2 +1,7 @@
+* Mon Nov 08 2010 Tapio Rantala <ext-tapio.rantala@nokia.com> 0.0.5-1
+- New upstream version
+- Refresh proper-pc-file.patch
+- Refresh use-pkgconfig.patch
+
 * Tue Nov 02 2010 Tapio Rantala <ext-tapio.rantala@nokia.com> 0.0.3-1
 - Initial RPM packaging
