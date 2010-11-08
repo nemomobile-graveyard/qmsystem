@@ -53,7 +53,12 @@ namespace MeeGo {
         g_type_init();
         gc = gconf_client_get_default();
         gconf_client_add_dir(gc, TIME_FORMAT_KEY, GCONF_CLIENT_PRELOAD_ONELEVEL, NULL);
-        notify_id = gconf_client_notify_add(gc, TIME_FORMAT_KEY, QmTimePrivate::gconfkey_changed, this, NULL, NULL);
+        notify_id = gconf_client_notify_add(gc,                                   /* a GConfClient */
+                                            TIME_FORMAT_KEY,                      /* namespace_section: where to listen for changes */
+                                            QmTimePrivate::gconfkey_changed,      /* function to call when changes occur */
+                                            this,                                 /* user data to pass to func */
+                                            NULL,                                 /* function to call on user_data when the notify is removed */
+                                            NULL);                                /* the return location for an allocated GError */
     }
 
     QmTime::~QmTime()
