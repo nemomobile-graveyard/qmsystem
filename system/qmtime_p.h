@@ -7,6 +7,7 @@
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Yang Yang <ext-yang.25.yang@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    @scope Private
 
@@ -75,7 +76,7 @@ namespace MeeGo {
 
     public:
 
-        Maemo::Timed::Interface ifc;        
+        Maemo::Timed::Interface ifc;
 
         QmTimePrivate() : QObject(NULL)
         {
@@ -125,20 +126,23 @@ namespace MeeGo {
             return ret;
         }
 
-    public Q_SLOTS:
-        void settings_changed(const Maemo::Timed::WallClock::Info &info, bool time_changed)
-        {
-            emit timeOrSettingsChanged(MeeGo::QmTimeTimeChanged);
-        }
-        static void gconfkey_changed(GConfClient* client, guint, GConfEntry*, gpointer data)
+        static void timeformat_gconfkey_changed(GConfClient*, guint, GConfEntry*, gpointer data)
         {
             QmTime *time = (QmTime *)data;
-            emit time->timeOrSettingsChanged(MeeGo::QmTimeOnlySettingsChanged);
+            if (time)
+                emit time->timeOrSettingsChanged(MeeGo::QmTimeOnlySettingsChanged);
         }
 
-    Q_SIGNALS:
-        void timeOrSettingsChanged(MeeGo::QmTimeWhatChanged);
+public Q_SLOTS:
+        void settings_changed(const Maemo::Timed::WallClock::Info &info, bool time_changed)
+        {
+            Q_UNUSED(info);
+            Q_UNUSED(time_changed);
+            emit timeOrSettingsChanged(MeeGo::QmTimeTimeChanged);
+        }
 
+Q_SIGNALS:
+        void timeOrSettingsChanged(MeeGo::QmTimeWhatChanged);
     };
 }
 

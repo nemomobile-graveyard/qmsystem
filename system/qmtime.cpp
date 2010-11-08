@@ -9,6 +9,7 @@
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Timo Rongas <ext-timo.rongas@nokia.com>
    @author Yang Yang <ext-yang.25.yang@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    This file is part of SystemSW QtAPI.
 
@@ -53,12 +54,12 @@ namespace MeeGo {
         g_type_init();
         gc = gconf_client_get_default();
         gconf_client_add_dir(gc, TIME_FORMAT_KEY, GCONF_CLIENT_PRELOAD_ONELEVEL, NULL);
-        notify_id = gconf_client_notify_add(gc,                                   /* a GConfClient */
-                                            TIME_FORMAT_KEY,                      /* namespace_section: where to listen for changes */
-                                            QmTimePrivate::gconfkey_changed,      /* function to call when changes occur */
-                                            this,                                 /* user data to pass to func */
-                                            NULL,                                 /* function to call on user_data when the notify is removed */
-                                            NULL);                                /* the return location for an allocated GError */
+        notify_id = gconf_client_notify_add(gc,                                            /* a GConfClient */
+                                            TIME_FORMAT_KEY,                               /* namespace_section: where to listen for changes */
+                                            QmTimePrivate::timeformat_gconfkey_changed,    /* function to call when changes occur */
+                                            this,                                          /* user data to pass to func */
+                                            NULL,                                          /* function to call on user_data when the notify is removed */
+                                            NULL);                                         /* the return location for an allocated GError */
     }
 
     QmTime::~QmTime()
@@ -67,7 +68,6 @@ namespace MeeGo {
         gconf_client_remove_dir (gc, TIME_FORMAT_KEY, NULL);
         g_object_unref(gc);
 
-        disconnect(this, SIGNAL(timeOrSettingsChanged(MeeGo::QmTimeWhatChanged)));
         MEEGO_UNINITIALIZE(QmTime);
     }
 
@@ -171,8 +171,6 @@ namespace MeeGo {
 
     QmTime::TimeFormat QmTime::getTimeFormat()
     {
-        MEEGO_PRIVATE(QmTime);
-
         gchar *ret = gconf_client_get_string(gc, TIME_FORMAT_KEY, NULL);
         if (ret == NULL)
             return QmTime::formatUnknown;
@@ -188,7 +186,6 @@ namespace MeeGo {
     /*can not set time format Unknown*/
     bool QmTime::setTimeFormat(QmTime::TimeFormat format)
     {
-        MEEGO_PRIVATE(QmTime);
         WallClock::Settings s;
         if (format == QmTime::format12h) {
             s.setFlag24(false);
