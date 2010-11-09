@@ -7,8 +7,9 @@ qmsystem2 (0.0.5) unstable; urgency=low
   * Fixes: NB#201671 - COREWEB: /usr/bin/sysuid 'isSignalConnected QMetaObject::activate Maemo::QmTime::timeOrSettingsChanged Maemo::QmTimePrivate::gconfkey_changed notify_listeners_callback'
   * Fixes: NB#202311 - qmsystem2 tries to connect to slots that don't exist
   * Fixes: NB#203249 - battery-test failed
+  * Fix lc_timeformat24h handling in getTimeFormat (and don't leak memory)
 
- -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Mon, 08 Nov 2010 13:45:20 +0200
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Tue, 09 Nov 2010 11:26:49 +0200
 
 qmsystem2 (0.0.4) unstable; urgency=low
 
