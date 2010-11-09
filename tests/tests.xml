@@ -89,7 +89,10 @@
       <case name="powerontime" level="Component" type="Functional" description="QmSystemPowerOnTime" timeout="30" subfeature="QT_APIs" requirement="39927">
         <step expected_result="0">/usr/bin/powerontime-test</step>
       </case>
-
+      <case name="time" level="Component" type="Functional" description="QmTime"  timeout="100" subfeature="QT_APIs" requirement="39927">
+        <!-- Run test time-test application -->
+        <step expected_result="0">/usr/bin/time-test </step>
+      </case>
       <!-- Environments optional - tells where the tests are run -->
       <environments>
         <scratchbox>false</scratchbox>

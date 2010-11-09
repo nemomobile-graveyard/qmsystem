@@ -194,7 +194,6 @@ private slots:
         QVERIFY(ret);
         waitTwice(500);
         QVERIFY(signalDump.signalReceived);
-        QVERIFY(signalDump.whatChanged == QmTimeOnlySettingsChanged);
     }
 
     void testGetAutosync() {

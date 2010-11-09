@@ -1,5 +1,9 @@
 <aegis>
   <request>
+    <credential name="bme::BatteryControl" />
+    <for path="/usr/bin/battery-test" id="battery-test" />
+  </request>
+  <request>
     <credential name="mce::CallStateControl" />
     <for path="/usr/bin/callstate-test" id="callstate-test" />
   </request>

@@ -39,8 +39,6 @@
 
 #include "qmtime.h"
 
-#define TIME_FORMAT_KEY "/meegotouch/i18n/lc_timeformat24h"
-
 namespace MeeGo {
 
     class SaveEnvTz {

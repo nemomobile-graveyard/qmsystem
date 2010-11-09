@@ -34,6 +34,7 @@
 #include "qmtime_p.h"
 #include "qmtime.h"
 
+#define TIME_FORMAT_KEY "/meegotouch/i18n/lc_timeformat24h"
 
 using namespace Maemo::Timed;
 
@@ -171,16 +172,17 @@ namespace MeeGo {
 
     QmTime::TimeFormat QmTime::getTimeFormat()
     {
+        /*
+         * If we adhere the same time format semantics as libmeegotouch's MLocale,
+         * by default we should have 12h time format (even if the gconf key is not set)
+         */
+        QmTime::TimeFormat timeFormat = QmTime::format12h;
         gchar *ret = gconf_client_get_string(gc, TIME_FORMAT_KEY, NULL);
-        if (ret == NULL)
-            return QmTime::formatUnknown;
-        if (strncmp(ret, "12", sizeof(ret)) == 0) {
-            return QmTime::format12h;
-        } else if (strncmp(ret, "24", sizeof(ret)) == 0) {
-            return QmTime::format24h;
+        if (strncmp(ret, "24", sizeof(ret)) == 0) {
+            timeFormat = QmTime::format24h;
         }
         g_free(ret);
-        return QmTime::formatUnknown;
+        return timeFormat;
     }
 
     /*can not set time format Unknown*/
