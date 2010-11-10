@@ -66,12 +66,6 @@ void SysfsWatcher::read_content()
   }
   if(data.length()==0)
     qWarning() << __PRETTY_FUNCTION__ << "empty read in" << path ;
-#if 0
-  else
-    qDebug() << __PRETTY_FUNCTION__ << data.length() << "bytes read from" << path ;
-  QString cmd_line = "cat " + path ;
-  system(cmd_line.toStdString().c_str()) ;
-#endif
   content = data ;
 }
 

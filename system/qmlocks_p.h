@@ -121,12 +121,6 @@ namespace MeeGo
         switch (what){
            case QmLocks::Device:
             {
-#if 0
-                if (!devlockIf) {
-                    devlockIf = new QmIPCInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE);
-                }
-                list = devlockIf->get(DEVLOCK_GET, DeviceLock::DeviceLockEnums::Device);
-#else
                 QDBusMessage call = QDBusMessage::createMethodCall(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE, DEVLOCK_GET);
                 QList<QVariant> args;
                 args.prepend(DeviceLock::DeviceLockEnums::Device);
@@ -135,7 +129,6 @@ namespace MeeGo
                 if (ret.type() == QDBusMessage::ReplyMessage) {
                     list = ret.arguments();
                 }
-#endif
                 if (!list.isEmpty()) {
                     bool toIntOk = false;
                     int val = list[0].toInt(&toIntOk);
@@ -167,14 +160,6 @@ namespace MeeGo
            case QmLocks::Device:
                 {
                  QList<QVariant> res;
-#if 0
-                    if (!devlockIf) {
-                        devlockIf = new QmIPCInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE);
-                    }
-                    res = devlockIf->get(DEVLOCK_SET,
-                                                          DeviceLock::DeviceLockEnums::Device,
-                                                          stateToState(how));
-#else
                     QDBusMessage call = QDBusMessage::createMethodCall(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE, DEVLOCK_SET);
                     QList<QVariant> args;
                     args.prepend(DeviceLock::DeviceLockEnums::Device);
@@ -184,7 +169,6 @@ namespace MeeGo
                     if (ret.type() == QDBusMessage::ReplyMessage) {
                         res = ret.arguments();
                     }
-#endif
                     if (res.isEmpty() || !res.first().toBool()) {
                         return false;
                     } else {
