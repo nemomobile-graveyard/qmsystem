@@ -38,7 +38,7 @@ QmThermal::QmThermal(QObject *parent)
 }
 
 QmThermal::~QmThermal(){
-    MEEGO_UNINITIALIZE(QmThermal) ;
+    MEEGO_UNINITIALIZE(QmThermal);
 
 }
 

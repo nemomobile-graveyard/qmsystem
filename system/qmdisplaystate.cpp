@@ -39,7 +39,7 @@ QmDisplayState::QmDisplayState(QObject *parent)
 }
 
 QmDisplayState::~QmDisplayState(){
-    MEEGO_UNINITIALIZE(QmDisplayState) ;
+    MEEGO_UNINITIALIZE(QmDisplayState);
 }
 
 QmDisplayState::DisplayState QmDisplayState::get() const{

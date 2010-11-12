@@ -51,7 +51,7 @@ public:
 
     struct input_event keyToEvent(QmKeys::Key key);
     QmKeys::State getKeyState(QmKeys::Key key);
-    int getKeyValue(const struct input_event &query);    
+    int getKeyValue(const struct input_event &query);
     QmKeys::Key codeToKey(__u16 code);
 
 public Q_SLOTS:
@@ -63,7 +63,7 @@ Q_SIGNALS:
 
   void lensCoverMoved(QmKeys::LensCoverPosition where);
 
-  void cameraLauncherMoved(QmKeys::CameraKeyPosition) ;
+  void cameraLauncherMoved(QmKeys::CameraKeyPosition);
 
   void volumeUpMoved(bool);
 

@@ -66,7 +66,7 @@ QmSystemState::QmSystemState(QObject *parent)
 }
 
 QmSystemState::~QmSystemState(){
-    MEEGO_UNINITIALIZE(QmSystemState) ;
+    MEEGO_UNINITIALIZE(QmSystemState);
 }
 
 bool QmSystemState::set(NextState nextState){

@@ -54,30 +54,30 @@ class MEEGO_SYSTEM_EXPORT QmCABC : public QObject
     Q_ENUMS(Mode)
 
 public:
-  enum Mode
-  {
-    Off=0,          /**< CABC is not activated */
-    Ui=1,           /**< Best quality. */   
-    StillImage=2,   /**< Medium quality, suitable for images */
-    MovingImage=3   /**< Suitable for video */
-  } ;
+    enum Mode
+    {
+        Off=0,          /**< CABC is not activated */
+        Ui=1,           /**< Best quality. */
+        StillImage=2,   /**< Medium quality, suitable for images */
+        MovingImage=3   /**< Suitable for video */
+    };
 
-  QmCABC(QObject *parent = 0) : QObject(parent) {} ;
+    QmCABC(QObject *parent = 0) : QObject(parent) {};
 
-  /**
-   * Get current CABC mode.
-   * @return Mode CABC mode.
-   */
-  Mode get() const ;
+    /**
+     * Get current CABC mode.
+     * @return Mode CABC mode.
+     */
+    Mode get() const;
 
 
-  /**
-   * Set current CABC mode.
-   *
-   * @param mode CABC  mode.
-   * @return bool TRUE if success, FALSE if failed.
-   */
-  bool set(Mode mode) ;
+    /**
+     * Set current CABC mode.
+     *
+     * @param mode CABC  mode.
+     * @return bool TRUE if success, FALSE if failed.
+     */
+    bool set(Mode mode);
 };
 
 } // namespace MeeGo

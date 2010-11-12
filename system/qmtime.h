@@ -228,7 +228,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      *
      * @return     Nonzero if daylight savings time is in effect, zero if not, -1 if error
      */
-    int getDSTUsage(const QDateTime &moment, const QString &location) ;
+    int getDSTUsage(const QDateTime &moment, const QString &location);
 
     /**
      * Get time difference between two locations at given moment of time
@@ -243,7 +243,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      * @return           Local time difference between the locations in seconds,
      *                   positive if the location1 is to the east of location2
      */
-    int getTimeDiff(const QDateTime &moment, const QString &location1, const QString &location2) ;
+    int getTimeDiff(const QDateTime &moment, const QString &location1, const QString &location2);
 
     /**
      * Set the state of automatic system time setting based on the network time information supplied by operator.
@@ -256,7 +256,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      *
      * @return      True if successfully set
      */
-    enum AutoSystemTimeStatus { AutoSystemTimeOn = 1, AutoSystemTimeOff = 0, AutoSystemTimeUnknown = -1 } ;
+    enum AutoSystemTimeStatus { AutoSystemTimeOn = 1, AutoSystemTimeOff = 0, AutoSystemTimeUnknown = -1 };
 
     /**
      * Get the state of automatic system time setting
@@ -265,7 +265,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      *
      * @return  AutoSystemTimeOn if enabled, AutoSystemTimeOff if disabled, AutoSystemTimeUnknown on errors
      */
-    enum AutoSystemTimeStatus autoSystemTime() ;
+    enum AutoSystemTimeStatus autoSystemTime();
 
     /**
      * Set the state of automatic system time setting
@@ -280,9 +280,9 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      *
      * @return True if successfully set
      */
-    bool setAutoSystemTime(enum AutoSystemTimeStatus new_status) ;
+    bool setAutoSystemTime(enum AutoSystemTimeStatus new_status);
 
-    enum AutoTimeZoneStatus { AutoTimeZoneOn = 1, AutoTimeZoneOff = 0, AutoTimeZoneUnknown = -1 } ;
+    enum AutoTimeZoneStatus { AutoTimeZoneOn = 1, AutoTimeZoneOff = 0, AutoTimeZoneUnknown = -1 };
 
     /**
      * Get the state of automatic time zone guessing
@@ -291,7 +291,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      *
      * @return  AutoTimeZoneOn if enabled, AutoTimeZoneOff if disabled, AutoTimeZoneUnknown on errors
      */
-    enum AutoTimeZoneStatus autoTimeZone() ;
+    enum AutoTimeZoneStatus autoTimeZone();
 
     /**
      * Set the state of automatic time zone guessing
@@ -306,7 +306,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      *
      * @return True if successfully set
      */
-    bool setAutoTimeZone(enum AutoTimeZoneStatus new_status) ;
+    bool setAutoTimeZone(enum AutoTimeZoneStatus new_status);
 
 
     /**
@@ -335,7 +335,7 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QmTime)
-    MEEGO_DECLARE_PRIVATE(QmTime)   
+    MEEGO_DECLARE_PRIVATE(QmTime)
 };
 
 } // MeeGo namespace

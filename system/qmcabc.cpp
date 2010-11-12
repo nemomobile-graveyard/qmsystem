@@ -40,45 +40,43 @@ static const QString cabc_dbus_names[] =
   MCE_CABC_MODE_UI,
   MCE_CABC_MODE_STILL_IMAGE,
   MCE_CABC_MODE_MOVING_IMAGE
-} ;
+};
 
-static const int cabc_mode_num = sizeof(cabc_dbus_names)/sizeof(*cabc_dbus_names) ;
+static const int cabc_mode_num = sizeof(cabc_dbus_names)/sizeof(*cabc_dbus_names);
 
 static int find_cabc_mode_by_dbus_name(const QString &name)
 {
-  for(int i=0; i<cabc_mode_num; ++i)
-    if (name==cabc_dbus_names[i])
-      return i ;
-  return -1 ;
+    for (int i=0; i < cabc_mode_num; ++i)
+        if (name == cabc_dbus_names[i])
+            return i;
+  return -1;
 }
 
 namespace MeeGo
 {
-  bool QmCABC::set(Mode mode)
-  {
-    QDBusInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, QDBusConnection::systemBus());
-    QDBusReply<QString> reply = cabc.call(MCE_CABC_MODE_REQ, cabc_dbus_names[mode]);
-    if(!reply.isValid())
-      qDebug() << "Setting mode "<< mode <<" (" << cabc_dbus_names[mode] << "): "<<"reply.value()="<<reply.value()<<":"<< reply.error().message() ;
-    return reply.isValid() && reply.value()==cabc_dbus_names[mode] ;
-  }
-
-  QmCABC::Mode QmCABC::get() const
-  {
-    QDBusInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, QDBusConnection::systemBus());
-    QDBusReply<QString> reply = cabc.call(MCE_CABC_MODE_GET);
-    if(reply.isValid())
+    bool QmCABC::set(Mode mode)
     {
-      int mode = find_cabc_mode_by_dbus_name(reply.value()) ;
-      if(mode<0)
-      {
-        qWarning() << __PRETTY_FUNCTION__ <<  "Invalid mode '" << reply.value() << "' returned by mce" ;
-        return Off ;
-      }
-      else
-        return (Mode) mode ;
+        QDBusInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, QDBusConnection::systemBus());
+        QDBusReply<QString> reply = cabc.call(MCE_CABC_MODE_REQ, cabc_dbus_names[mode]);
+        if (!reply.isValid())
+            qDebug() << "Setting mode "<< mode <<" (" << cabc_dbus_names[mode] << "): "<<"reply.value()="<<reply.value()<<":"<< reply.error().message();
+        return reply.isValid() && reply.value()==cabc_dbus_names[mode];
     }
-    else
-      return Off ; // What else could be returned here?
-  }
+
+    QmCABC::Mode QmCABC::get() const
+    {
+        QDBusInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, QDBusConnection::systemBus());
+        QDBusReply<QString> reply = cabc.call(MCE_CABC_MODE_GET);
+        if (reply.isValid()) {
+            int mode = find_cabc_mode_by_dbus_name(reply.value());
+            if (mode < 0) {
+                qWarning() << __PRETTY_FUNCTION__ <<  "Invalid mode '" << reply.value() << "' returned by mce";
+                return Off;
+            } else {
+               return (Mode) mode;
+            }
+        } else {
+            return Off; // What else could be returned here?
+        }
+    }
 }

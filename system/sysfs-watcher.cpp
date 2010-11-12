@@ -34,18 +34,18 @@
 
 SysfsWatcher::SysfsWatcher(const QString &p, QObject *parent) : QObject(parent), path(p), file(0), watcher(0)
 {
-  file = new QFile(p) ;
-  bool res = file->open(QIODevice::ReadOnly) ;
+  file = new QFile(p);
+  bool res = file->open(QIODevice::ReadOnly);
   if (!res)
   {
-    delete file ;
-    file = NULL ;
-    qWarning() << __PRETTY_FUNCTION__ << "Can't open" << p ;
-    return ;
+    delete file;
+    file = NULL;
+    qWarning() << __PRETTY_FUNCTION__ << "Can't open" << p;
+    return;
   }
-  read_content() ;
-  watcher = new QSocketNotifier (file->handle(), QSocketNotifier::Read) ;
-  connect(watcher, SIGNAL(activated(int)), this, SLOT(ready(int))) ;
+  read_content();
+  watcher = new QSocketNotifier (file->handle(), QSocketNotifier::Read);
+  connect(watcher, SIGNAL(activated(int)), this, SLOT(ready(int)));
 }
 
 SysfsWatcher::~SysfsWatcher()
@@ -58,27 +58,27 @@ void SysfsWatcher::read_content()
 {
   // should we care about multithreading here ?
   // workaround by Stefano, for Qt 4.6: doing this 2 times!
-  QByteArray data ;
+  QByteArray data;
   for (int i=0; i<2; ++i)
   {
-    file->seek(0) ;
-    data = file->readAll() ;
+    file->seek(0);
+    data = file->readAll();
   }
   if(data.length()==0)
-    qWarning() << __PRETTY_FUNCTION__ << "empty read in" << path ;
-  content = data ;
+    qWarning() << __PRETTY_FUNCTION__ << "empty read in" << path;
+  content = data;
 }
 
 bool SysfsWatcher::is(const char *state)
 {
-  const char *p = content ;
-  return strncmp(p, state, content.length()) == 0 && state[content.length()]=='\0' ;
+  const char *p = content;
+  return strncmp(p, state, content.length()) == 0 && state[content.length()]=='\0';
 }
 
 void SysfsWatcher::ready(int fd)
 {
   // should we care about multithreading here ?
-  assert(fd==file->handle()) ;
-  read_content() ;
-  emit content_changed() ; // even if it's the same as before
+  assert(fd==file->handle());
+  read_content();
+  emit content_changed(); // even if it's the same as before
 }

@@ -36,7 +36,7 @@ QmCallState::QmCallState(QObject *parent) : QObject(parent) {
 }
 
 QmCallState::~QmCallState(){
-    MEEGO_UNINITIALIZE(QmCallState) ;
+    MEEGO_UNINITIALIZE(QmCallState);
 }
 
 QmCallState::State QmCallState::getState() const{

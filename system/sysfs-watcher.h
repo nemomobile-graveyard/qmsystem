@@ -33,20 +33,20 @@
 
 class SysfsWatcher : public QObject
 {
-  Q_OBJECT ;
-  QString path ;
-  QByteArray content ;
-  QFile *file ;
-  QSocketNotifier *watcher ;
+  Q_OBJECT;
+  QString path;
+  QByteArray content;
+  QFile *file;
+  QSocketNotifier *watcher;
 private:
-  void read_content() ;
+  void read_content();
 private Q_SLOTS:
-  void ready(int fd) ;
+  void ready(int fd);
 public:
-  SysfsWatcher(const QString &p, QObject *parent=NULL) ;
+  SysfsWatcher(const QString &p, QObject *parent=NULL);
   virtual ~SysfsWatcher();
-  bool is_valid() { return file!=NULL ; }
-  bool is(const char *) ;
+  bool is_valid() { return file!=NULL; }
+  bool is(const char *);
 Q_SIGNALS:
-  void content_changed() ;
-} ;
+  void content_changed();
+};

@@ -40,7 +40,7 @@ QT_BEGIN_HEADER
 namespace MeeGo
 {
 
-class QmKeysPrivate ;
+class QmKeysPrivate;
 
 /*!
  * @scope Nokia Meego
@@ -139,7 +139,7 @@ public:
   /*!
    * @brief Destructor
    *
-   * Destruct QmKeys when you do not expect key pressures (for 
+   * Destruct QmKeys when you do not expect key pressures (for
    * example when screen is blanked) to save battery.
    *
    */
@@ -164,7 +164,7 @@ public:
    * @state Deprecated
    * @return Current state of the camera launcher key
    */
-  QmKeys::CameraKeyPosition getCameraLauncherPosition() ;
+  QmKeys::CameraKeyPosition getCameraLauncherPosition();
 
   /*!
    * @brief Deprecated, use getKeyState() instead
@@ -208,7 +208,7 @@ Q_SIGNALS:
    * @state Deprecated
    * @param where New camera luncher position.
    */
-  void cameraLauncherMoved(QmKeys::CameraKeyPosition) ;
+  void cameraLauncherMoved(QmKeys::CameraKeyPosition);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.

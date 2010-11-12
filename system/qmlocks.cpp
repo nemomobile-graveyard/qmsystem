@@ -38,7 +38,7 @@ QmLocks::QmLocks(QObject *parent)
 }
 
 QmLocks::~QmLocks(){
-    MEEGO_UNINITIALIZE(QmLocks) ;
+    MEEGO_UNINITIALIZE(QmLocks);
 }
 
 QmLocks::State QmLocks::getState(QmLocks::Lock what) const{

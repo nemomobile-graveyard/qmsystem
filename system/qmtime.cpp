@@ -243,54 +243,54 @@ namespace MeeGo {
 
     enum QmTime::AutoSystemTimeStatus QmTime::autoSystemTime()
     {
-      QDBusReply<Maemo::Timed::WallClock::Info> res = priv_func()->ifc.get_wall_clock_info_sync() ;
+      QDBusReply<Maemo::Timed::WallClock::Info> res = priv_func()->ifc.get_wall_clock_info_sync();
       if (not res.isValid())
-        return AutoSystemTimeUnknown ;
-      return res.value().flagTimeNitz() ? AutoSystemTimeOn : AutoSystemTimeOff ;
+          return AutoSystemTimeUnknown;
+      return res.value().flagTimeNitz() ? AutoSystemTimeOn : AutoSystemTimeOff;
     }
 
     bool QmTime::setAutoSystemTime(enum QmTime::AutoSystemTimeStatus new_status)
     {
-      Maemo::Timed::WallClock::Settings s ;
+      Maemo::Timed::WallClock::Settings s;
       switch(new_status)
       {
-        case AutoSystemTimeOn:
-          s.setTimeNitz() ;
-          break ;
-        case AutoSystemTimeOff:
-          s.setTimeManual() ;
-          break ;
-        default:
-          return false ;
+          case AutoSystemTimeOn:
+              s.setTimeNitz();
+              break;
+          case AutoSystemTimeOff:
+              s.setTimeManual();
+              break;
+          default:
+              return false;
       }
-      QDBusReply<bool> res = priv_func()->ifc.wall_clock_settings_sync(s) ;
-      return res.isValid() and res.value() ;
+      QDBusReply<bool> res = priv_func()->ifc.wall_clock_settings_sync(s);
+      return res.isValid() and res.value();
     }
 
     enum QmTime::AutoTimeZoneStatus QmTime::autoTimeZone()
     {
-      QDBusReply<Maemo::Timed::WallClock::Info> res = priv_func()->ifc.get_wall_clock_info_sync() ;
-      if (not res.isValid())
-        return AutoTimeZoneUnknown ;
-      return res.value().flagLocalCellular() ? AutoTimeZoneOn : AutoTimeZoneOff ;
+        QDBusReply<Maemo::Timed::WallClock::Info> res = priv_func()->ifc.get_wall_clock_info_sync();
+        if (not res.isValid())
+            return AutoTimeZoneUnknown;
+        return res.value().flagLocalCellular() ? AutoTimeZoneOn : AutoTimeZoneOff;
     }
 
     bool QmTime::setAutoTimeZone(enum QmTime::AutoTimeZoneStatus new_status)
     {
-      Maemo::Timed::WallClock::Settings s ;
-      switch(new_status)
-      {
-        case AutoTimeZoneOn:
-          s.setTimezoneCellular() ;
-          break ;
-        case AutoTimeZoneOff:
-          s.setTimezoneManual("") ;
-          break ;
-        default:
-          return false ;
-      }
-      QDBusReply<bool> res = priv_func()->ifc.wall_clock_settings_sync(s) ;
-      return res.isValid() and res.value() ;
+        Maemo::Timed::WallClock::Settings s;
+        switch(new_status)
+        {
+            case AutoTimeZoneOn:
+                s.setTimezoneCellular();
+                break;
+            case AutoTimeZoneOff:
+                s.setTimezoneManual("");
+                break;
+            default:
+                return false;
+        }
+        QDBusReply<bool> res = priv_func()->ifc.wall_clock_settings_sync(s);
+        return res.isValid() and res.value();
     }
 
     /*!

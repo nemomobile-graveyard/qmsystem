@@ -41,7 +41,7 @@ QmActivity::QmActivity(QObject *parent)
 }
 
 QmActivity::~QmActivity(){
-    MEEGO_UNINITIALIZE(QmActivity) ;
+    MEEGO_UNINITIALIZE(QmActivity);
 }
 
 QmActivity::Activity QmActivity::get() const{

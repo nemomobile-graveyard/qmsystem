@@ -60,7 +60,7 @@ QmLED::QmLED(QObject *parent)
 }
 
 QmLED::~QmLED(){
-    MEEGO_UNINITIALIZE(QmLED) ;
+    MEEGO_UNINITIALIZE(QmLED);
 }
 
 bool QmLED::activate(const QString &pattern){

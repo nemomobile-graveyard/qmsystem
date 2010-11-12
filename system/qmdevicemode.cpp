@@ -74,7 +74,7 @@ namespace MeeGo {
     }
 
     QmDeviceMode::~QmDeviceMode(){
-        MEEGO_UNINITIALIZE(QmDeviceMode) ;
+        MEEGO_UNINITIALIZE(QmDeviceMode);
     }
 
     QmDeviceMode::DeviceMode QmDeviceMode::getMode() const{
