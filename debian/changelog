@@ -1,3 +1,10 @@
+qmsystem2 (0.0.6) unstable; urgency=low
+
+  [Matias Muhonen]
+  * Fixes: NB#202890 - qmsystem QmTime test cases need to be enabled
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Fri, 12 Nov 2010 09:30:06 +0200
+
 qmsystem2 (0.0.5) unstable; urgency=low
 
   [Raimo Vuonnala]	
