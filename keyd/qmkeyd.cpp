@@ -127,50 +127,34 @@ QmKeyd::~QmKeyd()
 /*Check if the newly created device is BT headset, if not return false*/
 bool QmKeyd::isHeadset(int fd)
 {
-    int yalv;
-    int mediaDevice = 0;
-    int mediaKeys = 0;
-    unsigned long bit[EV_MAX][NBITS(KEY_MAX)];
-    memset(bit, 0, sizeof(bit));
-    ioctl(fd, EVIOCGBIT(0, EV_MAX), bit[0]);
+    bool headsetDetected = false;
+    unsigned long events[NBITS(EV_MAX)];
+    unsigned long bits[NBITS(KEY_MAX)];
 
-    for (yalv = 0; yalv < EV_MAX; yalv++) {
-        if (test_bit(yalv, bit[0])) {
-            switch (yalv) {
-            case EV_SYN :
-                mediaDevice++;
-                break;
-            case EV_KEY :
-                mediaDevice++;
-                ioctl(fd, EVIOCGBIT(yalv, KEY_MAX), bit[yalv]);
-                for (int j = 0; j < KEY_MAX; j++) {
-                    if (test_bit(j, bit[yalv])) {
-                        switch (j) {
-                        case KEY_PAUSECD: mediaKeys++; break;
-                        case KEY_PLAYCD: mediaKeys++; break;
-                        case KEY_STOPCD: mediaKeys++; break;
-                        case KEY_NEXTSONG: mediaKeys++; break;
-                        case KEY_FASTFORWARD: mediaKeys++; break;
-                        case KEY_PREVIOUSSONG: mediaKeys++; break;
-                        case KEY_REWIND: mediaKeys++; break;break;
-                        }
-                    }
-                }
-                break;
-            case EV_REL :
-                mediaDevice++;
-                break;
-            case EV_REP :
-                mediaDevice++;
-                break;
-            }
+    if (ioctl(fd, EVIOCGBIT(0, EV_MAX), events) == -1) {
+        goto PROBING_DONE;
+    }
+
+    if (!(test_bit(EV_SYN, events) && test_bit(EV_REL, events) && test_bit(EV_REP, events))) {
+        goto PROBING_DONE;
+    }
+
+    if (test_bit(EV_KEY, events)) {
+        if (ioctl(fd, EVIOCGBIT(EV_KEY, KEY_MAX), bits) == -1) {
+            goto PROBING_DONE;
+        }
+        if (test_bit(KEY_PAUSECD, bits) && test_bit(KEY_PLAYCD, bits) &&
+            test_bit(KEY_STOPCD, bits) && test_bit(KEY_NEXTSONG, bits) &&
+            test_bit(KEY_FASTFORWARD, bits) && test_bit(KEY_PREVIOUSSONG, bits) &&
+            test_bit(KEY_REWIND, bits)) {
+            headsetDetected = true;
         }
     }
-    if (mediaDevice == 4 && mediaKeys > 0)
-        return true;
 
-    return false;
+PROBING_DONE:
+    return headsetDetected;
 }
+
 void QmKeyd::cleanSocket()
 {
     QFile serverSocket(SERVER_NAME);
