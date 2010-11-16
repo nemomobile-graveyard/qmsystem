@@ -30,6 +30,7 @@
 #include <cstdio>
 #include <fcntl.h>
 #include <syslog.h>
+#include <errno.h>
 #include <sys/inotify.h>
 #include <QFile>
 
@@ -51,15 +52,20 @@
 #define SW_KEYPAD_SLIDE 0x0a
 #endif
 
-#define EVENT_SIZE (sizeof( struct inotify_event))
-#define BUF_LEN (1024* (EVENT_SIZE+16))
-
 #define BITS_PER_LONG (sizeof(long) * 8)
 #define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
 #define OFF(x)  ((x)%BITS_PER_LONG)
 #define BIT(x)  (1UL<<OFF(x))
 #define LONG(x) ((x)/BITS_PER_LONG)
 #define test_bit(bit, array)	((array[LONG(bit)] >> OFF(bit)) & 1)
+
+/*
+ * lea  --  helper for address + offset calculations
+ */
+static inline void *lea(void *base, int offs)
+{
+    return ((char *)base) + offs;
+}
 
 static int  debugmode = 0;
 
@@ -92,18 +98,17 @@ QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv)
         QCoreApplication::exit(1);
     }
 
-
-    /*dynamically detect bluetooth device*/
-    int fd, wd;
-    fd = inotify_init();
-    wd = inotify_add_watch( fd, "/dev/input", IN_CREATE | IN_DELETE);
-    if (fd != -1) {
-        inputNotifier = new QSocketNotifier(fd, QSocketNotifier::Read);
-        connect(inputNotifier, SIGNAL(activated(int)), this, SLOT(detectBT(int)));
-    } else {
-        syslog(LOG_WARNING, "Could not open /dev/input\n");
-        inputNotifier = NULL;
+    /* dynamically detect bluetooth device */
+    inotifyFd = inotify_init();
+    if (inotifyFd < 0) {
+		syslog(LOG_CRIT, "Could not create inotify watch for /dev/input, exit\n");
+		cleanSocket();
+		QCoreApplication::exit(1);
     }
+
+    inotifyWd = inotify_add_watch(inotifyFd, "/dev/input", IN_CREATE | IN_DELETE);
+    inputNotifier = new QSocketNotifier(inotifyFd, QSocketNotifier::Read);
+    connect(inputNotifier, SIGNAL(activated(int)), this, SLOT(detectBT(int)));
 }
 
 QmKeyd::~QmKeyd()
@@ -111,20 +116,13 @@ QmKeyd::~QmKeyd()
     server->close();
     delete server;
     closelog();
-    delete inputNotifier;
-    inputNotifier = NULL;
 
+    removeInotifyWatch();
     closeHandles();
-
-    if (btNotifier != NULL) {
-        close(btFile);
-        btFile = -1;
-        delete btNotifier;
-        btNotifier = NULL;
-    }
+    closeBT();
 }
 
-/*Check if the newly created device is BT headset, if not return false*/
+/* Check if the newly created device is BT headset, if not return false */
 bool QmKeyd::isHeadset(int fd)
 {
     bool headsetDetected = false;
@@ -169,35 +167,68 @@ void QmKeyd::cleanSocket()
     }
 }
 
-void QmKeyd::detectBT(int fd)
+void QmKeyd::detectBT(int inotify)
 {
-    int len = 0;
-    struct inotify_event *event;
-    char buffer[BUF_LEN];
+    int fd;
+    char fname[32];
+    char buf[2<<10];
+    struct inotify_event *ev;
 
-    len = read( fd, buffer, BUF_LEN );
-    event =  (struct inotify_event *) &buffer[0];
-    if (event->mask == IN_CREATE) {
-        strcpy(btFileDir, "/dev/input/");
-        strcat(btFileDir, event->name);
-        btFile = open(btFileDir, O_RDONLY | O_NONBLOCK);        
-        if (btFile != -1) {
-            if (isHeadset(btFile)) {
-                btNotifier = new QSocketNotifier(btFile, QSocketNotifier::Read);
-                connect(btNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
-            } else {
-                close(btFile);
-                btFile = -1;
-            }
-        } else {
-            syslog(LOG_WARNING, "Could not open %s\n", btFileDir);
-            btNotifier = NULL;
+    int n = read(inotify, buf, sizeof buf);
+
+    if (n == -1) {
+        if (errno != EINTR) {
+            syslog(LOG_WARNING, "inotify read: %s\n", strerror(errno));
+            removeInotifyWatch();
         }
-    } else if (event->mask == IN_DELETE && btFile != -1) {
-        close(btFile);
-        btFile = -1;
-        delete btNotifier;
-        btNotifier = NULL;
+    } else if (n < (int)sizeof *ev) {
+        syslog(LOG_WARNING, "inotify read: %d / %Zd\n", n, sizeof *ev);
+        removeInotifyWatch();
+    } else {
+        ev = (inotify_event *)lea(buf, 0);
+        while (n >= sizeof *ev) {
+            int k = sizeof *ev + ev->len;
+
+            if ((k < sizeof *ev) || (k > n)) {
+                break;
+            }
+
+            snprintf(fname, sizeof(fname), "/dev/input/%s", ev->name);
+
+            switch (ev->mask) {
+                case IN_DELETE:
+                     /* Check if the current headset was disconnected */
+                     if (btFile != -1 && strncmp(btfname, fname, sizeof(btfname)) == 0) {
+                         closeBT();
+                     }
+                     break;
+
+                case IN_CREATE:
+                     /* Check if a headset was connected */
+                     if ((fd = open(fname, O_RDONLY | O_NONBLOCK)) == -1) {
+                         syslog(LOG_WARNING, "Could not open %s for detecting a headset\n", fname);
+                         continue;
+                     }
+
+                     if (isHeadset(fd)) {
+                         /* Yes, found a new headset. Close an existing headset, if there's one */
+                         closeBT();
+
+                         strncpy(btfname, fname, sizeof(btfname));
+                         btFile = fd;
+
+                         /* Receive notifications for the headset */
+                         btNotifier = new QSocketNotifier(btFile, QSocketNotifier::Read);
+                         connect(btNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
+                     } else {
+                         close(fd);
+                     }
+                     break;
+            }
+
+            n -= k;
+            ev = (inotify_event *)lea(ev, k);
+        }
     }
 }
 
@@ -411,4 +442,24 @@ void QmKeyd::closeHandles()
         delete eciNotifier;
         eciNotifier = NULL;
     }
+}
+
+void QmKeyd::closeBT()
+{
+    if (btNotifier) {
+        delete btNotifier, btNotifier = 0;
+    }
+
+    if (btFile != -1) {
+        close(btFile), btFile = -1;
+    }
+}
+
+void QmKeyd::removeInotifyWatch()
+{
+    if (inputNotifier) {
+        delete inputNotifier, inputNotifier = 0;
+    }
+    inotify_rm_watch(inotifyFd, inotifyWd);
+    close(inotifyFd), inotifyFd = -1;
 }

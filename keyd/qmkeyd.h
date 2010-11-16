@@ -56,6 +56,9 @@ private:
     bool isHeadset(int fd);
     void openHandles();
     void closeHandles();
+    void closeBT();
+    void removeInotifyWatch();
+
     QLocalServer *server;
     QVector<QLocalSocket*> connections;
     int gpioFile;
@@ -69,7 +72,9 @@ private:
     QSocketNotifier *eciNotifier;
     QSocketNotifier *btNotifier;
     QSocketNotifier *inputNotifier;
-    char btFileDir[50];
+    int inotifyWd;
+    int inotifyFd;
+    char btfname[32];
     int users;
 };
 
