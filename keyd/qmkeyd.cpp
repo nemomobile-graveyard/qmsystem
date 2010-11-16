@@ -27,19 +27,14 @@
 
 #include "qmkeyd.h"
 
-#include <cstdio>
 #include <fcntl.h>
 #include <syslog.h>
 #include <errno.h>
-#include <sys/inotify.h>
-#include <QFile>
 
-#include <sys/types.h>
+#include <sys/inotify.h>
 #include <sys/socket.h>
 
-#include <string.h>
-
-
+#include <QFile>
 
 #define GPIO_KEYS "/dev/input/gpio-keys"
 #define KEYPAD "/dev/input/keypad"
@@ -69,46 +64,40 @@ static inline void *lea(void *base, int offs)
 
 static int  debugmode = 0;
 
-QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv)
+QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv), server(0), connections(0), gpioFile(-1), keypadFile(-1), eciFile(-1), btFile(-1),
+                                                                     gpioNotifier(0), keypadNotifier(0), eciNotifier(0), btNotifier(0), inputNotifier(0),
+                                                                     inotifyWd(-1), inotifyFd(-1), users(0)
 {
-    gpioFile = -1;
-    keypadFile = -1;
-    eciFile = -1;
-    btFile = -1;
-    users = 0;
     openlog("qmkeyd", LOG_NDELAY|LOG_PID, LOG_DAEMON);
 
     if (argc > 1 && !strcmp(argv[1], "-d"))
         debugmode = 1;
 
     server = new QLocalServer(this);
-    connect(server, SIGNAL(newConnection()), this, SLOT(newConnection()));
+    if (!connect(server, SIGNAL(newConnection()), this, SLOT(newConnection()))) {
+        failStart("Failed to connect the newConnection signal\n");
+    }
 
     cleanSocket();
 
     if (!server->listen(SERVER_NAME)) {
-        syslog(LOG_CRIT, "Failed to listen incoming connections on %s, exit\n", SERVER_NAME);
-        cleanSocket();
-        QCoreApplication::exit(1);
+        failStart("Failed to listen incoming connections on %s\n", SERVER_NAME);
     }
 
     if (chmod(SERVER_NAME, S_IRWXU|S_IRWXG|S_IRWXO) != 0) {
-        syslog(LOG_CRIT, "Could not set permissions %s, exit\n", SERVER_NAME);
-        cleanSocket();
-        QCoreApplication::exit(1);
+        failStart("Could not set permissions %s\n", SERVER_NAME);
     }
 
-    /* dynamically detect bluetooth device */
     inotifyFd = inotify_init();
     if (inotifyFd < 0) {
-        syslog(LOG_CRIT, "Could not create inotify watch for /dev/input, exit\n");
-        cleanSocket();
-        QCoreApplication::exit(1);
+        failStart("Could not create inotify watch for /dev/input\n");
     }
 
     inotifyWd = inotify_add_watch(inotifyFd, "/dev/input", IN_CREATE | IN_DELETE);
     inputNotifier = new QSocketNotifier(inotifyFd, QSocketNotifier::Read);
-    connect(inputNotifier, SIGNAL(activated(int)), this, SLOT(detectBT(int)));
+    if (!connect(inputNotifier, SIGNAL(activated(int)), this, SLOT(detectBT(int)))) {
+        failStart("Failed to connect the inotify activated signal\n");
+    }
 }
 
 QmKeyd::~QmKeyd()
@@ -120,6 +109,15 @@ QmKeyd::~QmKeyd()
     removeInotifyWatch();
     closeHandles();
     closeBT();
+}
+
+void QmKeyd::failStart(const char *fmt, ...)
+{
+    va_list va;
+    syslog(LOG_CRIT, "qmkeyd start failed, exit\n");
+    syslog(LOG_CRIT, fmt, va);
+    cleanSocket();
+    QCoreApplication::exit(1);
 }
 
 /* Check if the newly created device is BT headset, if not return false */
@@ -252,7 +250,7 @@ void QmKeyd::newConnection()
                 pid = cr.pid;
                 // printf("Peer's pid=%d, uid=%d, gid=%d\n", cr.pid, cr.uid, cr.gid);
             }
-          
+
             syslog(LOG_DEBUG, "New client with PID %u, socket %p, clients now %d\n", (unsigned int)pid, socket, users);
         }
 
@@ -293,7 +291,7 @@ void QmKeyd::socketReadyRead() {
     int ret = socket->read((char*)&ev, sizeof(ev));
     if (ret == sizeof(ev)) {
         QList<int> fdList = readFrom(ev);
-        int fd;        
+        int fd;
         /*The EVIOCGKEY ioctl is used to determine the global key and button state for a device.
          *EVIOCGKEY sets a bit in the bit array for each key or button that is pressed.
          */
@@ -310,7 +308,7 @@ void QmKeyd::socketReadyRead() {
             }
         }
         if (socket->write((char*)&ev, sizeof(ev)) != sizeof(ev)) {
-            int          fd = socket->socketDescriptor(); 
+            int          fd = socket->socketDescriptor();
             syslog(LOG_WARNING, "Could not write to a socket %d\n", fd);
         }
     }
@@ -344,7 +342,7 @@ QList<int> QmKeyd::readFrom(struct input_event &ev)
             list.push_back(gpioFile);
             break;
         case KEY_VOLUMEUP:
-        case KEY_VOLUMEDOWN:            
+        case KEY_VOLUMEDOWN:
             list.push_back(keypadFile);
             list.push_back(eciFile);
             list.push_back(btFile);
@@ -366,7 +364,7 @@ QList<int> QmKeyd::readFrom(struct input_event &ev)
         case KEY_STOPCD:
         case KEY_NEXTSONG:
         case KEY_FASTFORWARD:
-        case KEY_PREVIOUSSONG:        
+        case KEY_PREVIOUSSONG:
             list.push_back(btFile);
             break;
         case KEY_REWIND:
@@ -386,7 +384,7 @@ QList<int> QmKeyd::readFrom(struct input_event &ev)
 
 void QmKeyd::openHandles()
 {
-    
+
     if (gpioFile == -1) {
         gpioFile = open(GPIO_KEYS, O_RDONLY | O_NONBLOCK);
         if (gpioFile != -1) {

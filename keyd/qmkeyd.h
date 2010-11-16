@@ -30,6 +30,7 @@
 #include <QCoreApplication>
 #include <QSocketNotifier>
 #include <QLocalSocket>
+
 #include <linux/input.h>
 #include <stdint.h>
 
@@ -58,6 +59,7 @@ private:
     void closeHandles();
     void closeBT();
     void removeInotifyWatch();
+    void failStart(const char *fmt, ...);
 
     QLocalServer *server;
     QVector<QLocalSocket*> connections;
