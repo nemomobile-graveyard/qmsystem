@@ -101,9 +101,9 @@ QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv)
     /* dynamically detect bluetooth device */
     inotifyFd = inotify_init();
     if (inotifyFd < 0) {
-		syslog(LOG_CRIT, "Could not create inotify watch for /dev/input, exit\n");
-		cleanSocket();
-		QCoreApplication::exit(1);
+        syslog(LOG_CRIT, "Could not create inotify watch for /dev/input, exit\n");
+        cleanSocket();
+        QCoreApplication::exit(1);
     }
 
     inotifyWd = inotify_add_watch(inotifyFd, "/dev/input", IN_CREATE | IN_DELETE);
