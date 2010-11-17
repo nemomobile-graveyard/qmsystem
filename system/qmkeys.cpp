@@ -28,6 +28,7 @@
    </p>
  */
 #include "qmkeys.h"
+#include "qmlocks.h"
 #include "qmkeys_p.h"
 
 namespace MeeGo

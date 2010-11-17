@@ -55,6 +55,8 @@ HEADERS += mainpage.h \
     qmkeys.h \
     qmkeys_p.h \
     qmled.h \
+    qmlocks.h \
+    qmlocks_p.h \
     qmmagnetometer.h \
     qmmagnetometer_p.h \
     qmorientation.h \
@@ -92,6 +94,7 @@ SOURCES += qmactivity.cpp \
     qmipcinterface.cpp \
     qmkeys.cpp \
     qmled.cpp \
+    qmlocks.cpp \
     qmorientation.cpp \
     qmsystemstate.cpp \
     qmtap.cpp \
