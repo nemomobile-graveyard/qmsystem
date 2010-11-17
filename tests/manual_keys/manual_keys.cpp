@@ -26,7 +26,6 @@
 #include <qmkeys.h>
 #include <QTest>
 #include <QDebug>
-#include <qmlocks.h>
 
 using namespace MeeGo;
 
