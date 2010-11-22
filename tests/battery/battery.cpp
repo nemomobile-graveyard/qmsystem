@@ -119,6 +119,12 @@ private slots:
         (void)result;
     }
 
+    void testGetBatteryCondition() {
+        MeeGo::QmBattery::BatteryCondition result = battery->getBatteryCondition();
+        QVERIFY(result == MeeGo::QmBattery::ConditionGood || result == MeeGo::QmBattery::ConditionPoor || result == MeeGo::QmBattery::ConditionUnknown);
+        (void)result;
+    }
+
     void testRemainingTalkTimeNormal() {
         int result = battery->getRemainingTalkTime(MeeGo::QmBattery::NormalMode);
         (void)result;

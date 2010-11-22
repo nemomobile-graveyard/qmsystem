@@ -99,6 +99,7 @@ private slots:
             printf("The screen should start blanking again in %d...\n", time);
             QTest::qWait(time*1000);
         }
+        printf("Display state: %d\n", displaystate->get());
         do {
             printf("Did the display blank again? (y/n)?\n");
             cin >> res;
