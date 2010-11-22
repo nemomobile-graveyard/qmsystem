@@ -30,11 +30,13 @@
 #include "qmsystemstate.h"
 #include "qmsystemstate_p.h"
 
+#include <stdlib.h> /* free() */
+#include <sysinfo.h>
+
 #include <QFile>
 #include <QTextStream>
 
 #define RUNSTATE_FILE "/var/lib/dsme/saved_state"
-#define BOOTREASON_FILE "/proc/bootreason"
 
 #define RUNSTATE_LOCAL "LOCAL"
 #define RUNSTATE_TEST "TEST"
@@ -43,6 +45,8 @@
 #define RUNSTATE_USER "USER"
 #define RUNSTATE_SHUTDOWN "SHUTDOWN"
 #define RUNSTATE_ACT_DEAD "ACT_DEAD"
+
+#define SYSINFO_KEY_BOOTREASON "/component/boot-reason"
 
 #define BOOT_REASON_UNKNOWN           "unknown"
 #define BOOT_REASON_SWDG_TIMEOUT     "swdg_to"
@@ -116,36 +120,63 @@ QmSystemState::RunState QmSystemState::getRunState() {
 }
 
 QmSystemState::BootReason QmSystemState::getBootReason() {
-    QFile file(BOOTREASON_FILE);
-    if (file.open(QIODevice::ReadOnly)) {
-        QTextStream in(&file);
-        QString reasonStr = in.readLine();
-        if (reasonStr == BOOT_REASON_SWDG_TIMEOUT) {
-            return BootReason_SwdgTimeout;
-        } else if (reasonStr == BOOT_REASON_SEC_VIOLATION) {
-            return BootReason_SecViolation;
-        } else if (reasonStr == BOOT_REASON_32K_WDG_TIMEOUT) {
-            return BootReason_Wdg32kTimeout;
-        } else if (reasonStr == BOOT_REASON_POWER_ON_RESET) {
-            return BootReason_PowerOnReset;
-        } else if (reasonStr == BOOT_REASON_POWER_KEY) {
-            return BootReason_PowerKey;
-        } else if (reasonStr == BOOT_REASON_MBUS) {
-            return BootReason_MBus;
-        } else if (reasonStr == BOOT_REASON_CHARGER) {
-            return BootReason_Charger;
-        } else if (reasonStr == BOOT_REASON_USB) {
-            return BootReason_Usb;
-        } else if (reasonStr == BOOT_REASON_SW_RESET) {
-            return BootReason_SWReset;
-        } else if (reasonStr == BOOT_REASON_RTC_ALARM) {
-            return BootReason_RTCAlarm;
-        } else if (reasonStr == BOOT_REASON_NSU) {
-            return BootReason_NSU;
-        }
+    QmSystemState::BootReason bootReason = BootReason_Unknown;
+    struct system_config *sc = 0;
+    uint8_t *data = 0;
+    unsigned long size = 0;
+    QString reasonStr("");
+
+    if (sysinfo_init(&sc) != 0) {
+        /* Failed to initialize system configuration object */
+        goto BOOTREASON_DETERMINED;
     }
 
-    return BootReason_Unknown;
+    if (sysinfo_get_value(sc, SYSINFO_KEY_BOOTREASON, &data, &size) != 0) {
+        /* Failed to read boot-reason from system configuration */
+        goto BOOTREASON_DETERMINED;
+    }
+
+    for (unsigned long k=0; k < size; k++) {
+        /* Values can contain non-ascii data -> escape those */
+        int c = data[k];
+        if (c < 32 || c > 126)
+            continue;
+        reasonStr.append(QChar(c));
+    }
+
+    if (reasonStr == BOOT_REASON_SWDG_TIMEOUT) {
+        bootReason = BootReason_SwdgTimeout;
+    } else if (reasonStr == BOOT_REASON_SEC_VIOLATION) {
+        bootReason = BootReason_SecViolation;
+    } else if (reasonStr == BOOT_REASON_32K_WDG_TIMEOUT) {
+        bootReason = BootReason_Wdg32kTimeout;
+    } else if (reasonStr == BOOT_REASON_POWER_ON_RESET) {
+        bootReason = BootReason_PowerOnReset;
+    } else if (reasonStr == BOOT_REASON_POWER_KEY) {
+        bootReason = BootReason_PowerKey;
+    } else if (reasonStr == BOOT_REASON_MBUS) {
+        bootReason = BootReason_MBus;
+    } else if (reasonStr == BOOT_REASON_CHARGER) {
+        bootReason = BootReason_Charger;
+    } else if (reasonStr == BOOT_REASON_USB) {
+        bootReason = BootReason_Usb;
+    } else if (reasonStr == BOOT_REASON_SW_RESET) {
+        bootReason = BootReason_SWReset;
+    } else if (reasonStr == BOOT_REASON_RTC_ALARM) {
+        bootReason = BootReason_RTCAlarm;
+    } else if (reasonStr == BOOT_REASON_NSU) {
+        bootReason = BootReason_NSU;
+    }
+
+BOOTREASON_DETERMINED:
+    if (data) {
+        free(data), data = 0;
+    }
+
+    if (sc) {
+        sysinfo_finish(sc), sc = 0;
+    }
+    return bootReason;
 }
 
 unsigned int QmSystemState::getPowerOnTimeInSeconds(){

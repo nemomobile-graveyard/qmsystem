@@ -1,7 +1,11 @@
 qmsystem2 (0.0.8) unstable; urgency=low
 
+  [Yang Yang]
   * Add testGetBatteryCondition
-	
+
+  [Matias Muhonen]
+  * Fixes: NB#205929 - Get rid of /proc/component_version and /proc/bootreason files
+
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Mon, 22 Nov 2010 13:50:19 +0200
 
 qmsystem2 (0.0.7) unstable; urgency=low

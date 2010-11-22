@@ -70,20 +70,24 @@ private:
 
     }
 
-    void bootReasonFunc(QString reasonStr, QmSystemState::BootReason reason) {
-        QString filename = "/proc/bootreason";
-        QFile::remove(filename);
-        if (reasonStr.isEmpty()) {
-            QVERIFY2(systemstate->getBootReason() == reason, "Nonexistent file");
-        } else {
-            QFile file(filename);
-            QVERIFY(file.open(QIODevice::ReadWrite));
-            QTextStream out(&file);
-            out << reasonStr;
-            file.close();
+    QString kernelCommandLineValueForKey(const QString &key) {
+        QString value("");
+        QFile cmdlineFile("/proc/cmdline");
 
-            QVERIFY2(systemstate->getBootReason() == reason, reasonStr.toAscii().data());
+        if (!cmdlineFile.open(QFile::ReadOnly | QFile::Text)) {
+            return value;
         }
+
+        QTextStream in(&cmdlineFile);
+        QString keyAndValue;
+        foreach (keyAndValue, in.readAll().split(" ")) {
+            QStringList kernelArgument = keyAndValue.split("=");
+            if (kernelArgument.at(0) == key) {
+                value = kernelArgument.at(1);
+                break;
+            }
+        }
+        return value;
     }
 
 private slots:
@@ -124,18 +128,19 @@ private slots:
     }
 
     void testGetBootreason() {
-        bootReasonFunc("swdg_to", QmSystemState::BootReason_SwdgTimeout);
-        bootReasonFunc("sec_vio", QmSystemState::BootReason_SecViolation);
-        bootReasonFunc("32wd_to", QmSystemState::BootReason_Wdg32kTimeout);
-        bootReasonFunc("por", QmSystemState::BootReason_PowerOnReset);
-        bootReasonFunc("pwr_key", QmSystemState::BootReason_PowerKey);
-        bootReasonFunc("mbus", QmSystemState::BootReason_MBus);
-        bootReasonFunc("charger", QmSystemState::BootReason_Charger);
-        bootReasonFunc("usb", QmSystemState::BootReason_Usb);
-        bootReasonFunc("sw_rst", QmSystemState::BootReason_SWReset);
-        bootReasonFunc("rtc_alarm", QmSystemState::BootReason_RTCAlarm);
-        bootReasonFunc("garbage", QmSystemState::BootReason_Unknown);
-        bootReasonFunc("", QmSystemState::BootReason_Unknown);
+        QString reasonStr = kernelCommandLineValueForKey("bootreason");
+        if (reasonStr == "swdg_to")   QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_SwdgTimeout);
+        if (reasonStr == "sec_vio")   QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_SecViolation);
+        if (reasonStr == "32wd_to")   QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_Wdg32kTimeout);
+        if (reasonStr == "por")       QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_PowerOnReset);
+        if (reasonStr == "pwr_key")   QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_PowerKey);
+        if (reasonStr == "mbus")      QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_MBus);
+        if (reasonStr == "charger")   QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_Charger);
+        if (reasonStr == "usb")       QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_Usb);
+        if (reasonStr == "sw_rst")    QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_SWReset);
+        if (reasonStr == "rtc_alarm") QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_RTCAlarm);
+        if (reasonStr == "garbage")   QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_Unknown);
+        if (reasonStr == "")          QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_Unknown);
     }
 
     void cleanupTestCase() {

@@ -80,6 +80,7 @@
         <step>mkdir -p /tmp/qmsystemstatejail/lib</step>
         <step>mkdir -p /tmp/qmsystemstatejail/dev</step>
         <step>mkdir -p /tmp/qmsystemstatejail/var/lib/dsme</step>
+        <step>mount -o bind /proc /tmp/qmsystemstatejail/proc</step>
         <step>mount -o bind /usr /tmp/qmsystemstatejail/usr</step>
         <step>mount -o bind /lib /tmp/qmsystemstatejail/lib</step>
         <step>mount -o bind /dev /tmp/qmsystemstatejail/dev</step>
