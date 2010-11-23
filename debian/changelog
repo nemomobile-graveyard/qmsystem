@@ -1,5 +1,7 @@
 qmsystem2 (0.0.8) unstable; urgency=low
-
+  [ Pia Niemela ]
+  * Fixes: #205367 - mod to qmsensor's destructor 
+	
   [Yang Yang]
   * Add testGetBatteryCondition
 

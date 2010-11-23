@@ -118,7 +118,7 @@ namespace MeeGo {
             SessionTypeControl  /**< Control session */
         };
 
-        ~QmSensor();
+        virtual ~QmSensor();
 
         /**
          * Get type of current session.

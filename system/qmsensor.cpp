@@ -195,6 +195,7 @@ namespace MeeGo {
 
     QmSensor::~QmSensor()
     {
+        MEEGO_UNINITIALIZE(QmSensor);
     }
 
     QmSensor::SessionType QmSensor::sessionType()
