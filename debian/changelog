@@ -1,5 +1,7 @@
 qmsystem2 (0.0.8) unstable; urgency=low
-
+  [ Pia Niemela] 
+  * Fix: 205367, MEEGO_UNINITIALIZE added
+	
   [Yang Yang]
   * Add testGetBatteryCondition
 
