@@ -3,7 +3,8 @@
  * @brief Contains QmSensor
 
    <p>
-   Copyright (C) 2009-2010 Nokia Corporation
+   @copyright (C) 2009-2010 Nokia Corporation
+   @license LGPL Lesser General Public License
 
    @author Ilya Dogolazky <ilya.dogolazky@nokia.com>
    @author Raimo Vuonnala <raimo.vuonnala@nokia.com>
@@ -36,7 +37,7 @@
 
 QT_BEGIN_HEADER;
 
-namespace Maemo {
+namespace MeeGo {
     class QmSensorPrivate;
 
     /**
@@ -101,7 +102,7 @@ namespace Maemo {
      * delete als;
      * @endcode
      */
-    class MAEMO_SYSTEM_EXPORT QmSensor : public QObject
+    class MEEGO_SYSTEM_EXPORT QmSensor : public QObject
     {
         Q_OBJECT;
         Q_PROPERTY(QString lastError READ lastError);
@@ -117,7 +118,7 @@ namespace Maemo {
             SessionTypeControl  /**< Control session */
         };
 
-        virtual ~QmSensor();
+        ~QmSensor();
 
         /**
          * Get type of current session.
@@ -227,10 +228,10 @@ namespace Maemo {
          * Constructor. This class should not be instantiated.
          */
         QmSensor(QObject *parent);
-        MAEMO_DECLARE_PROTECTED(QmSensor);
+        MEEGO_DECLARE_PROTECTED(QmSensor);
 
     };
-} // Maemo namespace
+} // MeeGo namespace
 
 QT_END_HEADER
 

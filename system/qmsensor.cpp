@@ -34,7 +34,7 @@
 #define GET_PRIVATE_PTR(name) QmSensorPrivate* name = (QmSensorPrivate*)getPrivatePtr();
 #define GET_PUBLIC_PTR(name) QmSensor* name = getPublicPtr();
 
-namespace Maemo {
+namespace MeeGo {
 
     // ----------------- BEGIN PRIVATE CLASS DEFINITION ----------------- //
 
@@ -195,18 +195,16 @@ namespace Maemo {
 
     QmSensor::~QmSensor()
     {
-        MAEMO_UNINITIALIZE(QmSensor);
-
     }
 
     QmSensor::SessionType QmSensor::sessionType()
     {
-        MAEMO_PRIVATE(QmSensor);
+        MEEGO_PRIVATE(QmSensor);
         return priv->sessionType();
     }
 
     bool QmSensor::start() {
-        MAEMO_PRIVATE(QmSensor);
+        MEEGO_PRIVATE(QmSensor);
         if (priv->running_) return true;
         if (priv->start()) {
             priv->running_ = true;
@@ -218,7 +216,7 @@ namespace Maemo {
 
     bool QmSensor::stop()
     {
-        MAEMO_PRIVATE(QmSensor);
+        MEEGO_PRIVATE(QmSensor);
         if (!priv->running_) return true;
 
         if (priv->stop()) {
@@ -233,13 +231,13 @@ namespace Maemo {
 
     bool QmSensor::isRunning()
     {
-        MAEMO_PRIVATE(QmSensor);
+        MEEGO_PRIVATE(QmSensor);
         return priv->running_;
     }
 
     QmSensor::SessionType QmSensor::requestSession(SessionType type)
     {
-        MAEMO_PRIVATE(QmSensor);
+        MEEGO_PRIVATE(QmSensor);
 
         stop();
         priv->requestSession(type);
@@ -250,7 +248,7 @@ namespace Maemo {
     void QmSensor::closeSession()
     {
         stop();
-        MAEMO_PRIVATE(QmSensor);
+        MEEGO_PRIVATE(QmSensor);
         priv->closeSession();
     }
 
@@ -261,31 +259,31 @@ namespace Maemo {
 
     QString QmSensor::lastError() const
     {
-        MAEMO_PRIVATE_CONST(QmSensor);
+        MEEGO_PRIVATE_CONST(QmSensor);
         return priv->errorString_;
     }
 
     int QmSensor::interval()
     {
-        MAEMO_PRIVATE(QmSensor);
+        MEEGO_PRIVATE(QmSensor);
         return priv->interval();
     }
 
     void QmSensor::setInterval(int value)
     {
-        MAEMO_PRIVATE(QmSensor);
+        MEEGO_PRIVATE(QmSensor);
         priv->setInterval(value);
     }
 
     bool QmSensor::standbyOverride()
     {
-        MAEMO_PRIVATE(QmSensor);
+        MEEGO_PRIVATE(QmSensor);
         return priv->standbyOverride();
     }
 
     void QmSensor::setStandbyOverride(bool value)
     {
-        MAEMO_PRIVATE(QmSensor);
+        MEEGO_PRIVATE(QmSensor);
         priv->setStandbyOverride(value);
     }
 }
