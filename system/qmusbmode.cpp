@@ -31,6 +31,7 @@ namespace MeeGo {
     {
         MEEGO_INITIALIZE(QmUSBMode);
         connect(priv, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)), this, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)));
+        connect(priv, SIGNAL(error(const QString&)), this, SIGNAL(error(const QString&)));
     }
 
     QmUSBMode::~QmUSBMode()

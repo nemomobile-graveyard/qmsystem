@@ -1,12 +1,13 @@
 qmsystem2 (0.0.8) unstable; urgency=low
   [ Pia Niemela ]
-  * Fixes: #205367 - mod to qmsensor's destructor 
-	
+  * Fixes: NB#205367 - mod to qmsensor's destructor 
+
   [Yang Yang]
   * Add testGetBatteryCondition
 
   [Matias Muhonen]
   * Fixes: NB#205929 - Get rid of /proc/component_version and /proc/bootreason files
+  * Fixes: NB#205080 - Add usb_moded error message signal handling to QT api
 
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Mon, 22 Nov 2010 13:50:19 +0200
 

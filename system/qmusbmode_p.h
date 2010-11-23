@@ -51,6 +51,7 @@ namespace MeeGo
         {
             requestIf = new QmIPCInterface(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE);
             requestIf->connect(USB_MODE_SIGNAL_NAME, this, SLOT(modeChanged(const QString&)));
+            requestIf->connect(USB_MODE_ERROR_SIGNAL_NAME, this, SLOT(didReceiveError(const QString&)));
 
             g_type_init();
             gcClient = gconf_client_get_default();
@@ -164,6 +165,13 @@ namespace MeeGo
 
     Q_SIGNALS:
         void modeChanged(MeeGo::QmUSBMode::Mode mode);
+        void error(const QString &errorCode);
+
+    private Q_SLOTS:
+        void didReceiveError(const QString &errorCode)
+        {
+            emit error(errorCode);
+        }
 
     public Q_SLOTS:
         void modeChanged(const QString &mode)

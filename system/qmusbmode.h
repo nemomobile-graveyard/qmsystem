@@ -117,6 +117,13 @@ namespace MeeGo
          */
         void modeChanged(MeeGo::QmUSBMode::Mode mode);
 
+        /**
+         * This signal is emitted after an error occurred.
+         *
+         * @param errorCode a code representing the error.
+         */
+        void error(const QString &errorCode);
+
     private:
         Q_DISABLE_COPY(QmUSBMode);
         MEEGO_DECLARE_PRIVATE(QmUSBMode);
