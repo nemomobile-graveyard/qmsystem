@@ -22,6 +22,11 @@ public slots:
         modeStack.push(mode);
     }
 
+    void error(const QString &errorCode) {
+        qDebug() << "Received an ERROR signal: " << errorCode;
+        signalReceived = true;
+    }
+
 private:
     QmUSBMode *qmmode;
     QmUSBMode::Mode currentMode;
@@ -59,7 +64,6 @@ private:
         printf("\n\nPlease remove the usb cable.\n");
         printf("You have 10 seconds...\n\n");
         QTest::qWait(11*1000);
-        //QCOMPARE(currentMode, QmUSBMode::Disconnected);
         QVERIFY(currentMode == QmUSBMode::Disconnected ||
                 currentMode == QmUSBMode::Undefined);
 
@@ -102,6 +106,8 @@ private slots:
         QVERIFY(qmmode);
         QVERIFY(connect(qmmode, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)),
                         this, SLOT(modeChanged(MeeGo::QmUSBMode::Mode))));
+        QVERIFY(connect(qmmode, SIGNAL(error(const QString)),
+                        this, SLOT(error(const QString))));
     }
 
     void testAskOvi() {

@@ -1,3 +1,10 @@
+qmsystem2 (0.0.9) unstable; urgency=low
+
+  [Yang Yang]
+  * Add test error signal of qmusbmoded, open usbmod-test
+
+ -- Yang Yang <ext-yang.25.yang@nokia.com>  Wed, 24 Nov 2010 12:50:19 +0200
+
 qmsystem2 (0.0.8) unstable; urgency=low
   [ Pia Niemela ]
   * Fixes: NB#205367 - mod to qmsensor's destructor 

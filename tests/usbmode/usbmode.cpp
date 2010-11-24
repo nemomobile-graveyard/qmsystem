@@ -40,18 +40,25 @@ public slots:
         signalReceived = true;
     }
 
+    void error(const QString &errorCode) {
+        qDebug() << "Received a ERROR signal: " << errorCode;
+        signalReceived = true;
+    }
+
 private:
     QmUSBMode *mode;
     QmUSBMode::Mode currentMode;
     bool signalReceived;
 
+#if 0
     void setGetMode(QmUSBMode::Mode newMode) {
-        qDebug() << "Settings mode to: " << newMode;
+        qDebug() << "Set mode to: " << newMode;
         QVERIFY(mode->setMode(newMode));
         QTest::qWait(1000);
         QCOMPARE(currentMode, newMode);
         QCOMPARE(currentMode, mode->getMode());
     }
+#endif
 
     void setGetDefaultMode(QmUSBMode::Mode newMode) {
         QVERIFY(mode->setDefaultMode(newMode));
@@ -65,13 +72,17 @@ private slots:
         QVERIFY(mode);
         QVERIFY(connect(mode, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)),
                         this, SLOT(modeChanged(MeeGo::QmUSBMode::Mode))));
+        QVERIFY(connect(mode, SIGNAL(error(const QString)),
+                        this, SLOT(error(const QString))));
     }
-
+#if 0
     void testSetGetModes() {
+        setGetMode(QmUSBMode::ChargingOnly);
         setGetMode(QmUSBMode::MassStorage);
         setGetMode(QmUSBMode::ChargingOnly);
         setGetMode(QmUSBMode::OviSuite);
     }
+#endif
 
     void testSetGetDefaultModes() {
         setGetDefaultMode(QmUSBMode::MassStorage);
