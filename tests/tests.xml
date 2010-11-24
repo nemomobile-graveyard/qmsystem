@@ -64,6 +64,10 @@
         <!-- Run test thermal application -->
         <step expected_result="0">dsmetool -a; /usr/bin/thermal-test </step>
       </case>
+      <case name="usbmode" level="Component" type="Functional" description="QmUSBMode" timeout="240" subfeature="QT_APIs" requirement="39927">
+        <!-- Run test usbmode application -->
+        <step expected_result="0">/usr/bin/usbmode-test </step>
+      </case>
       <case name="watchdog-normal" level="Component" type="Functional" description="QmProcessWatchdog" timeout="330" subfeature="QT_APIs" requirement="39927">
         <step expected_result="0">/usr/bin/processwatchdog-test testWatchdogBasicOperation</step>
       </case>
