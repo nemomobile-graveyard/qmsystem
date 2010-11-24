@@ -4,7 +4,7 @@ libdir=${prefix}/lib/
 
 Name: QmSystem2
 Description: QmSystem2 Library
-Version: 0.0.8
+Version: 0.0.9
 Requires:
 Libs: -L${libdir} -lqmsystem2 -ltimed -lQtCore
 Cflags: -I${includedir}/qmsystem2 -I${includedir}/qt4/QtCore -I${includedir}/qt4
