@@ -1,6 +1,6 @@
-%define _name qmsystem2
+%define _name qmsystem
 Name:     libqmsystem2
-Version:  0.0.5
+Version:  0.0.8
 Release:  1
 Summary:  QmSystem library
 Group:    System/Libraries
@@ -18,9 +18,10 @@ BuildRequires: pkgconfig(libiphb) >= 0.1.4
 BuildRequires: pkgconfig(mce) >= 1.10.15
 BuildRequires: pkgconfig(QtCore) >= 4.5
 BuildRequires: pkgconfig(sensord) >= 0.6.12
+BuildRequires: pkgconfig(sysinfo) >= 1.0.17
 #BuildRequires: pkgconfig(timed) >= 1.3.20
 BuildRequires: pkgconfig(timed)
-BuildRequires: pkgconfig(usb_moded) >= 0.3
+BuildRequires: pkgconfig(usb_moded) >= 0.24
 BuildRequires: bme-devel >= 0.9.71
 #BuildRequires: devicelock-devel >= 0.2.11
 BuildRequires: doxygen
@@ -51,8 +52,8 @@ Doxygen-generated API documentation for QmSystem library.
 %package tests
 Summary:  Unit test cases and xml test description for libqmsystem2 library
 Group:    Development/System
-Requires: testrunner-lite
 Requires: %{name} = %{version}-%{release}
+Requires: testrunner-lite
 
 %description tests
 %{summary}.
