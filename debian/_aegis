@@ -31,6 +31,8 @@
   </request>
   <request>
     <credential name="devicelock::DeviceLockControl" />
+    <credential name="devicelock::State_Locked" />
+    <credential name="devicelock::State_Unlocked" />
     <for path="/usr/bin/manual-locks-test" id="manual-locks-test" />
   </request>
   <request>
