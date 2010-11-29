@@ -3,6 +3,9 @@ qmsystem2 (0.0.9) unstable; urgency=low
   [Yang Yang]
   * Add test error signal of qmusbmoded, open usbmod-test
 
+  [Matias Muhonen]
+  * Fixes: NB#207792 - MeeGo::QmUSBMode::setMode() may block for several seconds
+
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Wed, 24 Nov 2010 12:50:19 +0200
 
 qmsystem2 (0.0.8) unstable; urgency=low

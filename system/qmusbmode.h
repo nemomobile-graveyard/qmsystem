@@ -86,7 +86,8 @@ namespace MeeGo
         Mode getMode();
 
         /**
-         * Sets the mode.
+         * Sets the mode. Note that calling setMode does not necessarily change the mode immediately.
+         * To know, when the mode changed, the modeChanged signal should be listened to.
          *
          * @param mode the mode to be set. Valid modes are OviSuite, MassStorage and ChargingOnly.
          * @return true if successful
