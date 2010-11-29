@@ -1,4 +1,4 @@
-
+#include <QTime>
 #include <QObject>
 #include <qmusbmode.h>
 #include <QTest>
@@ -92,7 +92,11 @@ private:
         QCOMPARE(modeStack.pop(), QmUSBMode::Connected);
 
         if (defaultMode == QmUSBMode::Ask) {
+            QTime now;
+            now.start();
             QVERIFY(qmmode->setMode(mode));
+            qDebug("Time elapsed after setMode returns: %d ms", now.elapsed());
+            QVERIFY(now.elapsed()<18000);
             QTest::qWait(1000);
             QCOMPARE(currentMode, mode);
             QCOMPARE(qmmode->getMode(), currentMode);
