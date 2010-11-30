@@ -63,7 +63,8 @@ int main(int argc, char* argv[])
     qDebug() << ts() << "Trying to connect the chargingStateChanged signal";
     if (!QObject::connect(&battery, SIGNAL(chargingStateChanged(MeeGo::QmBattery::ChargingState)), &batteryMonitor,
                                     SLOT(slotChargingStateChanged(MeeGo::QmBattery::ChargingState)))) {
-        qDebug() << ts() << "Signal connecting failed";
+        qDebug() << ts() << "Signal connecting failed. Exit.";
+        QCoreApplication::exit(EXIT_FAILURE);
     }
 
     qDebug() << ts() << "Signal connected, entering main loop. Use Ctrl+C to quit.";
