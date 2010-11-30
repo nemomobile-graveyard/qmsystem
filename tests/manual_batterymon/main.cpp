@@ -26,7 +26,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QDateTime>
-#include <qmsystem2/qmbattery.h>
+#include <qmbattery.h>
 
 static QString ts()
 {
