@@ -25,6 +25,7 @@ SUBDIRS = accelerometer \
           time \
           manual_orientation \
           manual_accelerometer \
+          manual_batterymon \
           manual_bgcalibration \
           manual_compass \
           manual_als \

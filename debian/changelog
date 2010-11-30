@@ -3,6 +3,9 @@ qmsystem2 (0.0.10) unstable; urgency=low
   [Yang Yang]
   * Add time constraint for manual-usb-test:QmUSBMode::setMode()
 
+  [Matias Muhonen]
+  * Add manual-batterymon-test
+
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Wed, 29 Nov 2010 14:50:19 +0200
 
 qmsystem2 (0.0.9) unstable; urgency=low
