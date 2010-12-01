@@ -2,6 +2,8 @@ qmsystem2 (0.0.10) unstable; urgency=low
 
   [Yang Yang]
   * Add time constraint for manual-usb-test:QmUSBMode::setMode()
+  * Add check QmTime::setTimezone() if empty string, returns false without asking timed
+  * Remove tests for deprecated functions in time-test, fix setTimezone test
 
   [Matias Muhonen]
   * Add manual-batterymon-test

@@ -141,7 +141,7 @@ namespace MeeGo {
     bool QmTime::setTimezone(const QString tz)
     {
         MEEGO_PRIVATE(QmTime);
-
+        if (tz.isEmpty())return false;
         WallClock::Settings s;
         s.setTimezoneManual(tz);
         if (!s.check()) {

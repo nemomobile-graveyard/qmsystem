@@ -186,30 +186,6 @@ private slots:
         QCOMPARE(time->getDSTUsage(QDateTime(QDate(2000, 7, 7)), ":America/Sao_Paulo"), 0);
     }
 
-    void testSetAutosync() {
-        signalDump.signalReceived = false;
-        bool ret = time->setAutosync(true);
-        QVERIFY(ret);
-        ret = time->setAutosync(false);
-        QVERIFY(ret);
-        waitTwice(500);
-        QVERIFY(signalDump.signalReceived);
-    }
-
-    void testGetAutosync() {
-        int ret = time->getAutosync();
-        QVERIFY(ret != -1);
-    }
-
-    void testSetGetAutosync() {
-        QVERIFY(time->setAutosync(true));
-        waitTwice(10*1000);
-        QCOMPARE(time->getAutosync(), 1);
-        QVERIFY(time->setAutosync(false));
-        waitTwice(10*1000);
-        QCOMPARE(time->getAutosync(), 0);
-    }
-
     void testIsOperatorTimeAccessible() {
         int ret = time->isOperatorTimeAccessible();
         QVERIFY(ret != -1);
@@ -239,11 +215,6 @@ private slots:
 
     // TODO: GMT* timezones do not work with libtimed0?
     void testSetTimezone120020() {
-
-        QVERIFY(time->setTimezone("UTC"));
-        QDateTime dateTime(QDate(2000, 1, 1));
-        QVERIFY(time->setTime(dateTime));
-
         struct testTZStruct tzs[] = { //{"GMT-2GMT-3,0,365", "GMT", 3*60*60},
                                       //{"GMT+8", "GMT", -8*60*60},
                                       //{"GMT-10:30", "GMT", 10*60*60 + 30*60},
@@ -265,6 +236,9 @@ private slots:
                                       {":US/Pacific", "PST", -8*60*60}};
 
         for (unsigned i=0; i < sizeof(tzs)/sizeof(*tzs); i++) {
+            QVERIFY(time->setTimezone("UTC"));
+            QDateTime dateTime(QDate(2000, 1, 1));
+            QVERIFY(time->setTime(dateTime));
 
             QVERIFY2(time->setTimezone(tzs[i].tz), tzs[i].tz.toAscii().data());
 
@@ -276,9 +250,9 @@ private slots:
             QCOMPARE(tzs[i].tzname, tz2);
 
             int diff = dateTime.secsTo(QDateTime::currentDateTime());
-            QVERIFY2(diff <= tzs[i].secsTo + 5, tzs[i].tz.toAscii());
-            QVERIFY2(diff >= tzs[i].secsTo - 5, tzs[i].tz.toAscii());
-
+            qDebug()<<diff<<tzs[i].secsTo<<i;
+            QVERIFY(diff*tzs[i].secsTo >= 0);
+            QVERIFY2(qAbs(diff) <= qAbs(tzs[i].secsTo) + 5, tzs[i].tz.toAscii());
         }
     }
 
@@ -377,15 +351,6 @@ private slots:
         t = t.addDays(30);
         diff = time->getTimeDiff(t, ":Europe/Helsinki", ":GMT");
         QCOMPARE(diff, 10800);
-    }
-
-    void testAutosync120060() {
-        QVERIFY(time->setAutosync(false));
-        QCOMPARE(time->getAutosync(), 0);
-        QVERIFY(time->setAutosync(true));
-        QCOMPARE(time->getAutosync(), 1);
-        QVERIFY(time->setAutosync(false));
-        QCOMPARE(time->getAutosync(), 0);
     }
 
     void testOperatorTime120070() {
