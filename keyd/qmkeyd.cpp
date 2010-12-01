@@ -113,9 +113,13 @@ QmKeyd::~QmKeyd()
 
 void QmKeyd::failStart(const char *fmt, ...)
 {
-    va_list va;
+    va_list ap;
     syslog(LOG_CRIT, "qmkeyd start failed, exit\n");
-    syslog(LOG_CRIT, fmt, va);
+
+    va_start(ap, fmt);
+    syslog(LOG_CRIT, fmt, ap);
+    va_end(ap);
+
     cleanSocket();
     QCoreApplication::exit(1);
 }
@@ -184,10 +188,10 @@ void QmKeyd::detectBT(int inotify)
         removeInotifyWatch();
     } else {
         ev = (inotify_event *)lea(buf, 0);
-        while (n >= sizeof *ev) {
+        while (n >= (int)sizeof *ev) {
             int k = sizeof *ev + ev->len;
 
-            if ((k < sizeof *ev) || (k > n)) {
+            if ((k < (int)sizeof *ev) || (k > n)) {
                 break;
             }
 
