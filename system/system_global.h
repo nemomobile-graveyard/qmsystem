@@ -76,6 +76,4 @@
 
 #define MEEGO_UNINITIALIZE(Class) do { MEEGO_PRIVATE(Class); delete priv; } while(0)
 
-#define compilation_assert(const_expr) do {switch(0){case 0: case const_expr: ; }} while(0)
-
 #endif // SYSTEM_GLOBAL_H
