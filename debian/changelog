@@ -7,6 +7,7 @@ qmsystem2 (0.0.10) unstable; urgency=low
 
   [Matias Muhonen]
   * Add manual-batterymon-test
+  * Rename msystemdbus.h => msystemdbus_p.h and remove unused D-Bus interface declarations
 
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Wed, 29 Nov 2010 14:50:19 +0200
 
