@@ -27,7 +27,7 @@
 #include "qmactivity.h"
 #include "qmactivity_p.h"
 #include "qmipcinterface.h"
-#include "msystemdbus.h"
+#include "msystemdbus_p.h"
 
 #include <QDebug>
 

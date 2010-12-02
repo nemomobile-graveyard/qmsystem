@@ -34,7 +34,7 @@
 
 #else
 //TODO: ask Semi about these
-#include "msystemdbus.h"
+#include "msystemdbus_p.h"
 #define dsme_service SYS_DSME_SERVICE
 #define dsme_sig_interface SYS_DSME_SIG_INTERFACE
 #define dsme_sig_path SYS_DSME_SIG_PATH

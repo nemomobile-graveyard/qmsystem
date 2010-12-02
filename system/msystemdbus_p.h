@@ -1,5 +1,5 @@
 /*!
- * @file msystemdbus.h
+ * @file msystemdbus_p.h
  * @brief Contains D-Bus names for the services accessible through this API.
 
    <p>
@@ -32,11 +32,8 @@
  *
  */
 
-//TODO
-//Move this file to msystemdbus_p.h
-
-#ifndef MSYSTEMDBUS_H
-#define MSYSTEMDBUS_H
+#ifndef MSYSTEMDBUS_P_H
+#define MSYSTEMDBUS_P_H
 
 //D-Bus interfaces
 
@@ -173,4 +170,4 @@
 
 #define SYS_CLOCK_TIME_SIG                "time_changed"
 
-#endif // MSYSTEMDBUS_H
+#endif // MSYSTEMDBUS_P_H

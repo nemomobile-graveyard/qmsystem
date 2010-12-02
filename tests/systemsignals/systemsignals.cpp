@@ -32,7 +32,7 @@
 #include <QDBusMessage>
 
 #include <qmsystemstate.h>
-#include <msystemdbus.h>
+#include <msystemdbus_p.h>
 
 class SignalDump : public QObject {
     Q_OBJECT
