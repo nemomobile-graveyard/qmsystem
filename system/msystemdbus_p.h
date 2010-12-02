@@ -63,4 +63,11 @@
 #define SYS_THERMALMANAGER_STATE_GET      "get_thermal_state"
 #define SYS_THERMALMANAGER_STATE_SIG      "thermal_state_change_ind"
 
+//POWERONTIMER
+#define SYS_POWERONTIMER_SERVICE          "com.nokia.powerontimer"
+#define SYS_POWERONTIMER_INTERFACE        "com.nokia.powerontimer"
+#define SYS_POWERONTIMER_PATH             "/com/nokia/powerontimer"
+
+#define SYS_POWERONTIMER_TIME_GET         "get_poweron_time"
+
 #endif // MSYSTEMDBUS_P_H

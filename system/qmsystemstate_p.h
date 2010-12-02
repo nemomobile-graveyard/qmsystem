@@ -29,40 +29,8 @@
 
 #include "qmsystemstate.h"
 #include "qmipcinterface.h"
-#if 1
 #include "dsme/dsme_dbus_if.h"
-
-#else
-//TODO: ask Semi about these
 #include "msystemdbus_p.h"
-#define dsme_service SYS_DSME_SERVICE
-#define dsme_sig_interface SYS_DSME_SIG_INTERFACE
-#define dsme_sig_path SYS_DSME_SIG_PATH
-
-#define dsme_req_interface SYS_DSME_REQ_INTERFACE
-#define dsme_req_path SYS_DSME_REQ_PATH
-
-#define dsme_shutdown_ind SYS_DSME_SHUTDOWN_SIG
-#define dsme_save_unsaved_data_ind SYS_DSME_UNSAVEDDATA_SIG
-#define dsme_battery_empty_ind SYS_DSME_BATTERYEMPTY_SIG
-#define dsme_state_req_denied_ind SYS_DSME_REQ_DENIED_SIG
-
-#define dsme_req_powerup SYS_DSME_POWERUP_REQ
-#define dsme_req_reboot SYS_DSME_REBOOT_REQ
-#define dsme_req_shutdown SYS_DSME_SHUTDOWN_REQ
-#endif
-#define SYS_THERMALMANAGER_SERVICE        "com.nokia.thermalmanager"
-#define SYS_THERMALMANAGER_INTERFACE      "com.nokia.thermalmanager"
-#define SYS_THERMALMANAGER_PATH           "/com/nokia/thermalmanager"
-
-#define SYS_THERMALMANAGER_STATE_GET      "get_thermal_state"
-#define SYS_THERMALMANAGER_STATE_SIG      "thermal_state_change_ind"
-
-#define SYS_POWERONTIMER_SERVICE          "com.nokia.powerontimer"
-#define SYS_POWERONTIMER_INTERFACE        "com.nokia.powerontimer"
-#define SYS_POWERONTIMER_PATH             "/com/nokia/powerontimer"
-
-#define SYS_POWERONTIMER_TIME_GET         "get_poweron_time"
 
 namespace MeeGo
 {
