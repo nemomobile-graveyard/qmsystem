@@ -15,7 +15,5 @@ headers:
  /usr/include/qmsystem2/qmsystemstate.h
  /usr/include/qmsystem2/qmthermal.h
  /usr/include/qmsystem2/qmtime.h
- /usr/include/qmsystem2/qmusbmode.h
- /usr/include/qmsystem2/qmtap.h          
 state: stable
 scope: Nokia MeeGo

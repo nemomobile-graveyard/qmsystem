@@ -51,8 +51,6 @@ QmLocks: provides information and actions on device locks.
 QmSystemState: provides information and actions on device state.
 QmThermal: provides information on device thermal states.
 QmTime: provides interface for interacting with system clock.
-QmUSBMode: provides information and actions on USB state.
-QmTap: provides tap detection.
 
 To get library compiler and linker parameters, use the following:<br/>
 QMake: \code CONFIG+=QmSystem \endcode <br/>

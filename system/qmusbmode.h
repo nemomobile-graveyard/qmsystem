@@ -8,7 +8,7 @@
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
 
-   @scope Nokia Meego
+   @scope Internal
 
    This file is part of SystemSW QtAPI.
 
@@ -40,7 +40,7 @@ namespace MeeGo
 
 
     /**
-     * @scope Nokia Meego
+     * @scope Internal
      *
      * @brief Provides information and actions on USB state.
      *
