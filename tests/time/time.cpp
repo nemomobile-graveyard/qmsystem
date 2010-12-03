@@ -294,7 +294,7 @@ private slots:
     }
 
     void testCheckRemoteTime120040() {
-        QString timezone = ":Europe/Helsinki";
+        QString timezone = "Europe/Helsinki";
         QVERIFY(time->setTimezone(timezone));
         /* Set time to 1.7.2008 14:00 and DST on*/
         struct tm tm;
