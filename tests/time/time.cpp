@@ -59,6 +59,7 @@ struct testTZStruct {
     QString tz;
     QString tzname;
     int secsTo;
+    QString zone; // the main Olson name of the time zone (if 'tz' is just an alias)
 };
 
 class TestClass : public QObject
@@ -224,16 +225,16 @@ private slots:
                                       {"Asia/Shanghai", "CST", 8*60*60},
                                       {"Asia/Tokyo", "JST", 9*60*60},
                                       {"Australia/Melbourne", "EST", 11*60*60}, // DST on southern summer
-                                      {"Canada/Central", "CST", -6*60*60},
+                                      {"Canada/Central", "CST", -6*60*60, "America/Winnipeg"},
                                       {"Europe/Helsinki", "EET", 2*60*60},
                                       {"Europe/London", "GMT", 0},
                                       {"Europe/Moscow", "MSK", 3*60*60},
                                       {"Europe/Paris", "CET", 1*60*60},
                                       {"Pacific/Honolulu", "HST", -10*60*60},
-                                      {"US/Alaska", "AKST", -9*60*60},
-                                      {"US/Central", "CST", -6*60*60},
-                                      {"US/Mountain", "MST", -7*60*60},
-                                      {"US/Pacific", "PST", -8*60*60}};
+                                      {"US/Alaska", "AKST", -9*60*60, "America/Anchorage"},
+                                      {"US/Central", "CST", -6*60*60, "America/Chicago"},
+                                      {"US/Mountain", "MST", -7*60*60, "America/Denver"},
+                                      {"US/Pacific", "PST", -8*60*60, "America/Los_Angeles"}};
 
         for (unsigned i=0; i < sizeof(tzs)/sizeof(*tzs); i++) {
             QVERIFY(time->setTimezone("UTC"));
@@ -244,7 +245,7 @@ private slots:
 
             QString tz2;
             QVERIFY2(time->getTimezone(tz2), tzs[i].tz.toAscii().data());
-            QCOMPARE(tzs[i].tz, tz2);
+            QCOMPARE(tzs[i].zone.isEmpty() ? tzs[i].tz : tzs[i].zone, tz2);
 
             QVERIFY2(time->getTZName(tz2), tzs[1].tz.toAscii().data());
             QCOMPARE(tzs[i].tzname, tz2);
