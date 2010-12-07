@@ -1,9 +1,3 @@
-qmsystem2 (0.0.11) unstable; urgency=low
-
-  * Removed qmusbmode from Nokia Meego scope
-
- -- Raimo Vuonnala <raimo.vuonnala@nokia.com>  Fri, 03 Dec 2010 08:46:08 +0200
-
 qmsystem2 (0.0.10) unstable; urgency=low
 
   [Yang Yang]
@@ -15,7 +9,10 @@ qmsystem2 (0.0.10) unstable; urgency=low
   * Add manual-batterymon-test
   * Rename msystemdbus.h => msystemdbus_p.h and remove unused D-Bus interface declarations
 
- -- Yang Yang <ext-yang.25.yang@nokia.com>  Wed, 29 Nov 2010 14:50:19 +0200
+  [Raimo Vuonnala]
+  * Removed qmusbmode from Nokia Meego scope
+
+ -- Raimo Vuonnala <raimo.vuonnala@nokia.com>  Fri, 03 Dec 2010 08:46:08 +0200
 
 qmsystem2 (0.0.9) unstable; urgency=low
 
