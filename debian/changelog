@@ -12,6 +12,9 @@ qmsystem2 (0.0.10) unstable; urgency=low
   [Raimo Vuonnala]
   * Removed qmusbmode from Nokia Meego scope
 
+  [Ilya Dogolazky]
+  * Removed ':' before the time zone names
+
  -- Raimo Vuonnala <raimo.vuonnala@nokia.com>  Fri, 03 Dec 2010 08:46:08 +0200
 
 qmsystem2 (0.0.9) unstable; urgency=low
