@@ -6,6 +6,7 @@
    Copyright (C) 2009-2010 Nokia Corporation
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    @scope Private
 
@@ -32,7 +33,10 @@
 #include "qmipcinterface.h"
 #include "mce/dbus-names.h"
 #include "mce/mode-names.h"
+
+#if __DEVICELOCK__
 #include "devicelock/devicelock.h"
+#endif
 
 namespace MeeGo
 {
@@ -52,14 +56,18 @@ namespace MeeGo
                       MCE_REQUEST_PATH,
                       MCE_REQUEST_IF);
 
+#if __DEVICELOCK__
             DeviceLock::DeviceLockEnums::registerLockEnumerations();
+#endif
             devlockIf = NULL;
+#if __DEVICELOCK__
             QDBusConnection::systemBus().connect(DEVLOCK_SERVICE,
                                                  DEVLOCK_PATH,
                                                  DEVLOCK_SERVICE,
                                                  DEVLOCK_SIGNAL,
                                                  this,
                                                  SLOT(deviceStateChanged(int,int)));
+#endif
             signalIf->connect(MCE_TKLOCK_MODE_SIG, this, SLOT(touchAndKeyboardStateChanged(const QString&)));
         }
 
@@ -92,6 +100,7 @@ namespace MeeGo
         return "";
     }
 
+#if __DEVICELOCK__
     static QmLocks::State stateToState(DeviceLock::DeviceLockEnums::LockState state) {
         switch (state) {
         case DeviceLock::DeviceLockEnums::Unlocked:
@@ -113,6 +122,7 @@ namespace MeeGo
             return DeviceLock::DeviceLockEnums::Undefined;
         }
     }
+#endif
 
     QmLocks::State getState(QmLocks::Lock what) {
 
@@ -120,6 +130,7 @@ namespace MeeGo
         QList<QVariant> list;
         switch (what){
            case QmLocks::Device:
+#if __DEVICELOCK__
             {
                 QDBusMessage call = QDBusMessage::createMethodCall(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE, DEVLOCK_GET);
                 QList<QVariant> args;
@@ -137,6 +148,9 @@ namespace MeeGo
                     }
                 }
             }
+#else
+                return QmLocks::Unknown;
+#endif
                 break;
            case QmLocks::TouchAndKeyboard:
                 list = requestIf->get(MCE_TKLOCK_MODE_GET);
@@ -158,6 +172,7 @@ namespace MeeGo
 
         switch (what) {
            case QmLocks::Device:
+#if __DEVICELOCK__
                 {
                  QList<QVariant> res;
                     QDBusMessage call = QDBusMessage::createMethodCall(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE, DEVLOCK_SET);
@@ -175,6 +190,9 @@ namespace MeeGo
                         return true;
                     }
                 }
+#else
+                return false;
+#endif
                 break;
            case QmLocks::TouchAndKeyboard:
                 {
@@ -198,11 +216,15 @@ Q_SIGNALS:
     void stateChanged(MeeGo::QmLocks::Lock what, MeeGo::QmLocks::State how);
 
 private Q_SLOTS:
+
+#if __DEVICELOCK__
     void deviceStateChanged(int device, int state) {
         if (device == DeviceLock::DeviceLockEnums::Device) {
             emit stateChanged(QmLocks::Device, stateToState((DeviceLock::DeviceLockEnums::LockState)state));
         }
     }
+#endif
+
     void touchAndKeyboardStateChanged(const QString& state) {
         emit stateChanged(QmLocks::TouchAndKeyboard, stringToState(state));
     }
