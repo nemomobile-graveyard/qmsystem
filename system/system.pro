@@ -14,7 +14,7 @@ QMAKE_CXXFLAGS += -Wall -Wno-psabi
 
 CONFIG += timed
 CONFIG += link_pkgconfig
-PKGCONFIG += bmeipc dsme dsme_dbus_if gconf-2.0 libiphb sensord usb_moded
+PKGCONFIG += bmeipc dsme dsme_dbus_if gconf-2.0 libiphb sensord
 
 # Input
 HEADERS += mainpage.h \

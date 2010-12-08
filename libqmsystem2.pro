@@ -18,10 +18,11 @@ linux-g++-maemo {
 
     message("Compiling with usb-moded-dev support")
     DEFINES += __USB_MODED_DEV__
+    PKGCONFIG += usb_moded
 
     message("Compiling with sysinfo support")
     DEFINES += __SYSINFO__
-    LIBS += -lsysinfo
+    PKGCONFIG += sysinfo
 } else {
     message("Compiling without devicelock support")
     message("Compiling without usb-moded-dev support")
