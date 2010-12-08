@@ -26,8 +26,7 @@ PKGCONFIG += gconf-2.0
 LIBS += -lbmeipc \
     -ldsme \
     -ldsme_dbus_if \
-    -liphb \
-    -lsysinfo
+    -liphb
 
 # QMAKE_CXXFLAGS += $$system(pkg-config --cflags alarm)
 # Input

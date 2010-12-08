@@ -31,7 +31,10 @@
 #include "qmsystemstate_p.h"
 
 #include <stdlib.h> /* free() */
-#include <sysinfo.h>
+
+#if __SYSINFO__
+    #include <sysinfo.h>
+#endif
 
 #include <QFile>
 #include <QTextStream>
@@ -121,6 +124,8 @@ QmSystemState::RunState QmSystemState::getRunState() {
 
 QmSystemState::BootReason QmSystemState::getBootReason() {
     QmSystemState::BootReason bootReason = BootReason_Unknown;
+
+#if __SYSINFO__
     struct system_config *sc = 0;
     uint8_t *data = 0;
     unsigned long size = 0;
@@ -176,6 +181,8 @@ BOOTREASON_DETERMINED:
     if (sc) {
         sysinfo_finish(sc), sc = 0;
     }
+#endif /* #if __SYSINFO__ */
+
     return bootReason;
 }
 
