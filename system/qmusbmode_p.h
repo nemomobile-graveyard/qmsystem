@@ -31,8 +31,31 @@
 #include "qmipcinterface.h"
 #include <gconf/gconf-client.h>
 #include <QDebug>
-#include <usb-moded/usb_moded-dbus.h>
-#include <usb-moded/usb_moded-modes.h>
+
+#if __USB_MODED_DEV__
+    #include <usb-moded/usb_moded-dbus.h>
+    #include <usb-moded/usb_moded-modes.h>
+#else
+    #define USB_MODE_SERVICE                "com.meego.usb_moded"
+    #define USB_MODE_INTERFACE              "com.meego.usb_moded"
+    #define USB_MODE_OBJECT                 "/com/meego/usb_moded"
+    #define USB_MODE_SIGNAL_NAME            "sig_usb_state_ind"
+    #define USB_MODE_ERROR_SIGNAL_NAME      "sig_usb_state_error_ind"
+
+    #define USB_MODE_STATE_REQUEST          "mode_request"
+    #define USB_MODE_STATE_SET              "set_mode"
+
+    #define USB_CONNECTED                   "USB connected"
+    #define USB_DISCONNECTED                "USB disconnected"
+    #define DATA_IN_USE                     "data_in_use"
+    #define USB_CONNECTED_DIALOG_SHOW       "mode_requested_show_dialog"
+
+    #define MODE_MASS_STORAGE               "mass_storage"
+    #define MODE_OVI_SUITE                  "ovi_suite"
+    #define MODE_CHARGING                   "charging_only"
+    #define MODE_UNDEFINED                  "undefined"
+    #define MODE_ASK                        "ask"
+#endif
 
 #define USB_MODE_GCONF          "/Meego/System/UsbMode"
 

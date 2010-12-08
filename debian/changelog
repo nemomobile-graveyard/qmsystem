@@ -2,6 +2,7 @@ qmsystem2 (0.0.11) unstable; urgency=low
 
    [Matias Muhonen]
    * Made devicelock dependency optional
+   * Made usb-moded-dev dependency optional
 
    [Tapio Rantala]
    * Proper package config file format

@@ -15,6 +15,9 @@ INSTALLS += PKGCONFIGFILES QTCONFIGFILES
 linux-g++-maemo {
     message("Compiling with devicelock support")
     DEFINES += __DEVICELOCK__
+    message("Compiling with usb-moded-dev support")
+    DEFINES += __USB_MODED_DEV__
 } else {
     message("Compiling without devicelock support")
+    message("Compiling without usb-moded-dev support")
 }
