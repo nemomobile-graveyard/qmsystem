@@ -33,8 +33,8 @@
 #include <QDebug>
 
 #if __USB_MODED_DEV__
-    #include <usb-moded/usb_moded-dbus.h>
-    #include <usb-moded/usb_moded-modes.h>
+    #include <usb_moded-dbus.h>
+    #include <usb_moded-modes.h>
 #else
     #define USB_MODE_SERVICE                "com.meego.usb_moded"
     #define USB_MODE_INTERFACE              "com.meego.usb_moded"

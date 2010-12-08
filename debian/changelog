@@ -4,6 +4,7 @@ qmsystem2 (0.0.11) unstable; urgency=low
    * Made devicelock dependency optional
    * Made usb-moded-dev dependency optional
    * Made sysinfo dependency optional
+   * Use pkgconfig with qmake
 
    [Tapio Rantala]
    * Proper package config file format

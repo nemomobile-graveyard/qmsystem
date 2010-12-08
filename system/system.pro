@@ -12,23 +12,10 @@ QT -= gui
 
 QMAKE_CXXFLAGS += -Wall -Wno-psabi
 
-
-# Add sensord headers to include path (not using CONFIG option as that would require libraries, which
-# were denied for reason X)
-# INCLUDEPATH += /usr/include/sensord \
-# /usr/include/sensord/filters \
-# /usr/include/sensord/datatypes
-CONFIG += sensord timed
+CONFIG += timed
 CONFIG += link_pkgconfig
-PKGCONFIG += gconf-2.0
+PKGCONFIG += bmeipc dsme dsme_dbus_if gconf-2.0 libiphb sensord usb_moded
 
-# LIBS += $$system(pkg-config --libs alarm)
-LIBS += -lbmeipc \
-    -ldsme \
-    -ldsme_dbus_if \
-    -liphb
-
-# QMAKE_CXXFLAGS += $$system(pkg-config --cflags alarm)
 # Input
 HEADERS += mainpage.h \
     msystemdbus.h \
