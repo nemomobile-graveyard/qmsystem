@@ -3,6 +3,9 @@ qmsystem2 (0.0.11) unstable; urgency=low
    [Matias Muhonen]
    * Made devicelock dependency optional
 
+   [Tapio Rantala]
+   * Proper package config file format
+
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Wed, 08 Dec 2010 08:55:43 +0200
 
 qmsystem2 (0.0.10) unstable; urgency=low
