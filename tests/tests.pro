@@ -4,7 +4,6 @@ TEMPLATE = subdirs
 SUBDIRS = accelerometer \
           activity \
           als \
-          battery \
           cabc \
           callstate \
           compass \
@@ -21,7 +20,6 @@ SUBDIRS = accelerometer \
           system \
           systemsignals \
           tap \
-          thermal \
           time \
           manual_orientation \
           manual_accelerometer \
@@ -41,6 +39,11 @@ SUBDIRS = accelerometer \
           manual_tap\
           usbmode \
 	  powerontime
+
+linux-g++-maemo {
+    SUBDIRS += battery \
+               thermal
+}
 
 # Test definition installation
 testdefinition.files = tests.xml session
