@@ -5,6 +5,7 @@ qmsystem2 (0.0.11) unstable; urgency=low
    * Made usb-moded-dev dependency optional
    * Made sysinfo dependency optional
    * Use pkgconfig with qmake
+   * Make bmeipc dependency optional
 
    [Tapio Rantala]
    * Proper package config file format

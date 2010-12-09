@@ -14,7 +14,7 @@ QMAKE_CXXFLAGS += -Wall -Wno-psabi
 
 CONFIG += timed
 CONFIG += link_pkgconfig
-PKGCONFIG += bmeipc dsme dsme_dbus_if gconf-2.0 libiphb sensord
+PKGCONFIG += dsme dsme_dbus_if gconf-2.0 libiphb sensord
 
 # Input
 HEADERS += mainpage.h \
@@ -26,7 +26,6 @@ HEADERS += mainpage.h \
     qmals.h \
     qmals_p.h \
     qmbattery.h \
-    qmbattery_p.h \
     qmcabc.h \
     qmcallstate.h \
     qmcallstate_p.h \
@@ -71,7 +70,6 @@ HEADERS += mainpage.h \
 SOURCES += qmactivity.cpp \
     qmaccelerometer.cpp \ 
     qmals.cpp \
-    qmbattery.cpp \
     qmcabc.cpp \
     qmcallstate.cpp \
     qmcompass.cpp \
@@ -94,6 +92,15 @@ SOURCES += qmactivity.cpp \
     qmmagnetometer.cpp \
     qmwatchdog.cpp \
     qmusbmode.cpp
+
+linux-g++-maemo {
+    PKGCONFIG += bmeipc
+    HEADERS += qmbattery_p.h
+    SOURCES += qmbattery.cpp
+} else {
+    SOURCES += qmbattery_stub.cpp 
+}
+
 contextsubscriber { 
     DEFINES += PROVIDE_CONTEXT_INFO
     LIBS += -lcontextsubscriber
