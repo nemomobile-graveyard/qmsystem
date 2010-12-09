@@ -32,7 +32,7 @@
 
 #include "sensord/orientationsensor_i.h"
 #include "sensord/sensormanagerinterface.h"
-#include "sensord/filters/posedata.h"
+#include "datatypes/posedata.h"
 #include "qmsensor_p.h"
 
 namespace MeeGo
