@@ -29,6 +29,6 @@ linux-g++-maemo {
 } else {
     message("Compiling without devicelock support")
     message("Compiling without usb-moded-dev support")
-    message("Compiling without sysinfo support");
+    message("Compiling without sysinfo support")
     message("Compiling without mce support")
 }
