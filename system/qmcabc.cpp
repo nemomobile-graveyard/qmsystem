@@ -29,11 +29,14 @@
 #include <QDBusReply>
 #include <QDebug>
 
-#include <mce/mode-names.h>
-#include <mce/dbus-names.h>
+#if __MCE__
+    #include <mce/mode-names.h>
+    #include <mce/dbus-names.h>
+#endif
 
 #include "qmcabc.h"
 
+#if __MCE__
 static const QString cabc_dbus_names[] =
 {
   MCE_CABC_MODE_OFF,
@@ -51,20 +54,26 @@ static int find_cabc_mode_by_dbus_name(const QString &name)
             return i;
   return -1;
 }
+#endif /* __MCE__ */
 
 namespace MeeGo
 {
     bool QmCABC::set(Mode mode)
     {
+#if __MCE__
         QDBusInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, QDBusConnection::systemBus());
         QDBusReply<QString> reply = cabc.call(MCE_CABC_MODE_REQ, cabc_dbus_names[mode]);
         if (!reply.isValid())
             qDebug() << "Setting mode "<< mode <<" (" << cabc_dbus_names[mode] << "): "<<"reply.value()="<<reply.value()<<":"<< reply.error().message();
         return reply.isValid() && reply.value()==cabc_dbus_names[mode];
+#else
+        return false;
+#endif /* __MCE__ */
     }
 
     QmCABC::Mode QmCABC::get() const
     {
+#if __MCE__
         QDBusInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, QDBusConnection::systemBus());
         QDBusReply<QString> reply = cabc.call(MCE_CABC_MODE_GET);
         if (reply.isValid()) {
@@ -78,5 +87,8 @@ namespace MeeGo
         } else {
             return Off; // What else could be returned here?
         }
+#else
+        return Off;
+#endif /* __MCE__ */
     }
 }

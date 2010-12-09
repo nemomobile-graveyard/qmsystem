@@ -27,8 +27,11 @@
 #include "qmled.h"
 
 #include "qmipcinterface.h"
-#include <mce/dbus-names.h>
-#include <mce/mode-names.h>
+
+#if __MCE__
+    #include <mce/dbus-names.h>
+    #include <mce/mode-names.h>
+#endif
 
 #include <QDebug>
 
@@ -41,14 +44,18 @@ class QmLEDPrivate
 
 public:
     QmLEDPrivate(){
+#if __MCE__
         requestIf = new QmIPCInterface(
                     MCE_SERVICE,
                     MCE_REQUEST_PATH,
                     MCE_REQUEST_IF);
+#endif
     }
 
     ~QmLEDPrivate(){
+#if __MCE__
         delete requestIf;
+#endif
     }
 
     QmIPCInterface *requestIf;
@@ -64,23 +71,41 @@ QmLED::~QmLED(){
 }
 
 bool QmLED::activate(const QString &pattern){
+#if __MCE__
     MEEGO_PRIVATE(QmLED);
     return priv->requestIf->callSynchronously(MCE_ACTIVATE_LED_PATTERN, pattern);
+#else
+    Q_UNUSED(pattern);
+    return false;
+#endif
 }
 
 bool QmLED::deactivate(const QString &pattern){
+#if __MCE__
     MEEGO_PRIVATE(QmLED);
     return priv->requestIf->callSynchronously(MCE_DEACTIVATE_LED_PATTERN, pattern);
+#else
+    Q_UNUSED(pattern);
+    return false;
+#endif
 }
 
 bool QmLED::enable(void){
+#if __MCE__
     MEEGO_PRIVATE(QmLED);
     return priv->requestIf->callSynchronously(MCE_ENABLE_LED);
+#else
+    return false;
+#endif
 }
 
 bool QmLED::disable(void){
+#if __MCE__
     MEEGO_PRIVATE(QmLED);
     return priv->requestIf->callSynchronously(MCE_DISABLE_LED);
+#else
+    return false;
+#endif
 }
 
 } //namespace MeeGo

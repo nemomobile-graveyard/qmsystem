@@ -40,8 +40,10 @@ QmCallState::~QmCallState(){
 }
 
 QmCallState::State QmCallState::getState() const{
-    MEEGO_PRIVATE_CONST(QmCallState)
     State mState = Error;
+
+#if __MCE__
+    MEEGO_PRIVATE_CONST(QmCallState)
     QString state;
 
     QList<QVariant> resp;
@@ -59,13 +61,16 @@ QmCallState::State QmCallState::getState() const{
         mState = Service;
     else if (state == MCE_CALL_STATE_NONE)
         mState = None;
+#endif
 
     return mState;
 }
 
 QmCallState::Type QmCallState::getType() const {
-    MEEGO_PRIVATE_CONST(QmCallState)
     Type mType = Unknown;
+
+#if __MCE__
+    MEEGO_PRIVATE_CONST(QmCallState)
     QString type;
 
     QList<QVariant> resp;
@@ -80,12 +85,15 @@ QmCallState::Type QmCallState::getType() const {
         mType = Normal;
     else if (type == MCE_EMERGENCY_CALL)
         mType = Emergency;
+#endif
 
     return mType;
 }
 
 bool QmCallState::setState(QmCallState::State state, QmCallState::Type type) {
+#if __MCE__
     MEEGO_PRIVATE(QmCallState)
+
     QString mState;
     QString mType;
 
@@ -111,6 +119,12 @@ bool QmCallState::setState(QmCallState::State state, QmCallState::Type type) {
     } else {
         return false;
     }
+#else
+    Q_UNUSED(state);
+    Q_UNUSED(type);
+    return false;
+#endif
+
 }
 
 

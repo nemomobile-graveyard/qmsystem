@@ -29,8 +29,12 @@
 
 #include "qmdevicemode.h"
 #include "qmipcinterface.h"
-#include "mce/dbus-names.h"
-#include "mce/mode-names.h"
+
+#if __MCE__
+    #include "mce/dbus-names.h"
+    #include "mce/mode-names.h"
+#endif
+
 #include <gconf/gconf-client.h>
 #define PATH "/system/osso/dsm/energymanagement"
 #define FORCE_POWER_SAVING PATH"/force_power_saving"
@@ -56,6 +60,7 @@ namespace MeeGo
 
     public:
         QmDeviceModePrivate(){
+#if __MCE__
             signalIf = new QmIPCInterface(
                         MCE_SERVICE,
                         MCE_SIGNAL_PATH,
@@ -64,17 +69,22 @@ namespace MeeGo
                         MCE_SERVICE,
                         MCE_REQUEST_PATH,
                         MCE_REQUEST_IF);
+#endif
 
             g_type_init();
             gcClient = gconf_client_get_default();
 
+#if __MCE__
             signalIf->connect(MCE_RADIO_STATES_SIG, this, SLOT(deviceModeChangedSlot(const unsigned int)));
             signalIf->connect(MCE_PSM_STATE_SIG, this, SLOT(devicePSMChangedSlot(bool)));
+#endif
         }
 
         ~QmDeviceModePrivate(){
+#if __MCE__
             delete requestIf;
             delete signalIf;
+#endif
             g_object_unref(gcClient);
         }
 

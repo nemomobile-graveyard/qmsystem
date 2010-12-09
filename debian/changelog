@@ -7,6 +7,7 @@ qmsystem2 (0.0.11) unstable; urgency=low
    * Use pkgconfig with qmake
    * Make bmeipc dependency optional
    * Fix a deprecated location for posedata.h in QmOrientation
+   * Made mce dependency optional
 
    [Tapio Rantala]
    * Proper package config file format

@@ -32,8 +32,11 @@
 
 #include "qmactivity.h"
 #include "qmipcinterface.h"
-#include "mce/dbus-names.h"
-#include "mce/mode-names.h"
+
+#if __MCE__
+    #include "mce/dbus-names.h"
+    #include "mce/mode-names.h"
+#endif
 
 namespace MeeGo
 {
@@ -48,6 +51,7 @@ namespace MeeGo
         QmIPCInterface *signalIf;
 
         QmActivityPrivate(){
+#if __MCE__
             signalIf = new QmIPCInterface(
                         MCE_SERVICE,
                         MCE_SIGNAL_PATH,
@@ -57,11 +61,14 @@ namespace MeeGo
                         MCE_REQUEST_PATH,
                         MCE_REQUEST_IF);
             signalIf->connect(MCE_INACTIVITY_SIG, this, SLOT(slotActivityChanged(bool)));
+#endif
         }
 
         ~QmActivityPrivate(){
+#if __MCE__
             delete requestIf;
             delete signalIf;
+#endif
         }
 
     Q_SIGNALS:

@@ -31,11 +31,14 @@
 
 #include "qmlocks.h"
 #include "qmipcinterface.h"
-#include "mce/dbus-names.h"
-#include "mce/mode-names.h"
+
+#if __MCE__
+    #include "mce/dbus-names.h"
+    #include "mce/mode-names.h"
+#endif
 
 #if __DEVICELOCK__
-#include "devicelock/devicelock.h"
+    #include "devicelock/devicelock.h"
 #endif
 
 namespace MeeGo
@@ -47,6 +50,7 @@ namespace MeeGo
 
     public:
         QmLocksPrivate(){
+#if __MCE__
             signalIf = new QmIPCInterface(
                           MCE_SERVICE,
                           MCE_SIGNAL_PATH,
@@ -55,6 +59,7 @@ namespace MeeGo
                       MCE_SERVICE,
                       MCE_REQUEST_PATH,
                       MCE_REQUEST_IF);
+#endif
 
 #if __DEVICELOCK__
             DeviceLock::DeviceLockEnums::registerLockEnumerations();
@@ -68,16 +73,25 @@ namespace MeeGo
                                                  this,
                                                  SLOT(deviceStateChanged(int,int)));
 #endif
+
+#if __MCE__
             signalIf->connect(MCE_TKLOCK_MODE_SIG, this, SLOT(touchAndKeyboardStateChanged(const QString&)));
+#endif
         }
 
     ~QmLocksPrivate(){
+#if __MCE__
         delete requestIf;
         delete signalIf;
+#endif
+
+#if __DEVICELOCK__
         delete devlockIf;
+#endif
     }
 
     static QmLocks::State stringToState(const QString &state) {
+#if __MCE__
         if (state == MCE_TK_LOCKED)
         {
             return QmLocks::Locked;
@@ -87,9 +101,14 @@ namespace MeeGo
         } else {
             return QmLocks::Unknown;
         }
+#else
+        Q_UNUSED(state);
+        return QmLocks::Unknown;
+#endif
     }
 
     static QString stateToString(QmLocks::Lock what, QmLocks::State state) {
+#if __MCE__
         if (what == QmLocks::TouchAndKeyboard) {
             if (state == QmLocks::Locked) {
                 return MCE_TK_LOCKED;
@@ -97,6 +116,10 @@ namespace MeeGo
                 return MCE_TK_UNLOCKED;
             }
         }
+#else
+    Q_UNUSED(what);
+    Q_UNUSED(state);
+#endif
         return "";
     }
 
@@ -153,6 +176,7 @@ namespace MeeGo
 #endif
                 break;
            case QmLocks::TouchAndKeyboard:
+#if __MCE__
                 list = requestIf->get(MCE_TKLOCK_MODE_GET);
                 if (!list.isEmpty()) {
                     state = list[0].toString();
@@ -160,6 +184,9 @@ namespace MeeGo
                         return QmLocksPrivate::stringToState(state);
                     }
                 }
+#else
+                return QmLocks::Unknown;
+#endif
                 break;
            default:
                 return QmLocks::Unknown;
@@ -191,10 +218,12 @@ namespace MeeGo
                     }
                 }
 #else
+                Q_UNUSED(how);
                 return false;
 #endif
                 break;
            case QmLocks::TouchAndKeyboard:
+#if __MCE__
                 {
                     QString str = QmLocksPrivate::stateToString(what, how);
                     if (str.isEmpty()) {
@@ -202,6 +231,10 @@ namespace MeeGo
                     }
                     return requestIf->callSynchronously(MCE_TKLOCK_MODE_CHANGE_REQ, str);
                 }
+#else
+                Q_UNUSED(what);
+                return false;
+#endif
                 break;
            default:
                 return false;

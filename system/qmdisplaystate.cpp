@@ -43,9 +43,11 @@ QmDisplayState::~QmDisplayState(){
 }
 
 QmDisplayState::DisplayState QmDisplayState::get() const{
+    QmDisplayState::DisplayState state = Off;
+
+#if __MCE__
     MEEGO_PRIVATE_CONST(QmDisplayState)
 
-    QmDisplayState::DisplayState state = Off;
     QmIPCInterface *requestIf = priv->requestIf;
     QList<QVariant> results;
     QString stateStr;
@@ -58,11 +60,13 @@ QmDisplayState::DisplayState QmDisplayState::get() const{
         state = Dimmed;
     else if ( stateStr == ON )
         state = On;
+#endif
 
     return state;
 }
 
 bool QmDisplayState::set(QmDisplayState::DisplayState state){
+#if __MCE__
     MEEGO_PRIVATE(QmDisplayState)
 
     QmIPCInterface *requestIf = priv->requestIf;
@@ -83,6 +87,11 @@ bool QmDisplayState::set(QmDisplayState::DisplayState state){
     }
 
     return requestIf->callSynchronously(method);
+#else
+    Q_UNUSED(state);
+    return false;
+#endif
+
 }
 
 int QmDisplayState::getMaxDisplayBrightnessValue() {
@@ -198,17 +207,25 @@ void QmDisplayState::setBlankingWhenCharging(bool blanking) {
 }
 
 bool QmDisplayState::setBlankingPause(void){
+#if __MCE__
     MEEGO_PRIVATE_CONST(QmDisplayState)
 
     QmIPCInterface *requestIf = priv->requestIf;
     return requestIf->callSynchronously(MCE_PREVENT_BLANK_REQ);
+#else
+    return false;
+#endif
 }
 
 bool QmDisplayState::cancelBlankingPause(void) {
+#if __MCE__
     MEEGO_PRIVATE_CONST(QmDisplayState)
 
     QmIPCInterface *requestIf = priv->requestIf;
     return requestIf->callSynchronously(MCE_CANCEL_PREVENT_BLANK_REQ);
+#else
+    return false;
+#endif
 }
 
 } //MeeGo namespace

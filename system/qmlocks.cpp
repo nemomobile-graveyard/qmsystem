@@ -52,6 +52,7 @@ bool QmLocks::setState(QmLocks::Lock what, QmLocks::State how){
 }
 
 bool QmLocks::setDeviceAutolockTime(int seconds) {
+    Q_UNUSED(seconds);
     return false;
 }
 
