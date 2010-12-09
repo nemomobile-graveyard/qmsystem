@@ -24,6 +24,8 @@
  */
 #include "qmbattery.h"
 
+#include <QDebug>
+
 namespace MeeGo
 {
     class QmBatteryPrivate {
@@ -34,6 +36,7 @@ namespace MeeGo
 
     QmBattery::QmBattery(QObject *parent)
     {
+        qWarning() << "QmBattery is not functional because of a missing compile-time dependency. Please compile QmSystem with bmeipc.";
     }
 
     QmBattery::~QmBattery()
