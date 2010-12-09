@@ -18,7 +18,7 @@ PKGCONFIG += dsme dsme_dbus_if gconf-2.0 libiphb sensord
 
 # Input
 HEADERS += mainpage.h \
-    msystemdbus.h \
+    msystemdbus_p.h \
     qmaccelerometer.h \
     qmaccelerometer_p.h \
     qmactivity.h \
@@ -94,10 +94,12 @@ SOURCES += qmactivity.cpp \
     qmusbmode.cpp
 
 linux-g++-maemo {
+    message("Compiling with bmeipc support")
     PKGCONFIG += bmeipc
     HEADERS += qmbattery_p.h
     SOURCES += qmbattery.cpp
 } else {
+    message("Compiling without bmeipc support")
     SOURCES += qmbattery_stub.cpp 
 }
 
