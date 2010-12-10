@@ -1,33 +1,26 @@
-%define _name qmsystem
-Name:     libqmsystem2
-Version:  0.0.8
+Name:     qmsystem
+Version:  0.0.11
 Release:  1
 Summary:  QmSystem library
 Group:    System/Libraries
 License:  LGPLv2
 URL:      http://meego.gitorious.org/meego-middleware/qmsystem
-Source0:  %{_name}-%{version}.tar.bz2
-Patch0:   %{name}-0.0.3-proper-pc-file.patch
-Patch1:   %{name}-0.0.3-no-devicelock.patch
-Patch2:   %{name}-0.0.3-use-pkgconfig.patch
+Source0:  %{name}-%{version}.tar.bz2
 
 BuildRequires: pkgconfig(dbus-1)
 BuildRequires: pkgconfig(dsme)
 BuildRequires: pkgconfig(gconf-2.0)
 BuildRequires: pkgconfig(libiphb) >= 0.1.4
-BuildRequires: pkgconfig(mce) >= 1.10.15
+#BuildRequires: pkgconfig(mce) >= 1.10.15
 BuildRequires: pkgconfig(QtCore) >= 4.5
 BuildRequires: pkgconfig(sensord) >= 0.6.12
-BuildRequires: pkgconfig(sysinfo) >= 1.0.17
-#BuildRequires: pkgconfig(timed) >= 1.3.20
-BuildRequires: pkgconfig(timed)
-BuildRequires: pkgconfig(usb_moded) >= 0.24
-BuildRequires: bme-devel >= 0.9.71
+#BuildRequires: pkgconfig(sysinfo) >= 1.0.17
+BuildRequires: pkgconfig(timed) >= 1.3.20
+#BuildRequires: pkgconfig(usb_moded) >= 0.24
 #BuildRequires: devicelock-devel >= 0.2.11
 BuildRequires: doxygen
 BuildRequires: fdupes
 
-Requires: bme >= 0.9.37
 Requires: sensorfw >= 0.6.12
 Requires: timed >= 1.3.21
 
@@ -59,17 +52,14 @@ Requires: testrunner-lite
 %{summary}.
 
 %prep
-%setup -q -n %{_name}-%{version}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%setup -q
 
 %build
-qmake
+%qmake
 make
 
 %install
-make INSTALL_ROOT=%{buildroot} install
+%qmake_install
 %fdupes %{buildroot}/%{_docdir}/qmsystem2/html/
 
 %post -p /sbin/ldconfig
