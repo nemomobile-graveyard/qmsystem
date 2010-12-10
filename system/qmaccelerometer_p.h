@@ -6,7 +6,7 @@
    Copyright (C) 2009-2010 Nokia Corporation
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
-   @author Timo Rongas <ext-timo.rongas.nokia.com>
+   @author Timo Rongas <ext-timo.2.rongas.nokia.com>
    @author Sagar Shinde <ext-sagar.shinde@nokia.com>
 
    @scope Private
@@ -109,8 +109,8 @@ namespace MeeGo
         {
             QmAccelerometerReading output;
             output.timestamp = data.XYZData().timestamp_;
-            output.x = data.x();
-            output.y = data.y();
+            output.x = -data.y();
+            output.y = data.x();
             output.z = data.z();
 
             emit dataAvailable(output);

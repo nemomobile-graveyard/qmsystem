@@ -102,13 +102,13 @@ namespace MeeGo
         {
             switch (input) {
                 case PoseData::LeftUp:
-                    return QmOrientation::LeftUp;
-                case PoseData::RightUp:
-                    return QmOrientation::RightUp;
-                case PoseData::BottomUp:
                     return QmOrientation::BottomUp;
-                case PoseData::BottomDown:
+                case PoseData::RightUp:
                     return QmOrientation::BottomDown;
+                case PoseData::BottomUp:
+                    return QmOrientation::RightUp;
+                case PoseData::BottomDown:
+                    return QmOrientation::LeftUp;
                 case PoseData::FaceDown:
                     return QmOrientation::FaceDown;
                 case PoseData::FaceUp:

@@ -32,6 +32,7 @@
 #include "qmsensor_p.h"
 #include "sensord/rotationsensor_i.h"
 #include "sensord/sensormanagerinterface.h"
+#include <math.h>
 
 namespace MeeGo
 {
@@ -108,9 +109,30 @@ namespace MeeGo
         {
             QmRotationReading output;
             output.timestamp = data.XYZData().timestamp_;
-            output.x = data.x();
-            output.y = data.y();
-            output.z = data.z();
+
+            // Mangle X to definition...
+            if (abs(data.y()) <= 90)
+            {
+                output.x = -data.y();
+            }
+            else
+            {
+                output.x = (data.y()<0 ? 1 : -1) * 180 + data.y();
+            }
+
+            // Mangle Y to definition
+            if (abs(data.y()) <= 90)
+            {
+                output.y = data.x();
+            }
+            else
+            {
+                output.y = (data.x()>0 ? 1 : -1) * (180-abs(data.x()));
+            }
+
+            // ..and finally match z=0 to north.
+            output.z = (((data.z() + 180) + 90) % 360) - 180;
+
 
             emit dataAvailable(output);
         }
