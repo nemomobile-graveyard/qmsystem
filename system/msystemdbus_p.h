@@ -70,7 +70,7 @@
 
 #define SYS_POWERONTIMER_TIME_GET         "get_poweron_time"
 
-#if !defined(__USB_MODED_DEV__)
+#if !defined(HAVE_USB_MODED_DEV)
     #define USB_MODE_SERVICE                "com.meego.usb_moded"
     #define USB_MODE_INTERFACE              "com.meego.usb_moded"
     #define USB_MODE_OBJECT                 "/com/meego/usb_moded"
@@ -90,6 +90,6 @@
     #define MODE_CHARGING                   "charging_only"
     #define MODE_UNDEFINED                  "undefined"
     #define MODE_ASK                        "ask"
-#endif /* __USB_MODED_DEV__ */
+#endif /* HAVE_USB_MODED_DEV */
 
 #endif // MSYSTEMDBUS_P_H

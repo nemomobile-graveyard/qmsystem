@@ -31,7 +31,7 @@
 #include "qmcallstate.h"
 #include "qmipcinterface.h"
 
-#if __MCE__
+#if HAVE_MCE
     #include "mce/dbus-names.h"
     #include "mce/mode-names.h"
 #endif
@@ -45,7 +45,7 @@ namespace MeeGo
 
     public:
        QmCallStatePrivate(){
-#if __MCE__
+#if HAVE_MCE
            signalIf = new QmIPCInterface(
                           MCE_SERVICE,
                           MCE_SIGNAL_PATH,
@@ -59,7 +59,7 @@ namespace MeeGo
        }
 
        ~QmCallStatePrivate(){
-#if __MCE__
+#if HAVE_MCE
            delete requestIf;
            delete signalIf;
 #endif
@@ -73,7 +73,7 @@ namespace MeeGo
 
    public Q_SLOTS:
        void callStateChanged(const QString& state, const QString& type) {
-#if __MCE__
+#if HAVE_MCE
            QmCallState::State mState = QmCallState::Error;
            QmCallState::Type mType = QmCallState::Unknown;
 

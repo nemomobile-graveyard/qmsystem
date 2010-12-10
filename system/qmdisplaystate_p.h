@@ -30,7 +30,7 @@
 #include "qmdisplaystate.h"
 #include "qmipcinterface.h"
 
-#if __MCE__
+#if HAVE_MCE
     #include "mce/dbus-names.h"
     #include "mce/mode-names.h"
 #endif
@@ -63,7 +63,7 @@ namespace MeeGo
 
     public:
         QmDisplayStatePrivate(){
-#if __MCE__
+#if HAVE_MCE
             signalIf = new QmIPCInterface(
                         MCE_SERVICE,
                         MCE_SIGNAL_PATH,
@@ -76,13 +76,13 @@ namespace MeeGo
             g_type_init ();
             gc = gconf_client_get_default();
 
-#if __MCE__
+#if HAVE_MCE
             signalIf->connect(MCE_DISPLAY_SIG, this, SLOT(slotDisplayStateChanged(const QString&)));
 #endif
         }
 
         ~QmDisplayStatePrivate(){
-#if __MCE__
+#if HAVE_MCE
             delete signalIf;
             delete requestIf;
 #endif
@@ -99,7 +99,7 @@ namespace MeeGo
     private Q_SLOTS:
 
         void slotDisplayStateChanged(const QString& state){
-#if __MCE__
+#if HAVE_MCE
             if (state == MCE_DISPLAY_OFF_STRING)
                 emit displayStateChanged(QmDisplayState::Off);
             else if (state == MCE_DISPLAY_DIM_STRING)

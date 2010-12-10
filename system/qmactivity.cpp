@@ -44,7 +44,7 @@ QmActivity::~QmActivity(){
 }
 
 QmActivity::Activity QmActivity::get() const{
-#if __MCE__
+#if HAVE_MCE
     MEEGO_PRIVATE_CONST(QmActivity)
     QmIPCInterface *requestIf = priv->requestIf;
     QList<QVariant> results;

@@ -32,7 +32,7 @@
 #include <gconf/gconf-client.h>
 #include <QDebug>
 
-#if __USB_MODED_DEV__
+#if HAVE_USB_MODED_DEV
     #include <usb_moded-dbus.h>
     #include <usb_moded-modes.h>
 #else

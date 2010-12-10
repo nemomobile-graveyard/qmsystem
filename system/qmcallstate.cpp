@@ -42,7 +42,7 @@ QmCallState::~QmCallState(){
 QmCallState::State QmCallState::getState() const{
     State mState = Error;
 
-#if __MCE__
+#if HAVE_MCE
     MEEGO_PRIVATE_CONST(QmCallState)
     QString state;
 
@@ -69,7 +69,7 @@ QmCallState::State QmCallState::getState() const{
 QmCallState::Type QmCallState::getType() const {
     Type mType = Unknown;
 
-#if __MCE__
+#if HAVE_MCE
     MEEGO_PRIVATE_CONST(QmCallState)
     QString type;
 
@@ -91,7 +91,7 @@ QmCallState::Type QmCallState::getType() const {
 }
 
 bool QmCallState::setState(QmCallState::State state, QmCallState::Type type) {
-#if __MCE__
+#if HAVE_MCE
     MEEGO_PRIVATE(QmCallState)
 
     QString mState;

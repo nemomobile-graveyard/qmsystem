@@ -45,7 +45,7 @@ QmDisplayState::~QmDisplayState(){
 QmDisplayState::DisplayState QmDisplayState::get() const{
     QmDisplayState::DisplayState state = Off;
 
-#if __MCE__
+#if HAVE_MCE
     MEEGO_PRIVATE_CONST(QmDisplayState)
 
     QmIPCInterface *requestIf = priv->requestIf;
@@ -66,7 +66,7 @@ QmDisplayState::DisplayState QmDisplayState::get() const{
 }
 
 bool QmDisplayState::set(QmDisplayState::DisplayState state){
-#if __MCE__
+#if HAVE_MCE
     MEEGO_PRIVATE(QmDisplayState)
 
     QmIPCInterface *requestIf = priv->requestIf;
@@ -207,7 +207,7 @@ void QmDisplayState::setBlankingWhenCharging(bool blanking) {
 }
 
 bool QmDisplayState::setBlankingPause(void){
-#if __MCE__
+#if HAVE_MCE
     MEEGO_PRIVATE_CONST(QmDisplayState)
 
     QmIPCInterface *requestIf = priv->requestIf;
@@ -218,7 +218,7 @@ bool QmDisplayState::setBlankingPause(void){
 }
 
 bool QmDisplayState::cancelBlankingPause(void) {
-#if __MCE__
+#if HAVE_MCE
     MEEGO_PRIVATE_CONST(QmDisplayState)
 
     QmIPCInterface *requestIf = priv->requestIf;

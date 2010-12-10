@@ -32,7 +32,7 @@
 
 #include <stdlib.h> /* free() */
 
-#if __SYSINFO__
+#if HAVE_SYSINFO
     #include <sysinfo.h>
 #endif
 
@@ -125,7 +125,7 @@ QmSystemState::RunState QmSystemState::getRunState() {
 QmSystemState::BootReason QmSystemState::getBootReason() {
     QmSystemState::BootReason bootReason = BootReason_Unknown;
 
-#if __SYSINFO__
+#if HAVE_SYSINFO
     struct system_config *sc = 0;
     uint8_t *data = 0;
     unsigned long size = 0;
@@ -181,7 +181,7 @@ BOOTREASON_DETERMINED:
     if (sc) {
         sysinfo_finish(sc), sc = 0;
     }
-#endif /* #if __SYSINFO__ */
+#endif /* #if HAVE_SYSINFO */
 
     return bootReason;
 }

@@ -16,6 +16,28 @@ CONFIG += timed
 CONFIG += link_pkgconfig
 PKGCONFIG += dsme dsme_dbus_if gconf-2.0 libiphb sensord
 
+# for compiling on meego
+linux-g++-maemo {
+    message("Compiling with devicelock support")
+    DEFINES += HAVE_DEVICELOCK
+
+    message("Compiling with usb-moded-dev support")
+    DEFINES += HAVE_USB_MODED_DEV
+    PKGCONFIG += usb_moded
+
+    message("Compiling with sysinfo support")
+    DEFINES += HAVE_SYSINFO
+    PKGCONFIG += sysinfo
+
+    message("Compiling with mce support")
+    DEFINES += HAVE_MCE
+} else {
+    message("Compiling without devicelock support")
+    message("Compiling without usb-moded-dev support")
+    message("Compiling without sysinfo support")
+    message("Compiling without mce support")
+}
+
 # Input
 HEADERS += mainpage.h \
     msystemdbus_p.h \

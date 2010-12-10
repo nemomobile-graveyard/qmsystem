@@ -78,7 +78,7 @@ namespace MeeGo {
     }
 
     QmDeviceMode::DeviceMode QmDeviceMode::getMode() const{
-#if __MCE__
+#if HAVE_MCE
         MEEGO_PRIVATE_CONST(QmDeviceMode)
         QList<QVariant> list = priv->requestIf->get(MCE_RADIO_STATES_GET);
         unsigned int state = 0;
@@ -99,7 +99,7 @@ namespace MeeGo {
     }
 
     QmDeviceMode::PSMState QmDeviceMode::getPSMState() const {
-#if __MCE__
+#if HAVE_MCE
         MEEGO_PRIVATE_CONST(QmDeviceMode)
 
                 QList<QVariant> list = priv->requestIf->get(MCE_PSM_STATE_GET);
@@ -116,7 +116,7 @@ namespace MeeGo {
 
 
     bool QmDeviceMode::setMode(QmDeviceMode::DeviceMode mode){
-#if __MCE__
+#if HAVE_MCE
         MEEGO_PRIVATE(QmDeviceMode)
 
         unsigned int state, mask;

@@ -33,7 +33,7 @@
 #include "qmactivity.h"
 #include "qmipcinterface.h"
 
-#if __MCE__
+#if HAVE_MCE
     #include "mce/dbus-names.h"
     #include "mce/mode-names.h"
 #endif
@@ -51,7 +51,7 @@ namespace MeeGo
         QmIPCInterface *signalIf;
 
         QmActivityPrivate(){
-#if __MCE__
+#if HAVE_MCE
             signalIf = new QmIPCInterface(
                         MCE_SERVICE,
                         MCE_SIGNAL_PATH,
@@ -65,7 +65,7 @@ namespace MeeGo
         }
 
         ~QmActivityPrivate(){
-#if __MCE__
+#if HAVE_MCE
             delete requestIf;
             delete signalIf;
 #endif

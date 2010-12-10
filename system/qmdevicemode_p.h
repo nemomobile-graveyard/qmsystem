@@ -30,7 +30,7 @@
 #include "qmdevicemode.h"
 #include "qmipcinterface.h"
 
-#if __MCE__
+#if HAVE_MCE
     #include "mce/dbus-names.h"
     #include "mce/mode-names.h"
 #endif
@@ -60,7 +60,7 @@ namespace MeeGo
 
     public:
         QmDeviceModePrivate(){
-#if __MCE__
+#if HAVE_MCE
             signalIf = new QmIPCInterface(
                         MCE_SERVICE,
                         MCE_SIGNAL_PATH,
@@ -74,14 +74,14 @@ namespace MeeGo
             g_type_init();
             gcClient = gconf_client_get_default();
 
-#if __MCE__
+#if HAVE_MCE
             signalIf->connect(MCE_RADIO_STATES_SIG, this, SLOT(deviceModeChangedSlot(const unsigned int)));
             signalIf->connect(MCE_PSM_STATE_SIG, this, SLOT(devicePSMChangedSlot(bool)));
 #endif
         }
 
         ~QmDeviceModePrivate(){
-#if __MCE__
+#if HAVE_MCE
             delete requestIf;
             delete signalIf;
 #endif
