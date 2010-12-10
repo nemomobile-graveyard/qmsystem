@@ -7,6 +7,7 @@
 
    @author Sagar Shinde <ext-sagar.shinde@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    This file is part of SystemSW QtAPI.
 
@@ -46,12 +47,32 @@ private slots:
         (void)result;
     }
 
-    void testSet() {
-        for(int index=0; index<4; index++ ){
-            bool result = cabc->set((MeeGo::QmCABC::Mode)index);
-            QVERIFY(result == true);
-            QCOMPARE((MeeGo::QmCABC::Mode)index, cabc->get());
-        }
+    void testSetCabcOff() {
+        bool result = cabc->set(MeeGo::QmCABC::Off);
+        QVERIFY(result == true);
+        MeeGo::QmCABC::Mode mode = cabc->get();
+        QCOMPARE(MeeGo::QmCABC::Off, mode);
+    }
+
+    void testSetCabcUi() {
+        bool result = cabc->set(MeeGo::QmCABC::Ui);
+        QVERIFY(result == true);
+        MeeGo::QmCABC::Mode mode = cabc->get();
+        QCOMPARE(MeeGo::QmCABC::Ui, mode);
+    }
+
+    void testSetCabcStillImage() {
+        bool result = cabc->set(MeeGo::QmCABC::StillImage);
+        QVERIFY(result == true);
+        MeeGo::QmCABC::Mode mode = cabc->get();
+        QCOMPARE(MeeGo::QmCABC::StillImage, mode);
+    }
+
+    void testSetCabcMovingImage() {
+        bool result = cabc->set(MeeGo::QmCABC::MovingImage);
+        QVERIFY(result == true);
+        MeeGo::QmCABC::Mode mode = cabc->get();
+        QCOMPARE(MeeGo::QmCABC::MovingImage, mode);
     }
 
     void cleanupTestCase() {
