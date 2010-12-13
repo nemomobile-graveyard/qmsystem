@@ -343,7 +343,7 @@ namespace MeeGo {
     }
 
     /*!
-     * Should this somehow return always 1 on Dali?
+     * Should this somehow return always 1?
      */
     int QmTime::isOperatorTimeAccessible()
     {
