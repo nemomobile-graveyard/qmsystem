@@ -29,6 +29,13 @@
 #include <qmcabc.h>
 #include <QTest>
 
+#if HAVE_SYSINFO
+    #include <stdlib.h>
+    #include <sysinfo.h>
+
+    #define SYSINFO_KEY_PRODUCT "/component/product"
+#endif
+
 class TestClass : public QObject
 {
     Q_OBJECT
@@ -36,18 +43,68 @@ class TestClass : public QObject
 private:
     MeeGo::QmCABC *cabc;
 
+    QString productId() const {
+        QString productId("");
+
+        #if HAVE_SYSINFO
+            struct system_config *sc   = 0;
+            uint8_t              *data = 0;
+            unsigned long         size = 0;
+
+            if (sysinfo_init(&sc) != 0) {
+                goto EXIT;
+            }
+
+            if (sysinfo_get_value(sc, SYSINFO_KEY_PRODUCT, &data, &size) != 0) {
+                goto EXIT;
+            }
+
+            for (unsigned long k=0; k < size; k++) {
+                /* Values can contain non-ascii data -> escape those */
+                int c = data[k];
+                if (c < 32 || c > 126)
+                    continue;
+                productId.append(QChar(c));
+            }
+
+            EXIT:
+
+            if (data) {
+                free(data), data = 0;
+            }
+            if (sc) {
+                sysinfo_finish(sc), sc = 0;
+            }
+        #endif /* HAVE_SYSINFO */
+
+        return productId;
+    }
+
 private slots:
+
     void initTestCase() {
-        cabc = new MeeGo::QmCABC();
-        QVERIFY(cabc);
+        cabc = 0;
+        QString product = productId();
+        QVERIFY(product.length() > 0);
+
+        if ("RM-680" == product) {
+            cabc = new MeeGo::QmCABC();
+            QVERIFY(cabc);
+        }
     }
 
     void testGet() {
+        if (!cabc)
+            return;
+
         MeeGo::QmCABC::Mode result = cabc->get();
         (void)result;
     }
 
     void testSetCabcOff() {
+        if (!cabc)
+            return;
+
         bool result = cabc->set(MeeGo::QmCABC::Off);
         QVERIFY(result == true);
         MeeGo::QmCABC::Mode mode = cabc->get();
@@ -55,6 +112,9 @@ private slots:
     }
 
     void testSetCabcUi() {
+        if (!cabc)
+            return;
+
         bool result = cabc->set(MeeGo::QmCABC::Ui);
         QVERIFY(result == true);
         MeeGo::QmCABC::Mode mode = cabc->get();
@@ -62,6 +122,9 @@ private slots:
     }
 
     void testSetCabcStillImage() {
+        if (!cabc)
+            return;
+
         bool result = cabc->set(MeeGo::QmCABC::StillImage);
         QVERIFY(result == true);
         MeeGo::QmCABC::Mode mode = cabc->get();
@@ -69,6 +132,9 @@ private slots:
     }
 
     void testSetCabcMovingImage() {
+        if (!cabc)
+            return;
+
         bool result = cabc->set(MeeGo::QmCABC::MovingImage);
         QVERIFY(result == true);
         MeeGo::QmCABC::Mode mode = cabc->get();
@@ -76,7 +142,9 @@ private slots:
     }
 
     void cleanupTestCase() {
-        delete cabc;
+        if (cabc) {
+            delete cabc, cabc = 0;
+        }
     }
 };
 
