@@ -32,21 +32,26 @@ namespace MeeGo {
 
 
 QmLocks::QmLocks(QObject *parent)
-             : QObject(parent){
+             : QObject(parent) {
     MEEGO_INITIALIZE(QmLocks);
     connect(priv, SIGNAL(stateChanged(MeeGo::QmLocks::Lock, MeeGo::QmLocks::State)), this, SIGNAL(stateChanged(MeeGo::QmLocks::Lock,MeeGo::QmLocks::State)));
 }
 
-QmLocks::~QmLocks(){
+QmLocks::~QmLocks() {
     MEEGO_UNINITIALIZE(QmLocks);
 }
 
-QmLocks::State QmLocks::getState(QmLocks::Lock what) const{
+QmLocks::State QmLocks::getState(QmLocks::Lock what) const {
 
-    return reinterpret_cast<QmLocksPrivate*>(priv_ptr)->getState(what);
+    return reinterpret_cast<QmLocksPrivate*>(priv_ptr)->getState(what, false);
 }
 
-bool QmLocks::setState(QmLocks::Lock what, QmLocks::State how){
+QmLocks::State QmLocks::getStateAsync(QmLocks::Lock what) const {
+
+    return reinterpret_cast<QmLocksPrivate*>(priv_ptr)->getState(what, true);
+}
+
+bool QmLocks::setState(QmLocks::Lock what, QmLocks::State how) {
     MEEGO_PRIVATE(QmLocks)
     return priv->setState(what, how);
 }

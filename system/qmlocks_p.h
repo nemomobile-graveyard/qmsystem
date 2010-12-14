@@ -30,7 +30,11 @@
 #define QMLOCKS_P_H
 
 #include "qmlocks.h"
-#include "qmipcinterface.h"
+
+#include <QDBusInterface>
+#include <QDBusPendingCall>
+#include <QDBusReply>
+#include <QDebug>
 
 #if HAVE_MCE
     #include "mce/dbus-names.h"
@@ -49,219 +53,211 @@ namespace MeeGo
         MEEGO_DECLARE_PUBLIC(QmLocks)
 
     public:
-        QmLocksPrivate(){
-#if HAVE_MCE
-            signalIf = new QmIPCInterface(
-                          MCE_SERVICE,
-                          MCE_SIGNAL_PATH,
-                          MCE_SIGNAL_IF);
-            requestIf = new QmIPCInterface(
-                      MCE_SERVICE,
-                      MCE_REQUEST_PATH,
-                      MCE_REQUEST_IF);
-#endif
+        QmLocksPrivate() :
+            mceRequestIf(0),
+            devlockIf(0) {
+            #if HAVE_MCE
+                mceRequestIf = new QDBusInterface(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, QDBusConnection::systemBus());
 
-#if HAVE_DEVICELOCK
-            DeviceLock::DeviceLockEnums::registerLockEnumerations();
-#endif
-            devlockIf = NULL;
-#if HAVE_DEVICELOCK
-            QDBusConnection::systemBus().connect(DEVLOCK_SERVICE,
-                                                 DEVLOCK_PATH,
-                                                 DEVLOCK_SERVICE,
-                                                 DEVLOCK_SIGNAL,
-                                                 this,
-                                                 SLOT(deviceStateChanged(int,int)));
-#endif
+                if (!mceRequestIf->isValid()) {
+                    qDebug() << "mce D-Bus interface not valid";
+                }
 
-#if HAVE_MCE
-            signalIf->connect(MCE_TKLOCK_MODE_SIG, this, SLOT(touchAndKeyboardStateChanged(const QString&)));
-#endif
+                if (!QDBusConnection::systemBus().connect(MCE_SERVICE,
+                                                          MCE_SIGNAL_PATH,
+                                                          MCE_SIGNAL_IF,
+                                                          MCE_TKLOCK_MODE_SIG,
+                                                          this,
+                                                          SLOT(touchAndKeyboardStateChanged(const QString&)))) {
+                    qDebug() << "Unable to connect mce signal interface";
+                }
+            #endif
+
+            #if HAVE_DEVICELOCK
+                 DeviceLock::DeviceLockEnums::registerLockEnumerations();
+                 devlockIf = new QDBusInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE, QDBusConnection::systemBus());
+
+                 if (!devlockIf->isValid()) {
+                     qDebug() << "devicelock D-Bus interface not valid";
+                 }
+
+                 if (!QDBusConnection::systemBus().connect(DEVLOCK_SERVICE,
+                                                           DEVLOCK_PATH,
+                                                           DEVLOCK_SERVICE,
+                                                           DEVLOCK_SIGNAL,
+                                                           this,
+                                                           SLOT(deviceStateChanged(int,int)))) {
+                     qDebug() << "Unable to connect devicelock signal interface";
+                 }
+            #endif
         }
 
-    ~QmLocksPrivate(){
-#if HAVE_MCE
-        delete requestIf;
-        delete signalIf;
-#endif
+        ~QmLocksPrivate() {
+            if (mceRequestIf)
+                delete mceRequestIf, mceRequestIf = 0;
+            if (devlockIf)
+                delete devlockIf, devlockIf = 0;
+        }
 
-#if HAVE_DEVICELOCK
-        delete devlockIf;
-#endif
-    }
-
-    static QmLocks::State stringToState(const QString &state) {
-#if HAVE_MCE
-        if (state == MCE_TK_LOCKED)
-        {
-            return QmLocks::Locked;
-        } else if (state == MCE_TK_UNLOCKED)
-        {
-            return QmLocks::Unlocked;
-        } else {
+        static QmLocks::State stringToState(const QString &state) {
+            #if HAVE_MCE
+                if (state == MCE_TK_LOCKED) {
+                    return QmLocks::Locked;
+                } else if (state == MCE_TK_UNLOCKED) {
+                    return QmLocks::Unlocked;
+                }
+            #else
+                Q_UNUSED(state);
+            #endif
             return QmLocks::Unknown;
         }
-#else
-        Q_UNUSED(state);
-        return QmLocks::Unknown;
-#endif
-    }
 
-    static QString stateToString(QmLocks::Lock what, QmLocks::State state) {
-#if HAVE_MCE
-        if (what == QmLocks::TouchAndKeyboard) {
-            if (state == QmLocks::Locked) {
-                return MCE_TK_LOCKED;
-            } else if (state == QmLocks::Unlocked) {
-                return MCE_TK_UNLOCKED;
-            }
-        }
-#else
-    Q_UNUSED(what);
-    Q_UNUSED(state);
-#endif
-        return "";
-    }
-
-#if HAVE_DEVICELOCK
-    static QmLocks::State stateToState(DeviceLock::DeviceLockEnums::LockState state) {
-        switch (state) {
-        case DeviceLock::DeviceLockEnums::Unlocked:
-            return QmLocks::Unlocked;
-        case DeviceLock::DeviceLockEnums::Locked:
-            return QmLocks::Locked;
-        default:
-            return QmLocks::Unknown;
-        }
-    }
-
-    static DeviceLock::DeviceLockEnums::LockState stateToState(QmLocks::State state) {
-        switch (state) {
-        case QmLocks::Unlocked:
-            return DeviceLock::DeviceLockEnums::Unlocked;
-        case QmLocks::Locked:
-            return DeviceLock::DeviceLockEnums::Locked;
-        default:
-            return DeviceLock::DeviceLockEnums::Undefined;
-        }
-    }
-#endif
-
-    QmLocks::State getState(QmLocks::Lock what) {
-
-        QString state;
-        QList<QVariant> list;
-        switch (what){
-           case QmLocks::Device:
-#if HAVE_DEVICELOCK
-            {
-                QDBusMessage call = QDBusMessage::createMethodCall(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE, DEVLOCK_GET);
-                QList<QVariant> args;
-                args.prepend(DeviceLock::DeviceLockEnums::Device);
-                call.setArguments(args);
-                QDBusMessage ret = QDBusConnection::systemBus().call(call, QDBus::Block, 10*1000);
-                if (ret.type() == QDBusMessage::ReplyMessage) {
-                    list = ret.arguments();
-                }
-                if (!list.isEmpty()) {
-                    bool toIntOk = false;
-                    int val = list[0].toInt(&toIntOk);
-                    if (toIntOk) {
-                        return QmLocksPrivate::stateToState((DeviceLock::DeviceLockEnums::LockState)val);
+        static QString stateToString(QmLocks::Lock what, QmLocks::State state) {
+            #if HAVE_MCE
+                if (what == QmLocks::TouchAndKeyboard) {
+                    if (state == QmLocks::Locked) {
+                        return MCE_TK_LOCKED;
+                    } else if (state == QmLocks::Unlocked) {
+                        return MCE_TK_UNLOCKED;
                     }
                 }
-            }
-#else
-                return QmLocks::Unknown;
-#endif
-                break;
-           case QmLocks::TouchAndKeyboard:
-#if HAVE_MCE
-                list = requestIf->get(MCE_TKLOCK_MODE_GET);
-                if (!list.isEmpty()) {
-                    state = list[0].toString();
-                    if (!state.isEmpty()) {
-                        return QmLocksPrivate::stringToState(state);
-                    }
-                }
-#else
-                return QmLocks::Unknown;
-#endif
-                break;
-           default:
-                return QmLocks::Unknown;
-        }
-
-        return QmLocks::Unknown;
-    }
-
-    bool setState(QmLocks::Lock what, QmLocks::State how){
-
-        switch (what) {
-           case QmLocks::Device:
-#if HAVE_DEVICELOCK
-                {
-                 QList<QVariant> res;
-                    QDBusMessage call = QDBusMessage::createMethodCall(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE, DEVLOCK_SET);
-                    QList<QVariant> args;
-                    args.prepend(DeviceLock::DeviceLockEnums::Device);
-                    args.append(stateToState(how));
-                    call.setArguments(args);
-                    QDBusMessage ret = QDBusConnection::systemBus().call(call, QDBus::Block, 10*1000);
-                    if (ret.type() == QDBusMessage::ReplyMessage) {
-                        res = ret.arguments();
-                    }
-                    if (res.isEmpty() || !res.first().toBool()) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
-#else
-                Q_UNUSED(how);
-                return false;
-#endif
-                break;
-           case QmLocks::TouchAndKeyboard:
-#if HAVE_MCE
-                {
-                    QString str = QmLocksPrivate::stateToString(what, how);
-                    if (str.isEmpty()) {
-                        return false;
-                    }
-                    return requestIf->callSynchronously(MCE_TKLOCK_MODE_CHANGE_REQ, str);
-                }
-#else
+            #else
                 Q_UNUSED(what);
-                return false;
-#endif
-                break;
-           default:
-                return false;
+                Q_UNUSED(state);
+            #endif
+            return "";
         }
-    }
 
-    QmIPCInterface *requestIf;
-    QmIPCInterface *signalIf;
-    QmIPCInterface *devlockIf;
-
-Q_SIGNALS:
-    void stateChanged(MeeGo::QmLocks::Lock what, MeeGo::QmLocks::State how);
-
-private Q_SLOTS:
-
-#if HAVE_DEVICELOCK
-    void deviceStateChanged(int device, int state) {
-        if (device == DeviceLock::DeviceLockEnums::Device) {
-            emit stateChanged(QmLocks::Device, stateToState((DeviceLock::DeviceLockEnums::LockState)state));
+        #if HAVE_DEVICELOCK
+        static QmLocks::State stateToState(DeviceLock::DeviceLockEnums::LockState state) {
+            switch (state) {
+            case DeviceLock::DeviceLockEnums::Unlocked:
+                return QmLocks::Unlocked;
+            case DeviceLock::DeviceLockEnums::Locked:
+                return QmLocks::Locked;
+            default:
+                return QmLocks::Unknown;
+            }
         }
-    }
-#endif
 
-    void touchAndKeyboardStateChanged(const QString& state) {
-        emit stateChanged(QmLocks::TouchAndKeyboard, stringToState(state));
-    }
+        static DeviceLock::DeviceLockEnums::LockState stateToState(QmLocks::State state) {
+            switch (state) {
+            case QmLocks::Unlocked:
+                return DeviceLock::DeviceLockEnums::Unlocked;
+            case QmLocks::Locked:
+                return DeviceLock::DeviceLockEnums::Locked;
+            default:
+                return DeviceLock::DeviceLockEnums::Undefined;
+            }
+        }
+        #endif
 
-};
+        QmLocks::State getState(QmLocks::Lock what, bool async) {
+            QmLocks::State state = QmLocks::Unknown;
+
+            if (what == QmLocks::Device) {
+                #if HAVE_DEVICELOCK
+                    if (async) {
+                        QDBusPendingCall pcall = devlockIf->asyncCall(DEVLOCK_GET, DeviceLock::DeviceLockEnums::Device);
+                        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pcall, this);
+                        if (!QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                                         this, SLOT(didReceiveDeviceLockState(QDBusPendingCallWatcher*)))) {
+                            qDebug() << "Failed to watch pending devicelock call";
+                        }
+                    } else {
+                        QDBusReply<int> reply = devlockIf->call(DEVLOCK_GET, DeviceLock::DeviceLockEnums::Device);
+                        if (reply.isValid()) {
+                            state = QmLocksPrivate::stateToState((DeviceLock::DeviceLockEnums::LockState)reply.value());
+                        } else {
+                            qDebug() << "Failed to query devicelock";
+                        }
+                    }
+                #endif /* HAVE_DEVICELOCK */
+            } else if (what == QmLocks::TouchAndKeyboard) {
+                #if HAVE_MCE
+                    if (async) {
+                        QDBusPendingCall pcall = mceRequestIf->asyncCall(MCE_TKLOCK_MODE_GET);
+                        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pcall, this);
+                        if (!QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                                         this, SLOT(didReceiveTkLockState(QDBusPendingCallWatcher*)))) {
+                            qDebug() << "Failed to watch pending mce call";
+                        }
+                    } else {
+                        QDBusReply<QString> reply = mceRequestIf->call(MCE_TKLOCK_MODE_GET);
+                        if (reply.isValid()) {
+                            state = QmLocksPrivate::stringToState(reply.value());
+                        } else {
+                            qDebug() << "Failed to query mce";
+                        }
+                    }
+                #endif /* HAVE_MCE */
+            }
+            return state;
+        }
+
+        bool setState(QmLocks::Lock what, QmLocks::State how) {
+            bool success = false;
+            if (what == QmLocks::Device) {
+                #if HAVE_DEVICELOCK
+                    QDBusMessage reply = devlockIf->call(DEVLOCK_SET, DeviceLock::DeviceLockEnums::Device, stateToState(how));
+                    success = (reply.type() == QDBusMessage::ReplyMessage);
+                #else
+                    Q_UNUSED(how);
+                #endif /* HAVE_DEVICELOCK */
+            } else if (what == QmLocks::TouchAndKeyboard) {
+                #if HAVE_MCE
+                    QDBusMessage reply = mceRequestIf->call(MCE_TKLOCK_MODE_CHANGE_REQ, QmLocksPrivate::stateToString(what, how));
+                    success = (reply.type() == QDBusMessage::ReplyMessage);
+                #else
+                    Q_UNUSED(what);
+                #endif /* HAVE_MCE */
+            }
+            return success;
+        }
+
+        QDBusInterface *mceRequestIf;
+        QDBusInterface *devlockIf;
+
+    Q_SIGNALS:
+        void stateChanged(MeeGo::QmLocks::Lock what, MeeGo::QmLocks::State how);
+
+    private Q_SLOTS:
+
+        void didReceiveDeviceLockState(QDBusPendingCallWatcher *call) {
+            #if HAVE_DEVICELOCK
+                QDBusPendingReply<int> reply = *call;
+                if (reply.isError()) {
+                    return;
+                }
+                int state = reply.argumentAt<0>();
+                emit stateChanged(QmLocks::Device, stateToState((DeviceLock::DeviceLockEnums::LockState)state));
+            #endif
+            call->deleteLater();
+        }
+
+        void didReceiveTkLockState(QDBusPendingCallWatcher *call) {
+            #if HAVE_MCE
+                QDBusPendingReply<QString> reply = *call;
+                if (reply.isError()) {
+                    return;
+                }
+                QString state = reply.argumentAt<0>();
+                emit stateChanged(QmLocks::TouchAndKeyboard, stringToState(state));
+            #endif
+            call->deleteLater();
+        }
+
+        #if HAVE_DEVICELOCK
+        void deviceStateChanged(int device, int state) {
+            if (device == DeviceLock::DeviceLockEnums::Device) {
+                emit stateChanged(QmLocks::Device, stateToState((DeviceLock::DeviceLockEnums::LockState)state));
+            }
+        }
+        #endif
+
+        void touchAndKeyboardStateChanged(const QString& state) {
+            emit stateChanged(QmLocks::TouchAndKeyboard, stringToState(state));
+        }
+    };
 }
 #endif // QMLOCKS_P_H

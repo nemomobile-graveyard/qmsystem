@@ -73,12 +73,24 @@ public:
     ~QmLocks();
 
     /**
-     * Get the current lock state.
+     * Gets the current lock state. Note: the method blocks until
+     * the lock state has been retrieved. For a non-blocking query, please
+     * see getStateAsync().
+     *
      * @param what Which lock state to request.
      * @return Current lock state for @c what.
      */
     QmLocks::State getState(QmLocks::Lock what) const;
 
+    /**
+     * Gets the current lock state. The method is non-blocking, so it
+     * initially returns the lock state QmLocks::Unknown. When the lock state
+     * has been retrieved, the stateChanged signal is emitted.
+     *
+     * @param what Which lock state to request.
+     * @return Current lock state for @c what.
+     */
+    QmLocks::State getStateAsync(QmLocks::Lock what) const;
 
     /**
      * Set current lock state. Note that this interface does not allow
