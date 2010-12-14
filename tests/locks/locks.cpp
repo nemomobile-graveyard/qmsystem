@@ -75,27 +75,6 @@ private slots:
         (void)result;
     }
 
-/* Device lock tests are now in manual_locks
-    void testSetDeviceStateLocked() {
-        signalDump.signal = false;
-        bool result = locks->setState(MeeGo::QmLocks::Device, MeeGo::QmLocks::Locked);
-        QVERIFY(result == true);
-        QTest::qWait(2000);
-        QVERIFY(signalDump.signal);
-        QVERIFY(signalDump.lock == MeeGo::QmLocks::Device);
-        QVERIFY(signalDump.state == MeeGo::QmLocks::Locked);
-    }
-
-    void testSetDeviceStateUnlocked() {
-        signalDump.signal = false;
-        bool result = locks->setState(MeeGo::QmLocks::Device, MeeGo::QmLocks::Unlocked);
-        QVERIFY(result == true);
-        QTest::qWait(2000);
-        QVERIFY(signalDump.signal);
-        QVERIFY(signalDump.lock == MeeGo::QmLocks::Device);
-        QVERIFY(signalDump.state == MeeGo::QmLocks::Unlocked);
-    }
-*/
     void testSetTouchAndKeyboardStateLocked() {
         signalDump.signal = false;
         bool result = locks->setState(MeeGo::QmLocks::TouchAndKeyboard, MeeGo::QmLocks::Locked);
@@ -117,14 +96,7 @@ private slots:
         QVERIFY(signalDump.lock == MeeGo::QmLocks::TouchAndKeyboard);
         QVERIFY(signalDump.state == MeeGo::QmLocks::Unlocked);
     }
-#if 0
-    void testDeviceAutolockTime() {
 
-        QVERIFY(locks->setDeviceAutolockTime(10));
-        QCOMPARE(locks->getDeviceAutolockTime(), 10);
-
-    }
-#endif
     void cleanupTestCase() {
         delete locks;
     }
