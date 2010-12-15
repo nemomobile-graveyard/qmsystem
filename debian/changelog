@@ -10,7 +10,7 @@ qmsystem2 (0.0.11) unstable; urgency=low
    * Made mce dependency optional
    * Test each cabc mode separately
    * Fix cabc test
-   * Fixes NB#211192 - QmLocks makes blocking dbus calls
+   * Fixes: NB#211192 - QmLocks makes blocking dbus calls
 
    [Tapio Rantala]
    * Proper package config file format
