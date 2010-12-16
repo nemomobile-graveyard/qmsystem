@@ -1,5 +1,5 @@
 /*!
- * @file qmipcinterface.h
+ * @file qmipcinterface_p.h
  * @brief Contains QmIPCInterface and QmIPCInterfaceInfo.
 
    <p>

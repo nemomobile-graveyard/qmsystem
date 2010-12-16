@@ -26,7 +26,7 @@
  */
 #include "qmled.h"
 
-#include "qmipcinterface.h"
+#include "qmipcinterface_p.h"
 
 #if HAVE_MCE
     #include <mce/dbus-names.h>

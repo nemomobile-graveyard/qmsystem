@@ -29,7 +29,7 @@
 #define QMCALLSTATE_P_H
 
 #include "qmcallstate.h"
-#include "qmipcinterface.h"
+#include "qmipcinterface_p.h"
 
 #if HAVE_MCE
     #include "mce/dbus-names.h"

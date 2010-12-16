@@ -26,7 +26,7 @@
  */
 #include "qmactivity.h"
 #include "qmactivity_p.h"
-#include "qmipcinterface.h"
+#include "qmipcinterface_p.h"
 
 #include <QDebug>
 

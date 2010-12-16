@@ -23,7 +23,7 @@
    License along with SystemSW QtAPI.  If not, see <http://www.gnu.org/licenses/>.
    </p>
  */
-#include "qmipcinterface.h"
+#include "qmipcinterface_p.h"
 #include <QDBusPendingCall>
 
 namespace MeeGo {

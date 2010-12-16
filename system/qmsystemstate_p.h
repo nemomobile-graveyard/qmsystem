@@ -28,7 +28,7 @@
 #define QMSYSTEMSTATE_P_H
 
 #include "qmsystemstate.h"
-#include "qmipcinterface.h"
+#include "qmipcinterface_p.h"
 #include "dsme/dsme_dbus_if.h"
 #include "msystemdbus_p.h"
 

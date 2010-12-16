@@ -28,7 +28,7 @@
 #define QMUSBMODE_P_H
 
 #include "qmusbmode.h"
-#include "qmipcinterface.h"
+#include "qmipcinterface_p.h"
 #include <gconf/gconf-client.h>
 #include <QDebug>
 

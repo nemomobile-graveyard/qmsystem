@@ -29,7 +29,7 @@
 
 #include "qmthermal.h"
 
-#include "qmipcinterface.h"
+#include "qmipcinterface_p.h"
 
 #define SYS_THERMALMANAGER_SERVICE        "com.nokia.thermalmanager"
 #define SYS_THERMALMANAGER_INTERFACE      "com.nokia.thermalmanager"

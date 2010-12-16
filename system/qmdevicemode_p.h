@@ -28,7 +28,7 @@
 #define QMDEVICEMODE_P_H
 
 #include "qmdevicemode.h"
-#include "qmipcinterface.h"
+#include "qmipcinterface_p.h"
 
 #if HAVE_MCE
     #include "mce/dbus-names.h"

@@ -59,7 +59,7 @@ HEADERS += mainpage.h \
     qmdisplaystate_p.h \
     qmheartbeat.h \
     qmheartbeat_p.h \
-    qmipcinterface.h \
+    qmipcinterface_p.h \
     qmkeys.h \
     qmkeys_p.h \
     qmled.h \

@@ -12,6 +12,7 @@ qmsystem2 (0.0.11) unstable; urgency=low
    * Fix cabc test
    * Fixes: NB#211192 - QmLocks makes blocking dbus calls
    * Remove sysfs-watcher
+   * Rename qmipcinterface.h => qmipcinterface_p.h
 
    [Tapio Rantala]
    * Proper package config file format
