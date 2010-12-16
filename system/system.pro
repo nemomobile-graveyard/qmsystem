@@ -86,7 +86,6 @@ HEADERS += mainpage.h \
     qmusbmode_p.h \
     qmwatchdog.h \
     qmwatchdog_p.h \
-    sysfs-watcher.h \
     system_global.h \
     qmtime_p.h
 SOURCES += qmactivity.cpp \
@@ -108,7 +107,6 @@ SOURCES += qmactivity.cpp \
     qmthermal.cpp \
     qmproximity.cpp \
     qmtime.cpp \
-    sysfs-watcher.cpp \
     qmsensor.cpp \
     qmrotation.cpp \
     qmmagnetometer.cpp \
