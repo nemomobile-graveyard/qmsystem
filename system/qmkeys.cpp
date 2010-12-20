@@ -122,8 +122,10 @@ namespace MeeGo
         return ev;
     }
     QmKeys::State QmKeysPrivate::getKeyState(QmKeys::Key key) {
+        QmKeys::State state = QmKeys::KeyInvalid;
         if (keyMap.find(key) != keyMap.end()) {
-            return keyMap.value(key);
+            state = keyMap.value(key);
+            goto EXIT;
         }
         if (key == QmKeys::Camera) {
             struct input_event query;
@@ -133,25 +135,25 @@ namespace MeeGo
             query.code = KEY_CAMERA;
             int camera = getKeyValue(query);
             if (focus == 0 && camera == 0) {
-                return QmKeys::KeyUp;
+                state = QmKeys::KeyUp;
             } else if (focus == 1 && camera == 0) {
-                return QmKeys::KeyHalfDown;
+                state = QmKeys::KeyHalfDown;
             } else if (focus == 1 && camera == 1) {
-                return QmKeys::KeyDown;
+                state = QmKeys::KeyDown;
             } else if (focus == 0 && camera == 1){
-                return QmKeys::KeyDown;
+                state = QmKeys::KeyDown;
             }
         } else {
             struct input_event query = keyToEvent(key);
             int value = getKeyValue(query);
             if (value == 0) {
-                return QmKeys::KeyUp;
+                state = QmKeys::KeyUp;
             } else if (value == 1) {
-                return QmKeys::KeyDown;
-            } else {
-                return QmKeys::KeyInvalid;
+                state = QmKeys::KeyDown;
             }
         }
+        EXIT:
+        return state;
     }
 
     int QmKeysPrivate::getKeyValue(const struct input_event &query) {
