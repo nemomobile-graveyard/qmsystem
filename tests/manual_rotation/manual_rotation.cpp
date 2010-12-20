@@ -83,7 +83,7 @@ private:
             QmRotationReading reading;
             int xSum = 0;
             int ySum = 0;
-            int yTmp;
+            int yTmp = 0;
             foreach(reading, valueList) {
                 xSum += abs(x - reading.x);
 
