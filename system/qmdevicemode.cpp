@@ -78,24 +78,21 @@ namespace MeeGo {
     }
 
     QmDeviceMode::DeviceMode QmDeviceMode::getMode() const{
+        QmDeviceMode::DeviceMode deviceMode = Error;
 #if HAVE_MCE
         MEEGO_PRIVATE_CONST(QmDeviceMode)
+
         QList<QVariant> list = priv->requestIf->get(MCE_RADIO_STATES_GET);
-        unsigned int state = 0;
 
         if (!list.isEmpty()) {
-            state = list[0].toInt();
-        } else return Error;
-        if (state != 0) {
-            return Normal;
-        } else if (state == 0) {
-            return Flight;
-        } else {
-            return Error;
+            if (list[0].toInt() != 0) {
+                deviceMode = Normal;
+            } else {
+                deviceMode = Flight;
+            }
         }
-#else
-        return Error;
 #endif
+        return deviceMode;
     }
 
     QmDeviceMode::PSMState QmDeviceMode::getPSMState() const {
