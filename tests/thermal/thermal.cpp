@@ -88,7 +88,7 @@ int dsme_adjust_thermal_limit_values(const char* filename, MeeGo::QmThermal::The
 
 
     buf=(char*)malloc(60*sizeof(char));
-    memset(buf, 60, 0);
+    memset(buf, 0, sizeof(buf));
     /* modify file input */
     switch (thermal_state){
     case MeeGo::QmThermal::Normal:
