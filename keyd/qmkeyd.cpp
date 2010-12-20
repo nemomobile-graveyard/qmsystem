@@ -98,6 +98,9 @@ QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv), server(0), 
     if (!connect(inputNotifier, SIGNAL(activated(int)), this, SLOT(detectBT(int)))) {
         failStart("Failed to connect the inotify activated signal\n");
     }
+
+    /* Make sure btfname is a null-terminated string */
+    *btfname = '\0';
 }
 
 QmKeyd::~QmKeyd()
