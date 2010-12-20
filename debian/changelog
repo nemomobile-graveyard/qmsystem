@@ -1,3 +1,10 @@
+qmsystem2 (1.0.1) unstable; urgency=low
+
+   [Matias Muhonen]
+   * Fix warnings from the static analysis tool
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Mon, 20 Dec 2010 12:19:41 +0200
+
 qmsystem2 (1.0.0) unstable; urgency=low
 
    [Matias Muhonen]
