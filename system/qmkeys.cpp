@@ -95,6 +95,8 @@ namespace MeeGo
 
     struct input_event QmKeysPrivate::keyToEvent(QmKeys::Key key) {
         struct input_event ev;
+        memset(&ev, 0, sizeof(struct input_event));
+
         switch (key) {
         case QmKeys::KeyboardSlider:
             ev.type = EV_SW;
