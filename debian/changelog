@@ -3,6 +3,9 @@ qmsystem2 (1.0.0) unstable; urgency=low
    [Matias Muhonen]
    * Fix missing return in QmKeysPrivate::getKeyState
 
+   [Tapio Rantala]
+   * Releasing for MeeGo
+
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Mon, 20 Dec 2010 09:42:40 +0200
 
 qmsystem2 (0.0.11) unstable; urgency=low
