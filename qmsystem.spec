@@ -1,11 +1,12 @@
 Name:     qmsystem
-Version:  0.0.11
+Version:  1.0.0
 Release:  1
 Summary:  QmSystem library
-Group:    System/Libraries
+Group:    System/System Control
 License:  LGPLv2
 URL:      http://meego.gitorious.org/meego-middleware/qmsystem
 Source0:  %{name}-%{version}.tar.bz2
+Patch0:   %{name}-1.0.0-tests-directories.patch
 
 BuildRequires: pkgconfig(dbus-1)
 BuildRequires: pkgconfig(dsme)
@@ -20,6 +21,7 @@ BuildRequires: pkgconfig(timed) >= 1.3.20
 #BuildRequires: devicelock-devel >= 0.2.11
 BuildRequires: doxygen
 BuildRequires: fdupes
+BuildRequires: graphviz
 
 Requires: sensorfw >= 0.6.12
 Requires: timed >= 1.3.21
@@ -53,6 +55,7 @@ Requires: testrunner-lite
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %qmake
@@ -68,7 +71,7 @@ make
 
 %files
 %defattr(-,root,root,-)
-%doc debian/changelog debian/copyright
+%doc debian/copyright
 %{_libdir}/libqmsystem2.so.*
 %{_sbindir}/qmkeyd2
 
@@ -82,11 +85,11 @@ make
 
 %files doc
 %defattr(-,root,root,-)
-%doc debian/copyright
+%doc debian/changelog debian/copyright
 %{_docdir}/qmsystem2/html/*
 
 %files tests
 %defattr(-,root,root,-)
 %doc debian/copyright
 %{_bindir}/*-test
-%{_datadir}/qmsystem2-api-fast-tests/*
+%{_datadir}/%{name}-tests/tests.xml
