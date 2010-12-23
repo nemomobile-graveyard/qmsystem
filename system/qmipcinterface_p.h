@@ -1,6 +1,6 @@
 /*!
  * @file qmipcinterface_p.h
- * @brief Contains QmIPCInterface and QmIPCInterfaceInfo.
+ * @brief Contains QmIPCInterface.
 
    <p>
    @copyright (C) 2009-2010 Nokia Corporation
@@ -11,6 +11,7 @@
    @author Raimo Vuonnala <raimo.vuonnala@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Timo Rongas <ext-timo.rongas.nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    @scope Private
 
@@ -29,51 +30,28 @@
    License along with SystemSW QtAPI.  If not, see <http://www.gnu.org/licenses/>.
    </p>
  */
-#ifndef QMIPCINTERFACE_H
-#define QMIPCINTERFACE_H
+#ifndef QMIPCINTERFACE_P_H
+#define QMIPCINTERFACE_P_H
 
 #include "system_global.h"
 
-#include <QtDBus/qdbusconnection.h>
-#include <QtDBus/qdbusinterface.h>
-#include <QtCore/qstring.h>
-#include <QtCore/qlist.h>
-#include <QtCore/qvariant.h>
-
-class QDBusConnection;
+#include <QDBusAbstractInterface>
 
 namespace MeeGo {
 
-class QmIPCInterfaceInfo
-{
-public:
-    QmIPCInterfaceInfo(const char* service,
-                       const char* path,
-                       const char* interface){
-        mService = QString(service);
-        mPath = QString(path);
-        mInterface = QString(interface);
-    }
-
-    const QString service() const { return mService; };
-    const QString path() const { return mPath; };
-    const QString interface() const { return mInterface; };
-
-private:
-    QString mService,
-            mPath,
-            mInterface;
-};
-
-class MEEGO_SYSTEM_EXPORT QmIPCInterface : protected QDBusInterface
+/*
+ * Note: QDBusAbstractInterface is used instead of QDBusInterface for performance reasons --
+ * QDBusInterface uses blocking D-Bus call in constructor (http://bugreports.qt.nokia.com/browse/QTBUG-14485)
+ */
+class MEEGO_SYSTEM_EXPORT QmIPCInterface : protected QDBusAbstractInterface
 {
     Q_OBJECT
 
 public:
-    QmIPCInterface(const QmIPCInterfaceInfo* ifInfo);
     QmIPCInterface(const char* service,
                    const char* path,
-                   const char* interface);
+                   const char* interface,
+                   QObject *parent = 0);
     virtual ~QmIPCInterface();
 
     bool callSynchronously(const QString& method,
@@ -90,4 +68,4 @@ public:
 
 } // MeeGo namespace
 
-#endif // QMIPCINTERFACE_H
+#endif // QMIPCINTERFACE_P_H

@@ -7,6 +7,7 @@
 
    @author Antonio Aloisio <antonio.aloisio@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    This file is part of SystemSW QtAPI.
 
@@ -28,21 +29,15 @@
 
 namespace MeeGo {
 
-QmIPCInterface::QmIPCInterface(const QmIPCInterfaceInfo* ifInfo)
-              : QDBusInterface(ifInfo->service(),
-                               ifInfo->path(),
-                               ifInfo->interface(),
-                               QDBusConnection::systemBus()){
-
-}
-
 QmIPCInterface::QmIPCInterface(const char* service,
                                const char* path,
-                               const char* interface)
-              : QDBusInterface(service,
-                               path,
-                               interface,
-                               QDBusConnection::systemBus()){
+                               const char* interface,
+                               QObject *parent)
+              :  QDBusAbstractInterface(service,
+                                        path,
+                                        interface,
+                                        QDBusConnection::systemBus(),
+                                        parent) {
 }
 
 QmIPCInterface::~QmIPCInterface(){
