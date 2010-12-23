@@ -3,6 +3,7 @@ qmsystem2 (1.0.1) unstable; urgency=low
    [Matias Muhonen]
    * Fix warnings from the static analysis tool
    * Optimize QmIPCInterface performance by using QDBusAbstractInterface instead of QDBusInterface
+   * Fixes: NB#214660 - QmSystem uses QDBusInterface, potentially causing serious performance issues.
 
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Thu, 23 Dec 2010 12:23:17 +0200
 

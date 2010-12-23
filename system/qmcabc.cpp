@@ -25,7 +25,6 @@
    License along with SystemSW QtAPI.  If not, see <http://www.gnu.org/licenses/>.
    </p>
  */
-#include <QDBusInterface>
 #include <QDBusReply>
 #include <QDebug>
 
@@ -35,6 +34,8 @@
 #endif
 
 #include "qmcabc.h"
+
+#include "qmipcinterface_p.h"
 
 #if HAVE_MCE
 static const QString cabc_dbus_names[] =
@@ -61,7 +62,7 @@ namespace MeeGo
     bool QmCABC::set(Mode mode)
     {
 #if HAVE_MCE
-        QDBusInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, QDBusConnection::systemBus());
+        QmIPCInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
         QDBusReply<QString> reply = cabc.call(MCE_CABC_MODE_REQ, cabc_dbus_names[mode]);
         if (!reply.isValid())
             qDebug() << "Setting mode "<< mode <<" (" << cabc_dbus_names[mode] << "): "<<"reply.value()="<<reply.value()<<":"<< reply.error().message();
@@ -74,7 +75,7 @@ namespace MeeGo
     QmCABC::Mode QmCABC::get() const
     {
 #if HAVE_MCE
-        QDBusInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, QDBusConnection::systemBus());
+        QmIPCInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
         QDBusReply<QString> reply = cabc.call(MCE_CABC_MODE_GET);
         if (reply.isValid()) {
             int mode = find_cabc_mode_by_dbus_name(reply.value());

@@ -43,7 +43,7 @@ namespace MeeGo {
  * Note: QDBusAbstractInterface is used instead of QDBusInterface for performance reasons --
  * QDBusInterface uses blocking D-Bus call in constructor (http://bugreports.qt.nokia.com/browse/QTBUG-14485)
  */
-class MEEGO_SYSTEM_EXPORT QmIPCInterface : protected QDBusAbstractInterface
+class MEEGO_SYSTEM_EXPORT QmIPCInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
 

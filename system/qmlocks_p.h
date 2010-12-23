@@ -45,6 +45,8 @@
     #include "devicelock/devicelock.h"
 #endif
 
+#include "qmipcinterface_p.h"
+
 namespace MeeGo
 {
     class QmLocksPrivate : public QObject
@@ -57,7 +59,7 @@ namespace MeeGo
             mceRequestIf(0),
             devlockIf(0) {
             #if HAVE_MCE
-                mceRequestIf = new QDBusInterface(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, QDBusConnection::systemBus());
+                mceRequestIf = new QmIPCInterface(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
 
                 if (!mceRequestIf->isValid()) {
                     qDebug() << "mce D-Bus interface not valid";
@@ -75,7 +77,7 @@ namespace MeeGo
 
             #if HAVE_DEVICELOCK
                  DeviceLock::DeviceLockEnums::registerLockEnumerations();
-                 devlockIf = new QDBusInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE, QDBusConnection::systemBus());
+                 devlockIf = new QmIPCInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE);
 
                  if (!devlockIf->isValid()) {
                      qDebug() << "devicelock D-Bus interface not valid";
@@ -215,8 +217,8 @@ namespace MeeGo
             return success;
         }
 
-        QDBusInterface *mceRequestIf;
-        QDBusInterface *devlockIf;
+        QmIPCInterface *mceRequestIf;
+        QmIPCInterface *devlockIf;
 
     Q_SIGNALS:
         void stateChanged(MeeGo::QmLocks::Lock what, MeeGo::QmLocks::State how);
