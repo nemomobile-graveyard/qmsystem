@@ -53,18 +53,18 @@ public:
 
     /**
      * Activate pattern in device LED.
-     * @credential mce::LEDControl Resource token required to activate the patter.
+     * @credential mce::LEDControl Resource token required to activate the pattern.
      * @param pattern Pattern to activate.
-     * @return True if activation was requested, false otherwise.
+     * @return False if LED functionality is not available or cannot be set.
      * @todo Add description of strings for patterns.
      */
     bool activate(const QString &pattern);
 
     /**
      * Deactivate pattern in device LED.
-     * @credential mce::LEDControl Resource token required to deactivate the patter.
+     * @credential mce::LEDControl Resource token required to deactivate the pattern.
      * @param pattern Pattern to deactivate.
-     * @return True if deactivation was requested, false otherwise.
+     * @return False if LED functionality is not available or cannot be set.
      * @todo Add description of string for patterns.
      */
     bool deactivate(const QString &pattern);
@@ -72,14 +72,14 @@ public:
     /**
      * Enable device LED.
      * @credential mce::LEDControl Resource token required to enable LED.
-     * @return True if LED enable was requested, false otherwise.
+     * @return False if LED functionality is not available or cannot be set.
      */
     bool enable(void);
 
     /**
      * Disable device LED.
      * @credential mce::LEDControl Resource token required to disable LED.
-     * @return True if LED disable was requested, false otherwise.
+     * @return False if LED functionality is not available or cannot be set.
      */
     bool disable(void);
 
