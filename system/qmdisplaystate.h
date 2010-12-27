@@ -87,13 +87,13 @@ public:
     /*!
      * @brief Request not to blank the display. Must be repeated every 60 seconds to renew request.
      * Also prevents suspending.
-     * @return True if a blanking pause was requested, false otherwise.
+     * @return False if a blanking pause could not be requested.
      */
     bool setBlankingPause(void);
 
     /*!
      * @brief Cancels an earlier setBlankingPause() call.
-     * @return True if a blanking pause cancelation was requested, false otherwise.
+     * @return False if a blanking pause cancellation could not be requested.
      */
     bool cancelBlankingPause(void);
 
