@@ -128,10 +128,8 @@ namespace MeeGo
             if (str.isEmpty()) {
                 return false;
             }
-            /* Setting the USB mode can take several seconds from usb_moded, during the time
-               the USB_MODE_STATE_SET D-Bus call blocks. As we want setMode to return immediately,
-               make an asynchronous D-Bus call. */
-            return requestIf->callAsynchronously(USB_MODE_STATE_SET, str);
+            (void)requestIf->callAsynchronously(USB_MODE_STATE_SET, str);
+            return true;
         }
 
         QmUSBMode::Mode getMode()

@@ -36,6 +36,7 @@
 #include "system_global.h"
 
 #include <QDBusAbstractInterface>
+#include <QDBusPendingCall>
 
 namespace MeeGo {
 
@@ -57,7 +58,7 @@ public:
     bool callSynchronously(const QString& method,
                            const QVariant& arg1 = QVariant(),
                            const QVariant& arg2 = QVariant());
-    bool callAsynchronously(const QString& method,
+    QDBusPendingCall callAsynchronously(const QString& method,
                             const QVariant& arg1 = QVariant(),
                             const QVariant& arg2 = QVariant());
     QList<QVariant> get(const QString& method,

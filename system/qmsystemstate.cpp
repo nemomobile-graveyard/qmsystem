@@ -94,7 +94,8 @@ bool QmSystemState::set(NextState nextState){
             return false;
     }
     QmIPCInterface *requestIf = priv->dsmeRequestIf;
-    return requestIf->callAsynchronously(method);
+    (void)requestIf->callAsynchronously(method);
+    return true;
 }
 
 QmSystemState::RunState QmSystemState::getRunState() {

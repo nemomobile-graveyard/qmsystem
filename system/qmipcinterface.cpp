@@ -25,7 +25,6 @@
    </p>
  */
 #include "qmipcinterface_p.h"
-#include <QDBusPendingCall>
 
 namespace MeeGo {
 
@@ -53,15 +52,10 @@ bool QmIPCInterface::callSynchronously(const QString& method,
     return false;
 }
 
-bool QmIPCInterface::callAsynchronously(const QString& method,
+QDBusPendingCall QmIPCInterface::callAsynchronously(const QString& method,
                                         const QVariant& arg1,
                                         const QVariant& arg2 ) {
-    if (!isValid()) {
-        return false;
-    }
-
-    asyncCall(method, arg1, arg2);
-    return true;
+    return asyncCall(method, arg1, arg2);
 }
 
 QList<QVariant> QmIPCInterface::get(const QString& method,
