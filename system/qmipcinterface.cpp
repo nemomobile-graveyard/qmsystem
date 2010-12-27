@@ -28,6 +28,8 @@
 
 namespace MeeGo {
 
+// Note: QDBusAbstractInterface is used instead of QDBusInterface for performance reasons --
+// QDBusInterface uses blocking D-Bus call in constructor (http://bugreports.qt.nokia.com/browse/QTBUG-14485)
 QmIPCInterface::QmIPCInterface(const char* service,
                                const char* path,
                                const char* interface,
@@ -52,10 +54,12 @@ bool QmIPCInterface::callSynchronously(const QString& method,
     return false;
 }
 
-QDBusPendingCall QmIPCInterface::callAsynchronously(const QString& method,
+void QmIPCInterface::callAsynchronously(const QString& method,
                                         const QVariant& arg1,
                                         const QVariant& arg2 ) {
-    return asyncCall(method, arg1, arg2);
+    // As no feedback is needed on the D-Bus call, calling QDBusAbstractInterface
+    // with QDBus::NoBlock is faster than calling asyncCall() with QDBusPendingCall.
+    (void)call(QDBus::NoBlock, method, arg1, arg2);
 }
 
 QList<QVariant> QmIPCInterface::get(const QString& method,

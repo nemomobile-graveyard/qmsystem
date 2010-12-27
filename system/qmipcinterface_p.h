@@ -36,14 +36,9 @@
 #include "system_global.h"
 
 #include <QDBusAbstractInterface>
-#include <QDBusPendingCall>
 
 namespace MeeGo {
 
-/*
- * Note: QDBusAbstractInterface is used instead of QDBusInterface for performance reasons --
- * QDBusInterface uses blocking D-Bus call in constructor (http://bugreports.qt.nokia.com/browse/QTBUG-14485)
- */
 class MEEGO_SYSTEM_EXPORT QmIPCInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
@@ -58,12 +53,18 @@ public:
     bool callSynchronously(const QString& method,
                            const QVariant& arg1 = QVariant(),
                            const QVariant& arg2 = QVariant());
-    QDBusPendingCall callAsynchronously(const QString& method,
-                            const QVariant& arg1 = QVariant(),
-                            const QVariant& arg2 = QVariant());
     QList<QVariant> get(const QString& method,
                         const QVariant& arg1 = QVariant(),
                         const QVariant& arg2 = QVariant());
+    /*
+     * Makes a non-blocking call. Note: the method does not give feedback
+     * on success. Use the asyncCall method with QDBusPendingCall, if feedback
+     * is needed.
+     */
+    void callAsynchronously(const QString& method,
+                            const QVariant& arg1 = QVariant(),
+                            const QVariant& arg2 = QVariant());
+
     bool connect(const QString & name, QObject * receiver, const char * slot);
 };
 

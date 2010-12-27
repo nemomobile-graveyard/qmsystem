@@ -128,7 +128,7 @@ namespace MeeGo
             if (str.isEmpty()) {
                 return false;
             }
-            (void)requestIf->callAsynchronously(USB_MODE_STATE_SET, str);
+            requestIf->callAsynchronously(USB_MODE_STATE_SET, str);
             return true;
         }
 
