@@ -61,15 +61,15 @@ namespace MeeGo
 {
     bool QmCABC::set(Mode mode)
     {
+        bool success = false;
 #if HAVE_MCE
-        QmIPCInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
-        QDBusReply<QString> reply = cabc.call(MCE_CABC_MODE_REQ, cabc_dbus_names[mode]);
-        if (!reply.isValid())
-            qDebug() << "Setting mode "<< mode <<" (" << cabc_dbus_names[mode] << "): "<<"reply.value()="<<reply.value()<<":"<< reply.error().message();
-        return reply.isValid() && reply.value()==cabc_dbus_names[mode];
-#else
-        return false;
-#endif /* HAVE_MCE */
+        if (mode > -1 && mode < cabc_mode_num) {
+            QmIPCInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
+            cabc.callAsynchronously(MCE_CABC_MODE_REQ, cabc_dbus_names[mode]);
+            success = true;
+        }
+#endif
+        return success;
     }
 
     QmCABC::Mode QmCABC::get() const

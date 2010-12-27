@@ -201,15 +201,15 @@ namespace MeeGo
             bool success = false;
             if (what == QmLocks::Device) {
                 #if HAVE_DEVICELOCK
-                    QDBusMessage reply = devlockIf->call(DEVLOCK_SET, DeviceLock::DeviceLockEnums::Device, stateToState(how));
-                    success = (reply.type() == QDBusMessage::ReplyMessage);
+                    devlockIf->callAsynchronously(DEVLOCK_SET, DeviceLock::DeviceLockEnums::Device, stateToState(how));
+                    success = true;
                 #else
                     Q_UNUSED(how);
                 #endif /* HAVE_DEVICELOCK */
             } else if (what == QmLocks::TouchAndKeyboard) {
                 #if HAVE_MCE
-                    QDBusMessage reply = mceRequestIf->call(MCE_TKLOCK_MODE_CHANGE_REQ, QmLocksPrivate::stateToString(what, how));
-                    success = (reply.type() == QDBusMessage::ReplyMessage);
+                    mceRequestIf->callAsynchronously(MCE_TKLOCK_MODE_CHANGE_REQ, QmLocksPrivate::stateToString(what, how));
+                    success = true;
                 #else
                     Q_UNUSED(what);
                 #endif /* HAVE_MCE */

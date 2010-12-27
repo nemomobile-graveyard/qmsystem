@@ -75,7 +75,7 @@ public:
      * Set current CABC mode.
      *
      * @param mode CABC  mode.
-     * @return bool TRUE if success, FALSE if failed.
+     * @return bool TRUE if a valid mode was requested, FALSE otherwise.
      */
     bool set(Mode mode);
 };

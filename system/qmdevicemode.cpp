@@ -131,10 +131,8 @@ namespace MeeGo {
             return false;
         }
 
-        QList<QVariant> res = priv->requestIf->get(MCE_RADIO_STATES_CHANGE_REQ, state, mask);
-        if (!res.isEmpty() && !res.at(0).toInt()) {
-            return true;
-        }
+        priv->requestIf->callAsynchronously(MCE_RADIO_STATES_CHANGE_REQ, state, mask);
+        return true;
 #else
     Q_UNUSED(mode);
 #endif

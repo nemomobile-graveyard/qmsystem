@@ -80,20 +80,20 @@ public:
     /*!
      * @brief Set the current display state
      * @param state Display state new set
-     * @return True on success, false otherwise
+     * @return True if a valid display state was requested, false otherwise
      */
     bool set(DisplayState state);
 
     /*!
-     * @brief Request not to blank the display. Must be repeated every 60 seconds to renew request.
+     * @brief Request not to blank the display. Must be repeated every 30 seconds to renew request.
      * Also prevents suspending.
-     * @return True on success, false otherwise.
+     * @return True if a blanking pause was requested, false otherwise.
      */
     bool setBlankingPause(void);
 
     /*!
      * @brief Cancels an earlier setBlankingPause() call.
-     * @return True on success, false otherwise.
+     * @return True if a blanking pause cancelation was requested, false otherwise.
      */
     bool cancelBlankingPause(void);
 

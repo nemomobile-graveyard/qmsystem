@@ -99,7 +99,7 @@ public:
      * @credential mce::TKLockControl Resource token required to set the TK (touchscreen and keyboard) lock state.
      * @param what Which lock state to set
      * @param how Set @c to which state.
-     * @return True on success, false otherwise.
+     * @return True if the lock state was requested, false otherwise.
      */
     bool setState(QmLocks::Lock what, QmLocks::State how);
 

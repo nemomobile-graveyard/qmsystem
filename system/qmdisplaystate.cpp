@@ -86,7 +86,8 @@ bool QmDisplayState::set(QmDisplayState::DisplayState state){
             return false;
     }
 
-    return requestIf->callSynchronously(method);
+    requestIf->callAsynchronously(method);
+    return true;
 #else
     Q_UNUSED(state);
     return false;
@@ -211,7 +212,8 @@ bool QmDisplayState::setBlankingPause(void){
     MEEGO_PRIVATE_CONST(QmDisplayState)
 
     QmIPCInterface *requestIf = priv->requestIf;
-    return requestIf->callSynchronously(MCE_PREVENT_BLANK_REQ);
+    requestIf->callAsynchronously(MCE_PREVENT_BLANK_REQ);
+    return true;
 #else
     return false;
 #endif
@@ -222,7 +224,8 @@ bool QmDisplayState::cancelBlankingPause(void) {
     MEEGO_PRIVATE_CONST(QmDisplayState)
 
     QmIPCInterface *requestIf = priv->requestIf;
-    return requestIf->callSynchronously(MCE_CANCEL_PREVENT_BLANK_REQ);
+    requestIf->callAsynchronously(MCE_CANCEL_PREVENT_BLANK_REQ);
+    return true;
 #else
     return false;
 #endif

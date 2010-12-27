@@ -73,7 +73,8 @@ QmLED::~QmLED(){
 bool QmLED::activate(const QString &pattern){
 #if HAVE_MCE
     MEEGO_PRIVATE(QmLED);
-    return priv->requestIf->callSynchronously(MCE_ACTIVATE_LED_PATTERN, pattern);
+    priv->requestIf->callAsynchronously(MCE_ACTIVATE_LED_PATTERN, pattern);
+    return true;
 #else
     Q_UNUSED(pattern);
     return false;
@@ -83,7 +84,8 @@ bool QmLED::activate(const QString &pattern){
 bool QmLED::deactivate(const QString &pattern){
 #if HAVE_MCE
     MEEGO_PRIVATE(QmLED);
-    return priv->requestIf->callSynchronously(MCE_DEACTIVATE_LED_PATTERN, pattern);
+    priv->requestIf->callAsynchronously(MCE_DEACTIVATE_LED_PATTERN, pattern);
+    return true;
 #else
     Q_UNUSED(pattern);
     return false;
@@ -93,7 +95,8 @@ bool QmLED::deactivate(const QString &pattern){
 bool QmLED::enable(void){
 #if HAVE_MCE
     MEEGO_PRIVATE(QmLED);
-    return priv->requestIf->callSynchronously(MCE_ENABLE_LED);
+    priv->requestIf->callAsynchronously(MCE_ENABLE_LED);
+    return true;
 #else
     return false;
 #endif
@@ -102,7 +105,8 @@ bool QmLED::enable(void){
 bool QmLED::disable(void){
 #if HAVE_MCE
     MEEGO_PRIVATE(QmLED);
-    return priv->requestIf->callSynchronously(MCE_DISABLE_LED);
+    priv->requestIf->callAsynchronously(MCE_DISABLE_LED);
+    return true;
 #else
     return false;
 #endif

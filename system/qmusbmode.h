@@ -90,7 +90,7 @@ namespace MeeGo
          * To know, when the mode changed, the modeChanged signal should be listened to.
          *
          * @param mode the mode to be set. Valid modes are OviSuite, MassStorage and ChargingOnly.
-         * @return true if successful
+         * @return true if a valid mode was requested, false otherwise.
          */
         bool setMode(Mode mode);
 

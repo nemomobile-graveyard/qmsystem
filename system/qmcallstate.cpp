@@ -113,12 +113,8 @@ bool QmCallState::setState(QmCallState::State state, QmCallState::Type type) {
     else
         return false;
 
-    QList<QVariant> res = priv->requestIf->get(MCE_CALL_STATE_CHANGE_REQ, mState, mType);
-    if (!res.isEmpty() && res.at(0).toBool()) {
-        return true;
-    } else {
-        return false;
-    }
+    priv->requestIf->callAsynchronously(MCE_CALL_STATE_CHANGE_REQ, mState, mType);
+    return true;
 #else
     Q_UNUSED(state);
     Q_UNUSED(type);

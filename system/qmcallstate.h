@@ -96,7 +96,7 @@ public:
      * @credential mce::CallStateControl Resource token required to set the call state.
      * @param state State to set.
      * @param type  Type to set.
-     * @return True on success, false otherwise.
+     * @return True if a valid mode was requested, false otherwise.
      */
     bool setState(QmCallState::State state, QmCallState::Type type);
 
