@@ -1,3 +1,11 @@
+qmsystem2 (1.0.2) unstable; urgency=low
+
+   [Matias Muhonen]
+   * Optimize QmIPCInterface::callAsynchronously() performance
+   * Make blocking D-Bus calls non-blocking where it makes sense
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Mon, 27 Dec 2010 12:10:16 +0200
+
 qmsystem2 (1.0.1) unstable; urgency=low
 
    [Matias Muhonen]
