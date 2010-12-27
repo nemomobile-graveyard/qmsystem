@@ -85,7 +85,7 @@ public:
     bool set(DisplayState state);
 
     /*!
-     * @brief Request not to blank the display. Must be repeated every 30 seconds to renew request.
+     * @brief Request not to blank the display. Must be repeated every 60 seconds to renew request.
      * Also prevents suspending.
      * @return True if a blanking pause was requested, false otherwise.
      */
