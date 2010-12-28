@@ -85,7 +85,6 @@ private slots:
     void initTestCase() {
         cabc = 0;
         QString product = productId();
-        QVERIFY(product.length() > 0);
 
         if ("RM-680" == product) {
             cabc = new MeeGo::QmCABC();
@@ -107,6 +106,8 @@ private slots:
 
         bool result = cabc->set(MeeGo::QmCABC::Off);
         QVERIFY(result == true);
+
+        QTest::qWait(500);
         MeeGo::QmCABC::Mode mode = cabc->get();
         QCOMPARE(MeeGo::QmCABC::Off, mode);
     }
@@ -117,6 +118,8 @@ private slots:
 
         bool result = cabc->set(MeeGo::QmCABC::Ui);
         QVERIFY(result == true);
+
+        QTest::qWait(500);
         MeeGo::QmCABC::Mode mode = cabc->get();
         QCOMPARE(MeeGo::QmCABC::Ui, mode);
     }
@@ -127,6 +130,8 @@ private slots:
 
         bool result = cabc->set(MeeGo::QmCABC::StillImage);
         QVERIFY(result == true);
+
+        QTest::qWait(500);
         MeeGo::QmCABC::Mode mode = cabc->get();
         QCOMPARE(MeeGo::QmCABC::StillImage, mode);
     }
@@ -137,6 +142,8 @@ private slots:
 
         bool result = cabc->set(MeeGo::QmCABC::MovingImage);
         QVERIFY(result == true);
+
+        QTest::qWait(500);
         MeeGo::QmCABC::Mode mode = cabc->get();
         QCOMPARE(MeeGo::QmCABC::MovingImage, mode);
     }
