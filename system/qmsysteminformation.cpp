@@ -41,7 +41,7 @@ QmSystemInformationPrivate::QmSystemInformationPrivate()
             sysinfo_finish(systemConfig), systemConfig = 0;
         }
     }
-    #endif
+    #endif /* HAVE_SYSINFO */
 }
 
 QmSystemInformationPrivate::~QmSystemInformationPrivate()
@@ -50,7 +50,7 @@ QmSystemInformationPrivate::~QmSystemInformationPrivate()
     if (systemConfig) {
         sysinfo_finish(systemConfig), systemConfig = 0;
     }
-    #endif
+    #endif /* HAVE_SYSINFO */
 }
 
 QString QmSystemInformationPrivate::valueForKey(const QString &key) const
@@ -76,7 +76,7 @@ QString QmSystemInformationPrivate::valueForKey(const QString &key) const
             continue;
         value += (char)c;
     }
-    #endif
+    #endif /* HAVE_SYSINFO */
     EXIT:
     /* Free allocation done by sysinfo_get_value() */
     if (data) {
