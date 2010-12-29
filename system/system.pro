@@ -29,7 +29,6 @@ linux-g++-maemo {
     message("Compiling with mce support")
     DEFINES += HAVE_MCE
 } else {
-    message("Compiling without devicelock support")
     message("Compiling without usb-moded-dev support")
     message("Compiling without sysinfo support")
     message("Compiling without mce support")

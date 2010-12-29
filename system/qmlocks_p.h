@@ -52,8 +52,7 @@ namespace MeeGo
 
     public:
         QmLocksPrivate() :
-            mceRequestIf(0),
-            devlockIf(0) {
+            mceRequestIf(0) {
             #if HAVE_MCE
                 mceRequestIf = new QmIPCInterface(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
 
@@ -75,8 +74,6 @@ namespace MeeGo
         ~QmLocksPrivate() {
             if (mceRequestIf)
                 delete mceRequestIf, mceRequestIf = 0;
-            if (devlockIf)
-                delete devlockIf, devlockIf = 0;
         }
 
         static QmLocks::State stringToState(const QString &state) {
@@ -112,7 +109,7 @@ namespace MeeGo
             QmLocks::State state = QmLocks::Unknown;
 
             if (what == QmLocks::Device) {
-                qWarning() << "QmLocks::Device is not support. Please use the DeviceLock interface.";
+                qWarning() << "QmLocks::Device is not supported. Please use the DeviceLock interface.";
             } else if (what == QmLocks::TouchAndKeyboard) {
                 #if HAVE_MCE
                     if (async) {
@@ -139,7 +136,7 @@ namespace MeeGo
             bool success = false;
             if (what == QmLocks::Device) {
                 Q_UNUSED(how);
-                qWarning() << "QmLocks::Device is not support. Please use the DeviceLock interface.";
+                qWarning() << "QmLocks::Device is not supported. Please use the DeviceLock interface.";
             } else if (what == QmLocks::TouchAndKeyboard) {
                 #if HAVE_MCE
                     mceRequestIf->callAsynchronously(MCE_TKLOCK_MODE_CHANGE_REQ, QmLocksPrivate::stateToString(what, how));
@@ -152,7 +149,6 @@ namespace MeeGo
         }
 
         QmIPCInterface *mceRequestIf;
-        QmIPCInterface *devlockIf;
 
     Q_SIGNALS:
         void stateChanged(MeeGo::QmLocks::Lock what, MeeGo::QmLocks::State how);
