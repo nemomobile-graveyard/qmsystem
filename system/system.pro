@@ -75,6 +75,8 @@ HEADERS += mainpage.h \
     qmrotation_p.h \
     qmsensor.h \
     qmsensor_p.h \
+    qmsysteminformation.h \
+    qmsysteminformation_p.h \
     qmsystemstate.h \
     qmsystemstate_p.h \
     qmtap.h \
@@ -102,6 +104,7 @@ SOURCES += qmactivity.cpp \
     qmled.cpp \
     qmlocks.cpp \
     qmorientation.cpp \
+    qmsysteminformation.cpp \
     qmsystemstate.cpp \
     qmtap.cpp \
     qmthermal.cpp \
