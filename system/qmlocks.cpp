@@ -26,47 +26,42 @@
    </p>
  */
 #include "qmlocks.h"
-
-#define DEPRECATION_WARNING "You are using a deprecated and non-functional interface. Instead of QmLocks, please use the DeviceLock interface."
-#include <QDebug>
+#include "qmlocks_p.h"
 
 namespace MeeGo {
 
 
 QmLocks::QmLocks(QObject *parent)
              : QObject(parent) {
-    qWarning() << DEPRECATION_WARNING;
+    MEEGO_INITIALIZE(QmLocks);
+    connect(priv, SIGNAL(stateChanged(MeeGo::QmLocks::Lock, MeeGo::QmLocks::State)), this, SIGNAL(stateChanged(MeeGo::QmLocks::Lock,MeeGo::QmLocks::State)));
 }
 
 QmLocks::~QmLocks() {
+    MEEGO_UNINITIALIZE(QmLocks);
 }
 
 QmLocks::State QmLocks::getState(QmLocks::Lock what) const {
-    Q_UNUSED(what);
-    qWarning() << DEPRECATION_WARNING;
-    return QmLocks::Unknown;
+
+    return reinterpret_cast<QmLocksPrivate*>(priv_ptr)->getState(what, false);
 }
 
 QmLocks::State QmLocks::getStateAsync(QmLocks::Lock what) const {
-    Q_UNUSED(what);
-    qWarning() << DEPRECATION_WARNING;
-    return QmLocks::Unknown;
+
+    return reinterpret_cast<QmLocksPrivate*>(priv_ptr)->getState(what, true);
 }
 
 bool QmLocks::setState(QmLocks::Lock what, QmLocks::State how) {
-    Q_UNUSED(how);
-    qWarning() << DEPRECATION_WARNING;
-    return false;
+    MEEGO_PRIVATE(QmLocks)
+    return priv->setState(what, how);
 }
 
 bool QmLocks::setDeviceAutolockTime(int seconds) {
     Q_UNUSED(seconds);
-    qWarning() << DEPRECATION_WARNING;
     return false;
 }
 
 int QmLocks::getDeviceAutolockTime() {
-    qWarning() << DEPRECATION_WARNING;
     return -1;
 }
 

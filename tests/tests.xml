@@ -56,6 +56,10 @@
         <!-- Run test led application -->
         <step expected_result="0">/usr/bin/led-test </step>
       </case>
+      <case name="locks" level="Component" type="Functional" description="QmLocks" timeout="120" subfeature="QT_APIs" requirement="39927">
+        <!-- Run test locks application -->
+        <step expected_result="0">/usr/bin/locks-test </step>
+      </case>
       <case name="thermal" level="Component" type="Functional" description="QmThermal" timeout="240" subfeature="QT_APIs" requirement="39927">
         <!-- Run test thermal application -->
         <step expected_result="0">dsmetool -a; /usr/bin/thermal-test </step>
@@ -199,6 +203,9 @@
       </case>
       <case name="manual-bgcalibration" level="Component" type="Functional" manual="true" description="QmMagnetometer" subfeature="Magnetometer in SensorFW" requirement="39960">
         <step expected_result="0">/usr/bin/manual-bgcalibration-test </step>
+      </case>
+      <case name="manual-locks" level="Component" type="Functional" manual="true" description="devicelock" subfeature="QT_APIs" requirement="39927">
+        <step expected_result="0">/usr/bin/manual-locks-test </step>
       </case>
       <case name="manual-usbmode" level="Component" type="Functional" manual="true" description="usbmode" subfeature="QT_APIs" requirement="39927">
         <step expected_result="0">/usr/bin/manual-usbmode-test </step>
