@@ -25,6 +25,7 @@
 #include "qmsysteminformation.h"
 #include "qmsysteminformation_p.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 
 namespace MeeGo
@@ -55,8 +56,8 @@ QmSystemInformationPrivate::~QmSystemInformationPrivate()
 QString QmSystemInformationPrivate::valueForKey(const QString &key) const
 {
     QString value("");
-    #if HAVE_SYSINFO
     uint8_t *data = 0;
+    #if HAVE_SYSINFO
     unsigned long size = 0;
 
     if (!systemConfig) {
