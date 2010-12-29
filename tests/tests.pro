@@ -12,7 +12,6 @@ SUBDIRS = accelerometer \
           heartbeat \
           hw_keys \
           led \
-          locks \
           orientation \
           proximity \
           rotation \
@@ -34,7 +33,6 @@ SUBDIRS = accelerometer \
           manual_keys \
           manual_led \
           manual_proximity \
-          manual_locks \
           manual_usbmode \
           manual_tap\
           usbmode \

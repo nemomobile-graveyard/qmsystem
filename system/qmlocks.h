@@ -38,12 +38,12 @@ QT_BEGIN_HEADER
 
 namespace MeeGo {
 
-class QmLocksPrivate;
-
 /**
  * @scope Nokia Meego
  *
- * @brief Provides information and actions on device locks.
+ * @brief Provides information and actions on device locks. Please note that this
+ *        interface is deprecated and non-functional so the devicelock interface
+ *        should be used instead.
  */
 class MEEGO_SYSTEM_EXPORT QmLocks : public QObject
 {
@@ -52,14 +52,14 @@ class MEEGO_SYSTEM_EXPORT QmLocks : public QObject
     Q_ENUMS(State)
 
 public:
-    /** Things that can be locked. */
+    /** Things that can be locked. Please use the DeviceLockEnums::LockType enum instead. */
     enum Lock
     {
         Device = 0,       /**< Device lock */
         TouchAndKeyboard  /**< Touchscreen and keyboard lock */
     };
 
-    /** Lock states */
+    /** Lock states. Please use the DeviceLockEnums::LockState enum instead. */
     enum State
     {
         Unlocked = 0,     /**< Unlocked */
@@ -77,6 +77,9 @@ public:
      * the lock state has been retrieved. For a non-blocking query, please
      * see getStateAsync().
      *
+     * Please note that this method is deprecated and the devicelock D-Bus method
+     * DEVLOCK_GET should be used instead.
+     *
      * @param what Which lock state to request.
      * @return Current lock state for @c what.
      */
@@ -87,6 +90,9 @@ public:
      * initially returns the lock state QmLocks::Unknown. When the lock state
      * has been retrieved, the stateChanged signal is emitted.
      *
+     * Please note that this method is deprecated and the devicelock D-Bus method
+     * DEVLOCK_GET should be used instead.
+     *
      * @param what Which lock state to request.
      * @return Current lock state for @c what.
      */
@@ -95,6 +101,10 @@ public:
     /**
      * Set current lock state. Note that this interface does not allow
      * to unlock device.
+     *
+     * Please note that this method is deprecated and the devicelock D-Bus method
+     * DEVLOCK_SET should be used instead.
+     *
      * @credential devicelock::DeviceLockControl Resource token required to set the device lock state.
      * @credential mce::TKLockControl Resource token required to set the TK (touchscreen and keyboard) lock state.
      * @param what Which lock state to set
@@ -114,10 +124,8 @@ public:
      */
     bool setDeviceAutolockTime(int seconds);
 
-
-
     /**
-     * Get device autolock timeout. 
+     * Get device autolock timeout.
      * @state Deprecated
      * @return Timeout in seconds, value 0 means that autolock is not acticated, -1 is error
      */
@@ -126,6 +134,10 @@ public:
 Q_SIGNALS:
     /**
      * Sent when some device lock state has changed.
+     *
+     * Please note that this signal is deprecated
+     * and the signal DEVLOCK_SIGNAL should be used instead.
+     *
      * @param what Which lock state was changed
      * @param how Which state the lock was changed to.
      */
@@ -134,7 +146,6 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QmLocks)
-    MEEGO_DECLARE_PRIVATE(QmLocks)
 };
 
 } // namspace MeeGo
