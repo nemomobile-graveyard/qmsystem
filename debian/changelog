@@ -1,3 +1,10 @@
+qmsystem2 (1.0.3) unstable; urgency=low
+
+   [Matias Muhonen]
+   * Added QmSystemInformation
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Wed, 29 Dec 2010 11:17:08 +0200
+
 qmsystem2 (1.0.2) unstable; urgency=low
 
    [Matias Muhonen]
