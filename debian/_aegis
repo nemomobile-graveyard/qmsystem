@@ -20,20 +20,12 @@
     <for path="/usr/bin/manual-led-test" id="manual-led-test" />
   </request>
   <request>
-    <credential name="devicelock::DeviceLockControl" />
     <credential name="mce::TKLockControl" />
     <for path="/usr/bin/locks-test" id="locks-test" />
   </request>
   <request>
-    <credential name="devicelock::DeviceLockControl" />
     <credential name="mce::TKLockControl" />
     <for path="/usr/bin/displaystate-test" id="displaystate-test" />
-  </request>
-  <request>
-    <credential name="devicelock::DeviceLockControl" />
-    <credential name="devicelock::State_Locked" />
-    <credential name="devicelock::State_Unlocked" />
-    <for path="/usr/bin/manual-locks-test" id="manual-locks-test" />
   </request>
   <request>
     <credential name="dsme::DeviceStateControl" />
