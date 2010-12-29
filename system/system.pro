@@ -18,9 +18,6 @@ PKGCONFIG += dsme dsme_dbus_if gconf-2.0 libiphb sensord
 
 # for compiling on meego
 linux-g++-maemo {
-    message("Compiling with devicelock support")
-    DEFINES += HAVE_DEVICELOCK
-
     message("Compiling with usb-moded-dev support")
     DEFINES += HAVE_USB_MODED_DEV
     PKGCONFIG += usb_moded

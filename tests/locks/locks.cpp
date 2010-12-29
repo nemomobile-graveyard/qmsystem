@@ -65,11 +65,6 @@ private slots:
                         &signalDump, SLOT(stateChanged(MeeGo::QmLocks::Lock, MeeGo::QmLocks::State))));
     }
 
-    void testGetDeviceLockState() {
-        MeeGo::QmLocks::State result = locks->getState(MeeGo::QmLocks::Device);
-        (void)result;
-    }
-
     void testGetTouchAndKeyboardState() {
         MeeGo::QmLocks::State result = locks->getState(MeeGo::QmLocks::TouchAndKeyboard);
         (void)result;

@@ -2,6 +2,7 @@ qmsystem2 (1.0.3) unstable; urgency=low
 
    [Matias Muhonen]
    * Added QmSystemInformation
+   * Fixes: NB#211690 - Circular dependency between qmsystem2, devicelock and qt-mobility
 
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Wed, 29 Dec 2010 11:17:08 +0200
 

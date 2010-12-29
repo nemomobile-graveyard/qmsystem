@@ -55,7 +55,7 @@ public:
     /** Things that can be locked. */
     enum Lock
     {
-        Device = 0,       /**< Device lock */
+        Device = 0,       /**< Device lock. Note: this is deprecated and not supported. Please use the DeviceLock interface. */
         TouchAndKeyboard  /**< Touchscreen and keyboard lock */
     };
 

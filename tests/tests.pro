@@ -34,7 +34,6 @@ SUBDIRS = accelerometer \
           manual_keys \
           manual_led \
           manual_proximity \
-          manual_locks \
           manual_usbmode \
           manual_tap\
           usbmode \

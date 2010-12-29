@@ -41,10 +41,6 @@
     #include "mce/mode-names.h"
 #endif
 
-#if HAVE_DEVICELOCK
-    #include "devicelock/devicelock.h"
-#endif
-
 #include "qmipcinterface_p.h"
 
 namespace MeeGo
@@ -73,24 +69,6 @@ namespace MeeGo
                                                           SLOT(touchAndKeyboardStateChanged(const QString&)))) {
                     qDebug() << "Unable to connect mce signal interface";
                 }
-            #endif
-
-            #if HAVE_DEVICELOCK
-                 DeviceLock::DeviceLockEnums::registerLockEnumerations();
-                 devlockIf = new QmIPCInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE);
-
-                 if (!devlockIf->isValid()) {
-                     qDebug() << "devicelock D-Bus interface not valid";
-                 }
-
-                 if (!QDBusConnection::systemBus().connect(DEVLOCK_SERVICE,
-                                                           DEVLOCK_PATH,
-                                                           DEVLOCK_SERVICE,
-                                                           DEVLOCK_SIGNAL,
-                                                           this,
-                                                           SLOT(deviceStateChanged(int,int)))) {
-                     qDebug() << "Unable to connect devicelock signal interface";
-                 }
             #endif
         }
 
@@ -130,51 +108,11 @@ namespace MeeGo
             return "";
         }
 
-        #if HAVE_DEVICELOCK
-        static QmLocks::State stateToState(DeviceLock::DeviceLockEnums::LockState state) {
-            switch (state) {
-            case DeviceLock::DeviceLockEnums::Unlocked:
-                return QmLocks::Unlocked;
-            case DeviceLock::DeviceLockEnums::Locked:
-                return QmLocks::Locked;
-            default:
-                return QmLocks::Unknown;
-            }
-        }
-
-        static DeviceLock::DeviceLockEnums::LockState stateToState(QmLocks::State state) {
-            switch (state) {
-            case QmLocks::Unlocked:
-                return DeviceLock::DeviceLockEnums::Unlocked;
-            case QmLocks::Locked:
-                return DeviceLock::DeviceLockEnums::Locked;
-            default:
-                return DeviceLock::DeviceLockEnums::Undefined;
-            }
-        }
-        #endif
-
         QmLocks::State getState(QmLocks::Lock what, bool async) {
             QmLocks::State state = QmLocks::Unknown;
 
             if (what == QmLocks::Device) {
-                #if HAVE_DEVICELOCK
-                    if (async) {
-                        QDBusPendingCall pcall = devlockIf->asyncCall(DEVLOCK_GET, DeviceLock::DeviceLockEnums::Device);
-                        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pcall, this);
-                        if (!QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                                         this, SLOT(didReceiveDeviceLockState(QDBusPendingCallWatcher*)))) {
-                            qDebug() << "Failed to watch pending devicelock call";
-                        }
-                    } else {
-                        QDBusReply<int> reply = devlockIf->call(DEVLOCK_GET, DeviceLock::DeviceLockEnums::Device);
-                        if (reply.isValid()) {
-                            state = QmLocksPrivate::stateToState((DeviceLock::DeviceLockEnums::LockState)reply.value());
-                        } else {
-                            qDebug() << "Failed to query devicelock";
-                        }
-                    }
-                #endif /* HAVE_DEVICELOCK */
+                qWarning() << "QmLocks::Device is not support. Please use the DeviceLock interface.";
             } else if (what == QmLocks::TouchAndKeyboard) {
                 #if HAVE_MCE
                     if (async) {
@@ -200,12 +138,8 @@ namespace MeeGo
         bool setState(QmLocks::Lock what, QmLocks::State how) {
             bool success = false;
             if (what == QmLocks::Device) {
-                #if HAVE_DEVICELOCK
-                    devlockIf->callAsynchronously(DEVLOCK_SET, DeviceLock::DeviceLockEnums::Device, stateToState(how));
-                    success = true;
-                #else
-                    Q_UNUSED(how);
-                #endif /* HAVE_DEVICELOCK */
+                Q_UNUSED(how);
+                qWarning() << "QmLocks::Device is not support. Please use the DeviceLock interface.";
             } else if (what == QmLocks::TouchAndKeyboard) {
                 #if HAVE_MCE
                     mceRequestIf->callAsynchronously(MCE_TKLOCK_MODE_CHANGE_REQ, QmLocksPrivate::stateToString(what, how));
@@ -225,18 +159,6 @@ namespace MeeGo
 
     private Q_SLOTS:
 
-        void didReceiveDeviceLockState(QDBusPendingCallWatcher *call) {
-            #if HAVE_DEVICELOCK
-                QDBusPendingReply<int> reply = *call;
-                if (reply.isError()) {
-                    return;
-                }
-                int state = reply.argumentAt<0>();
-                emit stateChanged(QmLocks::Device, stateToState((DeviceLock::DeviceLockEnums::LockState)state));
-            #endif
-            call->deleteLater();
-        }
-
         void didReceiveTkLockState(QDBusPendingCallWatcher *call) {
             #if HAVE_MCE
                 QDBusPendingReply<QString> reply = *call;
@@ -248,14 +170,6 @@ namespace MeeGo
             #endif
             call->deleteLater();
         }
-
-        #if HAVE_DEVICELOCK
-        void deviceStateChanged(int device, int state) {
-            if (device == DeviceLock::DeviceLockEnums::Device) {
-                emit stateChanged(QmLocks::Device, stateToState((DeviceLock::DeviceLockEnums::LockState)state));
-            }
-        }
-        #endif
 
         void touchAndKeyboardStateChanged(const QString& state) {
             emit stateChanged(QmLocks::TouchAndKeyboard, stringToState(state));
