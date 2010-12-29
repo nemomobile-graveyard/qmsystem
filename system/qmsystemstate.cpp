@@ -30,11 +30,7 @@
 #include "qmsystemstate.h"
 #include "qmsystemstate_p.h"
 
-#include <stdlib.h> /* free() */
-
-#if HAVE_SYSINFO
-    #include <sysinfo.h>
-#endif
+#include "qmsysteminformation.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -48,8 +44,6 @@
 #define RUNSTATE_USER "USER"
 #define RUNSTATE_SHUTDOWN "SHUTDOWN"
 #define RUNSTATE_ACT_DEAD "ACT_DEAD"
-
-#define SYSINFO_KEY_BOOTREASON "/component/boot-reason"
 
 #define BOOT_REASON_UNKNOWN           "unknown"
 #define BOOT_REASON_SWDG_TIMEOUT     "swdg_to"
@@ -126,29 +120,8 @@ QmSystemState::RunState QmSystemState::getRunState() {
 QmSystemState::BootReason QmSystemState::getBootReason() {
     QmSystemState::BootReason bootReason = BootReason_Unknown;
 
-#if HAVE_SYSINFO
-    struct system_config *sc = 0;
-    uint8_t *data = 0;
-    unsigned long size = 0;
-    QString reasonStr("");
-
-    if (sysinfo_init(&sc) != 0) {
-        /* Failed to initialize system configuration object */
-        goto BOOTREASON_DETERMINED;
-    }
-
-    if (sysinfo_get_value(sc, SYSINFO_KEY_BOOTREASON, &data, &size) != 0) {
-        /* Failed to read boot-reason from system configuration */
-        goto BOOTREASON_DETERMINED;
-    }
-
-    for (unsigned long k=0; k < size; k++) {
-        /* Values can contain non-ascii data -> escape those */
-        int c = data[k];
-        if (c < 32 || c > 126)
-            continue;
-        reasonStr.append(QChar(c));
-    }
+    QmSystemInformation systemInformation;
+    QString reasonStr = systemInformation.valueForKey("/component/boot-reason");
 
     if (reasonStr == BOOT_REASON_SWDG_TIMEOUT) {
         bootReason = BootReason_SwdgTimeout;
@@ -173,16 +146,6 @@ QmSystemState::BootReason QmSystemState::getBootReason() {
     } else if (reasonStr == BOOT_REASON_NSU) {
         bootReason = BootReason_NSU;
     }
-
-BOOTREASON_DETERMINED:
-    if (data) {
-        free(data), data = 0;
-    }
-
-    if (sc) {
-        sysinfo_finish(sc), sc = 0;
-    }
-#endif /* #if HAVE_SYSINFO */
 
     return bootReason;
 }
