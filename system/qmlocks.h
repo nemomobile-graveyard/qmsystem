@@ -1,6 +1,6 @@
 /*!
  * @file qmlocks.h
- * @brief Contains QmLocks which provides information and actions on device locks.
+ * @brief Contains QmLocks which provides information and actions on the touch screen lock.
 
    <p>
    @copyright (C) 2009-2010 Nokia Corporation
@@ -10,7 +10,8 @@
    @author Ilya Dogolazky <ilya.dogolazky@nokia.com>
    @author Raimo Vuonnala <raimo.vuonnala@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
-   @author Timo Rongas <ext-timo.rongas.nokia.com>
+   @author Timo Rongas <ext-timo.rongas@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    @scope Nokia Meego
 
@@ -95,7 +96,6 @@ public:
     /**
      * Set current lock state. Note that this interface does not allow
      * to unlock device.
-     * @credential devicelock::DeviceLockControl Resource token required to set the device lock state.
      * @credential mce::TKLockControl Resource token required to set the TK (touchscreen and keyboard) lock state.
      * @param what Which lock state to set
      * @param how Set @c to which state.
