@@ -25,6 +25,8 @@
 #include "qmsysteminformation.h"
 #include "qmsysteminformation_p.h"
 
+#include <stdlib.h>
+
 namespace MeeGo
 {
 
@@ -75,6 +77,10 @@ QString QmSystemInformationPrivate::valueForKey(const QString &key) const
     }
     #endif
     EXIT:
+    /* Free allocation done by sysinfo_get_value() */
+    if (data) {
+        free(data), data = 0;
+    }
     return value;
 }
 
