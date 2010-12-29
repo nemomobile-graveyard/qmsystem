@@ -1,6 +1,6 @@
 /*!
  * @file qmlocks.h
- * @brief Contains QmLocks which allows to get and set the state of the TK (touchscreen and keyboard) lock.
+ * @brief Contains QmLocks which allows to get and set the state of the touchscreen/keypad lock.
 
    <p>
    @copyright (C) 2009-2010 Nokia Corporation
@@ -57,7 +57,7 @@ public:
     enum Lock
     {
         Device = 0,       /**< Device lock. Note: this is deprecated and not supported. Please use the DeviceLock interface. */
-        TouchAndKeyboard  /**< Touchscreen and keyboard lock */
+        TouchAndKeyboard  /**< Touchscreen/keypad lock */
     };
 
     /** Lock states */
@@ -96,7 +96,7 @@ public:
     /**
      * Set current lock state. Note that this interface does not allow
      * to unlock device.
-     * @credential mce::TKLockControl Resource token required to set the TK (touchscreen and keyboard) lock state.
+     * @credential mce::TKLockControl Resource token required to set the touchscreen/keypad lock state.
      * @param what Which lock state to set
      * @param how Set @c to which state.
      * @return True if the lock state was requested, false otherwise.
