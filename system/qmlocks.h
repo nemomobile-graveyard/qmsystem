@@ -1,6 +1,6 @@
 /*!
  * @file qmlocks.h
- * @brief Contains QmLocks which provides information and actions on the touch screen lock.
+ * @brief Contains QmLocks which allows to get and set the state of the TK (touchscreen and keyboard) lock.
 
    <p>
    @copyright (C) 2009-2010 Nokia Corporation
