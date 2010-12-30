@@ -12,9 +12,8 @@ QT -= gui
 
 QMAKE_CXXFLAGS += -Wall -Wno-psabi
 
-CONFIG += timed
 CONFIG += link_pkgconfig
-PKGCONFIG += dsme dsme_dbus_if gconf-2.0 libiphb sensord
+PKGCONFIG += dsme dsme_dbus_if gconf-2.0 libiphb sensord timed
 
 # for compiling on meego
 linux-g++-maemo {
