@@ -32,6 +32,7 @@
 #include <QFile>
 
 #include <qmsystemstate.h>
+#include <qmsysteminformation.h>
 
 using namespace MeeGo;
 
@@ -69,26 +70,6 @@ private:
             QVERIFY2(systemstate->getRunState() == state, stateStr.toAscii().data());
         }
 
-    }
-
-    QString kernelCommandLineValueForKey(const QString &key) {
-        QString value("");
-        QFile cmdlineFile("/proc/cmdline");
-
-        if (!cmdlineFile.open(QFile::ReadOnly | QFile::Text)) {
-            return value;
-        }
-
-        QTextStream in(&cmdlineFile);
-        QString keyAndValue;
-        foreach (keyAndValue, in.readAll().split(" ")) {
-            QStringList kernelArgument = keyAndValue.split("=");
-            if (kernelArgument.at(0) == key) {
-                value = kernelArgument.at(1);
-                break;
-            }
-        }
-        return value;
     }
 
 private slots:
@@ -129,7 +110,7 @@ private slots:
     }
 
     void testGetBootreason() {
-        QString reasonStr = kernelCommandLineValueForKey("bootreason");
+        QString reasonStr = QmSystemInformation::kernelCommandLineValueForKey("bootreason");
         if (reasonStr == "swdg_to")   QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_SwdgTimeout);
         if (reasonStr == "sec_vio")   QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_SecViolation);
         if (reasonStr == "32wd_to")   QVERIFY(systemstate->getBootReason() == QmSystemState::BootReason_Wdg32kTimeout);

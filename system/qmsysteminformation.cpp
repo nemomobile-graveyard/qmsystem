@@ -28,6 +28,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include <QFile>
+#include <QTextStream>
+#include <QStringList>
+
 namespace MeeGo
 {
 
@@ -100,5 +104,27 @@ QString QmSystemInformation::valueForKey(const QString &key) const
     MEEGO_PRIVATE_CONST(QmSystemInformation)
     return priv->valueForKey(key);
 }
+
+QString QmSystemInformation::kernelCommandLineValueForKey(const QString &key)
+{
+    QString value("");
+    QFile cmdlineFile("/proc/cmdline");
+
+    if (!cmdlineFile.open(QFile::ReadOnly | QFile::Text)) {
+        return value;
+    }
+
+    QTextStream in(&cmdlineFile);
+    QString keyAndValue;
+    foreach (keyAndValue, in.readAll().split(" ")) {
+        QStringList kernelArgument = keyAndValue.split("=");
+        if (kernelArgument.at(0) == key) {
+            value = kernelArgument.at(1);
+            break;
+        }
+    }
+    return value;
+}
+
 
 } //MeeGo namespace

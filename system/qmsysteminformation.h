@@ -50,6 +50,12 @@ public:
      */
     QString valueForKey(const QString &key) const;
 
+    /*!
+     * @brief Gets the value of a key from the kernel command line.
+     * @return Returns the kernel command line value as a QString.
+     */
+    static QString kernelCommandLineValueForKey(const QString &key);
+
 private:
     Q_DISABLE_COPY(QmSystemInformation)
     MEEGO_DECLARE_PRIVATE(QmSystemInformation)
