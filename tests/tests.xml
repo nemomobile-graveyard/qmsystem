@@ -77,6 +77,9 @@
       <case name="watchdog-abort" level="Component" type="Functional" description="QmProcessWatchdog" timeout="180" subfeature="QT_APIs" requirement="39927">
         <step expected_result="134">/usr/bin/processwatchdog-test testWatchdogAbort</step>
       </case>
+      <case name="systeminformation" level="Component" type="Functional" description="QmSystemInformation" timeout="5" subfeature="QT_APIs" requirement="39927">
+        <step expected_result="0">/usr/bin/systeminformation-test</step>
+      </case>
       <case name="system-state" level="Component" type="Functional" description="QmSystemState" timeout="30" subfeature="QT_APIs" requirement="39927">
         <step>mkdir -p /tmp/qmsystemstatejail</step>
         <step>mkdir -p /tmp/qmsystemstatejail/usr</step>
