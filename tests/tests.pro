@@ -18,6 +18,7 @@ SUBDIRS = accelerometer \
           rotation \
           magnetometer \
           system \
+          systeminformation \
           systemsignals \
           tap \
           time \
