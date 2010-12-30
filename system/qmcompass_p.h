@@ -116,7 +116,7 @@ namespace MeeGo
         {
             QmCompassReading output;
             output.timestamp = value.data().timestamp_;
-            output.degrees = value.data().degrees_;
+            output.degrees = (value.data().degrees_ + 90) % 360;
             output.level = value.data().level_;
             emit dataAvailable(output);
         }
