@@ -1,6 +1,6 @@
 /**
  * @file qmcabc.h
- * @brief Contains QmCABC which provides methods to set and get Content Adaptive Backlight Control (CABC) mode.
+ * @brief Contains QmCABC which provides methods to indicate Content Adaptive Backlight Control (CABC) mode.
 
    <p>
    @copyright (C) 2009-2010 Nokia Corporation
@@ -46,7 +46,7 @@ namespace MeeGo
  *
  * @scope Nokia Meego
  *
- * @brief Provides methods to set and get the Content Adaptive Backlight Control (CABC) mode.
+ * @brief Provides methods to indicate the Content Adaptive Backlight Control (CABC) mode.
  */
 class MEEGO_SYSTEM_EXPORT QmCABC : public QObject
 {
@@ -74,7 +74,7 @@ public:
      * Requests to set the CABC mode. The system does not guarantee that
      * the CABC mode will be set according to the request. The applications
      * should not depend on a particular CABC mode but can use this method
-     * to hint that a certain CABC mode would be desired.
+     * to indicate that a certain CABC mode would be desired.
      *
      * @param mode CABC  mode.
      * @return bool TRUE if a valid mode was requested, FALSE otherwise.
