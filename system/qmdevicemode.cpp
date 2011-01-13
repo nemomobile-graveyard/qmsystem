@@ -28,56 +28,50 @@
 #include "qmdevicemode.h"
 #include "qmdevicemode_p.h"
 
-
-#include <QDebug>
-
-
 /*
+ * PSM stuff (spec)
+ *
+ * Signal emitted from the com.nokia.mce.signal interface
+ *
+ *    Name        powersave_mode_ind
+ *   Parameters  dbus_bool_t  mode TRUE (=on)/ FALSE(=off)
+ *   Description Sent when the powersave mode is changed
+ *
+ *
+ * Generic method calls provided by the com.nokia.mce.request interface
+ *
+ *   Name                   get_powersave_mode
+ *   Parameters             -
+ *   Errors / Return value  dbus_bool_t inactivity TRUE / FALSE
+ *   Description            Get the current powersave mode. TRUE if the powersave mode is on,  FALSE if the powersave mode is off.
+ *
+ *
+ *   Name                   set_powersave_mode
+ *   Parameters             dbus_bool_t  mode TRUE (=on)/ FALSE(=off)
+ *   Errors / Return value  dbus_bool_t  status TRUE=success / FALSE=failure
+ *   Description            Set the current powersave mode. TRUE if the powersave mode is on,  FALSE if the powersave mode is off.
+ *
+ *
+ * We also need to set the automatic PSM, GConf would be good as this is persistent setting (see qmdisplaystate.cpp)
+ *
+ */
 
-PSM stuff (spec)
-
-Signal emitted from the com.nokia.mce.signal interface
-
-    Name        powersave_mode_ind
-    Parameters  dbus_bool_t  mode TRUE (=on)/ FALSE(=off)
-    Description Sent when the powersave mode is changed
-
-
-Generic method calls provided by the com.nokia.mce.request interface
-
-    Name                   get_powersave_mode
-    Parameters             -
-    Errors / Return value  dbus_bool_t inactivity TRUE / FALSE
-    Description            Get the current powersave mode. TRUE if the powersave mode is on,  FALSE if the powersave mode is off.
-
-
-    Name                   set_powersave_mode
-    Parameters             dbus_bool_t  mode TRUE (=on)/ FALSE(=off)
-    Errors / Return value  dbus_bool_t  status TRUE=success / FALSE=failure
-    Description            Set the current powersave mode. TRUE if the powersave mode is on,  FALSE if the powersave mode is off.
-
-
-We also need to set the automatic PSM, GConf would be good as this is persistent setting (see qmdisplaystate.cpp)
-
-
-
-*/
-
-namespace MeeGo {
-
-
-    QmDeviceMode::QmDeviceMode(QObject *parent) : QObject(parent){
+namespace MeeGo
+{
+    QmDeviceMode::QmDeviceMode(QObject *parent) : QObject(parent) {
         MEEGO_INITIALIZE(QmDeviceMode)
-                connect(priv, SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState)), this, SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState)));
-        connect(priv, SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode)), this, SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode)));
 
+        connect(priv, SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState)), this,
+                SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState)));
+        connect(priv, SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode)), this,
+                SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode)));
     }
 
-    QmDeviceMode::~QmDeviceMode(){
+    QmDeviceMode::~QmDeviceMode() {
         MEEGO_UNINITIALIZE(QmDeviceMode);
     }
 
-    QmDeviceMode::DeviceMode QmDeviceMode::getMode() const{
+    QmDeviceMode::DeviceMode QmDeviceMode::getMode() const {
         QmDeviceMode::DeviceMode deviceMode = Error;
 #if HAVE_MCE
         MEEGO_PRIVATE_CONST(QmDeviceMode)
@@ -99,7 +93,7 @@ namespace MeeGo {
 #if HAVE_MCE
         MEEGO_PRIVATE_CONST(QmDeviceMode)
 
-                QList<QVariant> list = priv->requestIf->get(MCE_PSM_STATE_GET);
+        QList<QVariant> list = priv->requestIf->get(MCE_PSM_STATE_GET);
         if (!list.isEmpty()) {
             if (list.first().toBool()) {
                 return PSMStateOn;
@@ -110,7 +104,6 @@ namespace MeeGo {
 #endif
         return PSMError;
     }
-
 
     bool QmDeviceMode::setMode(QmDeviceMode::DeviceMode mode){
 #if HAVE_MCE
@@ -134,7 +127,7 @@ namespace MeeGo {
         priv->requestIf->callAsynchronously(MCE_RADIO_STATES_CHANGE_REQ, state, mask);
         return true;
 #else
-    Q_UNUSED(mode);
+        Q_UNUSED(mode);
 #endif
         return false;
     }
@@ -142,7 +135,7 @@ namespace MeeGo {
     bool QmDeviceMode::setPSMState(QmDeviceMode::PSMState state) {
         MEEGO_PRIVATE(QmDeviceMode)
 
-                gboolean val = FALSE;
+        gboolean val = FALSE;
         if (state == PSMStateOff) {
             val = FALSE;
         } else if (state == PSMStateOn) {
@@ -162,7 +155,7 @@ namespace MeeGo {
     bool QmDeviceMode::setPSMBatteryMode(int percentages) {
         MEEGO_PRIVATE(QmDeviceMode)
 
-                if (percentages < 0 || percentages > 100) {
+        if (percentages < 0 || percentages > 100) {
             return false;
         }
 
@@ -203,7 +196,7 @@ namespace MeeGo {
     int QmDeviceMode::getPSMBatteryMode() {
         MEEGO_PRIVATE(QmDeviceMode)
 
-                GError *error = NULL;
+        GError *error = NULL;
         gboolean ret = gconf_client_get_bool(priv->gcClient, ENABLE_POWER_SAVING, &error);
         if (error) {
             g_error_free(error);
@@ -219,6 +212,5 @@ namespace MeeGo {
         }
         return retVal;
     }
-
 
 } // namespace MeeGo
