@@ -110,11 +110,11 @@ namespace MeeGo
         return PSMError;
     }
 
-    bool QmDeviceMode::setMode(QmDeviceMode::DeviceMode mode){
+    bool QmDeviceMode::setMode(QmDeviceMode::DeviceMode mode) {
 #if HAVE_MCE
         MEEGO_PRIVATE(QmDeviceMode)
 
-        unsigned int state, mask;
+        quint32 state, mask;
 
         switch (mode) {
         case Normal:
