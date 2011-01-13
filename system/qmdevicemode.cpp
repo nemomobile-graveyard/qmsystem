@@ -28,6 +28,10 @@
 #include "qmdevicemode.h"
 #include "qmdevicemode_p.h"
 
+#include <QDBusConnection>
+#include <QDBusReply>
+#include <QDBusMessage>
+
 /*
  * PSM stuff (spec)
  *
@@ -74,12 +78,12 @@ namespace MeeGo
     QmDeviceMode::DeviceMode QmDeviceMode::getMode() const {
         QmDeviceMode::DeviceMode deviceMode = Error;
 #if HAVE_MCE
-        MEEGO_PRIVATE_CONST(QmDeviceMode)
-
-        QList<QVariant> list = priv->requestIf->get(MCE_RADIO_STATES_GET);
-
-        if (!list.isEmpty()) {
-            if (list[0].toInt() != 0) {
+        QDBusReply<quint32> radioStatesReply = QDBusConnection::systemBus().call(
+                                               QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH,
+                                                                              MCE_REQUEST_IF, MCE_RADIO_STATES_GET));
+        if (radioStatesReply.isValid()) {
+            const quint32 radioStateFlags = radioStatesReply.value();
+            if (radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH)) {
                 deviceMode = Normal;
             } else {
                 deviceMode = Flight;
