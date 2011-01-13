@@ -9,6 +9,7 @@
    @author Ilya Dogolazky <ilya.dogolazky@nokia.com>
    @author Raimo Vuonnala <raimo.vuonnala@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    This file is part of SystemSW QtAPI.
 
