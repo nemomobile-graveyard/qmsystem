@@ -124,6 +124,8 @@ private:
             return "Pause";
         case QmKeys::RightCtrl:
             return "RightCtrl";
+        case QmKeys::PowerKey:
+            return "PowerKey";
         default:
             return "Unknown";
         }
@@ -374,8 +376,11 @@ private slots:
     {
         printf("This test will ask you to press the power button.\nGet ready! The test starts in 10 seconds...\n\n");
         QTest::qWait(10*1000);
-        doTestNew(QmKeys::PowerKey, QmKeys::KeyDown);
-        doTestNew(QmKeys::PowerKey, QmKeys::KeyUp);
+
+        printf("Please press and release the powerButton. Listening events for 10 seconds\n");
+        QTest::qWait(10*1000);
+
+        printf("Did you see the PowerKey events?\n");
     }
 
     void testCamera4ever()
