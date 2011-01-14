@@ -6,6 +6,7 @@
    Copyright (C) 2009-2010 Nokia Corporation
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    @scope Private
 
@@ -42,50 +43,61 @@
 #define THRESHOLDS PATH"/possible_psm_thresholds"
 #define THRESHOLD PATH"/psm_threshold"
 
-// Prepare for the upcoming change in mce-dev.
-#ifndef MCE_PSM_STATE_GET
-#define MCE_PSM_STATE_GET MCE_PSM_MODE_GET
-#endif
-#ifndef MCE_PSM_STATE_SIG
-#define MCE_PSM_STATE_SIG MCE_PSM_MODE_SIG
-#endif
-
 namespace MeeGo
 {
-
     class QmDeviceModePrivate : public QObject
     {
         Q_OBJECT
         MEEGO_DECLARE_PUBLIC(QmDeviceMode)
 
     public:
-        QmDeviceModePrivate(){
-#if HAVE_MCE
-            signalIf = new QmIPCInterface(
-                        MCE_SERVICE,
-                        MCE_SIGNAL_PATH,
-                        MCE_SIGNAL_IF);
-            requestIf = new QmIPCInterface(
-                        MCE_SERVICE,
-                        MCE_REQUEST_PATH,
-                        MCE_REQUEST_IF);
-#endif
+        QmDeviceModePrivate() {
+            signalIf = requestIf = 0;
+
+            #if HAVE_MCE
+                signalIf = new QmIPCInterface(MCE_SERVICE, MCE_SIGNAL_PATH, MCE_SIGNAL_IF);
+                requestIf = new QmIPCInterface(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
+            #endif
 
             g_type_init();
             gcClient = gconf_client_get_default();
 
-#if HAVE_MCE
-            signalIf->connect(MCE_RADIO_STATES_SIG, this, SLOT(deviceModeChangedSlot(const unsigned int)));
-            signalIf->connect(MCE_PSM_STATE_SIG, this, SLOT(devicePSMChangedSlot(bool)));
-#endif
+            #if HAVE_MCE
+                signalIf->connect(MCE_RADIO_STATES_SIG, this, SLOT(deviceModeChangedSlot(const quint32)));
+                signalIf->connect(MCE_PSM_STATE_SIG, this, SLOT(devicePSMChangedSlot(bool)));
+            #endif
         }
 
-        ~QmDeviceModePrivate(){
-#if HAVE_MCE
-            delete requestIf;
-            delete signalIf;
-#endif
-            g_object_unref(gcClient);
+        ~QmDeviceModePrivate() {
+            #if HAVE_MCE
+                if (requestIf)
+                    delete requestIf, requestIf = 0;
+                if (signalIf)
+                    delete signalIf, signalIf = 0;
+            #endif
+            g_object_unref(gcClient), gcClient = 0;
+        }
+
+        static QmDeviceMode::DeviceMode radioStateToDeviceMode(quint32 radioStateFlags) {
+            QmDeviceMode::DeviceMode deviceMode = QmDeviceMode::Error;
+            #if HAVE_MCE
+                if (radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH)) {
+                    deviceMode = QmDeviceMode::Normal;
+                } else {
+                    deviceMode = QmDeviceMode::Flight;
+                }
+            #else
+                Q_UNUSED(radioStateFlags);
+            #endif
+            return deviceMode;
+        }
+
+        static QmDeviceMode::PSMState psmStateToModeEnum(bool on) {
+            if (on) {
+                return QmDeviceMode::PSMStateOn;
+            } else {
+                return QmDeviceMode::PSMStateOff;
+            }
         }
 
         QmIPCInterface *requestIf;
@@ -98,22 +110,15 @@ namespace MeeGo
         void deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode);
 
     private Q_SLOTS:
+
         void devicePSMChangedSlot(bool on) {
-            if (on) {
-                emit devicePSMStateChanged(QmDeviceMode::PSMStateOn);
-            } else {
-                emit devicePSMStateChanged(QmDeviceMode::PSMStateOff);
-            }
+            emit devicePSMStateChanged(psmStateToModeEnum(on));
         }
-        void deviceModeChangedSlot(const unsigned int state) {
-            if (state != 0) {
-                emit deviceModeChanged(QmDeviceMode::Normal);
-            } else if (state == 0) {
-                emit deviceModeChanged(QmDeviceMode::Flight);
-            }
+
+        void deviceModeChangedSlot(const quint32 state) {
+            emit deviceModeChanged(radioStateToDeviceMode(state));
         }
     };
-
 }
 
 #endif // QMDEVICEMODE_P_H

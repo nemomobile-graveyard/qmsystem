@@ -78,62 +78,58 @@ namespace MeeGo
 
     QmDeviceMode::DeviceMode QmDeviceMode::getMode() const {
         QmDeviceMode::DeviceMode deviceMode = Error;
-#if HAVE_MCE
-        QDBusReply<quint32> radioStatesReply = QDBusConnection::systemBus().call(
-                                               QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH,
-                                                                              MCE_REQUEST_IF, MCE_RADIO_STATES_GET));
-        if (radioStatesReply.isValid()) {
-            const quint32 radioStateFlags = radioStatesReply.value();
-            if (radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH)) {
-                deviceMode = Normal;
-            } else {
-                deviceMode = Flight;
+        #if HAVE_MCE
+            MEEGO_PRIVATE_CONST(QmDeviceMode)
+
+            QDBusReply<quint32> radioStatesReply = QDBusConnection::systemBus().call(
+                                                       QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH,
+                                                                                      MCE_REQUEST_IF, MCE_RADIO_STATES_GET));
+            if (radioStatesReply.isValid()) {
+                deviceMode = priv->radioStateToDeviceMode(radioStatesReply.value());
             }
-        }
-#endif
+        #endif
         return deviceMode;
     }
 
     QmDeviceMode::PSMState QmDeviceMode::getPSMState() const {
-#if HAVE_MCE
-        MEEGO_PRIVATE_CONST(QmDeviceMode)
+        QmDeviceMode::PSMState psmState = PSMError;
+        #if HAVE_MCE
+            MEEGO_PRIVATE_CONST(QmDeviceMode)
 
-        QList<QVariant> list = priv->requestIf->get(MCE_PSM_STATE_GET);
-        if (!list.isEmpty()) {
-            if (list.first().toBool()) {
-                return PSMStateOn;
-            } else {
-                return PSMStateOff;
+            QDBusReply<bool> psmModeReply = QDBusConnection::systemBus().call(
+                                                QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH,
+                                                                               MCE_REQUEST_IF, MCE_PSM_STATE_GET));
+            if (psmModeReply.isValid()) {
+                psmState = priv->psmStateToModeEnum(psmModeReply.value());
             }
-        }
-#endif
-        return PSMError;
+        #endif
+        return psmState;
     }
 
     bool QmDeviceMode::setMode(QmDeviceMode::DeviceMode mode) {
-#if HAVE_MCE
-        MEEGO_PRIVATE(QmDeviceMode)
+        #if HAVE_MCE
+            MEEGO_PRIVATE(QmDeviceMode)
 
-        quint32 state, mask;
+            quint32 state, mask;
 
-        switch (mode) {
-        case Normal:
-            state = 1;
-            mask = MCE_RADIO_STATE_MASTER;
-            break;
-        case Flight:
-            state = 0;
-            mask = MCE_RADIO_STATE_MASTER;
-            break;
-        default:
-            return false;
-        }
+            switch (mode) {
+            case Normal:
+                state = 1;
+                mask = MCE_RADIO_STATE_MASTER;
+                break;
+            case Flight:
+                state = 0;
+                mask = MCE_RADIO_STATE_MASTER;
+                break;
+            default:
+                return false;
+            }
 
-        priv->requestIf->callAsynchronously(MCE_RADIO_STATES_CHANGE_REQ, state, mask);
-        return true;
-#else
-        Q_UNUSED(mode);
-#endif
+            priv->requestIf->callAsynchronously(MCE_RADIO_STATES_CHANGE_REQ, state, mask);
+            return true;
+        #else
+            Q_UNUSED(mode);
+        #endif
         return false;
     }
 
