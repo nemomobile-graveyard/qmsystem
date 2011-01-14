@@ -56,18 +56,33 @@ public:
     /** Things that can be locked. */
     enum Lock
     {
-        Device = 0,       /**< Device lock */
-        TouchAndKeyboard  /**< Touchscreen/keypad lock */
+        /**
+         * Device lock.
+         * @state Deprecated
+         */
+        Device = 0,
+        /**
+         * Touchscreen/keypad lock
+         */
+        TouchAndKeyboard
     };
 
     /** Lock states */
     enum State
     {
-        Unlocked = 0,     /**< Unlocked */
-        Locked,            /**< Locked */
-        Unknown         /**< Unknown */
+        /**
+         * Unlocked
+         */
+        Unlocked = 0,
+        /**
+         * Locked
+         */
+        Locked,
+        /**
+         * Unknown
+         */
+        Unknown
     };
-
 
 public:
     QmLocks(QObject *parent = 0);
@@ -103,7 +118,6 @@ public:
      */
     bool setState(QmLocks::Lock what, QmLocks::State how);
 
-
     /**
      * Set device autolock timeout. Device is automatically locked
      * after the specified amount of inactivity.
@@ -114,10 +128,8 @@ public:
      */
     bool setDeviceAutolockTime(int seconds);
 
-
-
     /**
-     * Get device autolock timeout. 
+     * Get device autolock timeout.
      * @state Deprecated
      * @return Timeout in seconds, value 0 means that autolock is not acticated, -1 is error
      */
@@ -131,7 +143,6 @@ Q_SIGNALS:
      */
     void stateChanged(MeeGo::QmLocks::Lock what, MeeGo::QmLocks::State how);
 
-
 private:
     Q_DISABLE_COPY(QmLocks)
     MEEGO_DECLARE_PRIVATE(QmLocks)
@@ -141,6 +152,6 @@ private:
 
 QT_END_HEADER
 
-#endif /*QMLOCKS_H*/
+#endif /* QMLOCKS_H */
 
 // End of file
