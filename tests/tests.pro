@@ -29,6 +29,7 @@ SUBDIRS = accelerometer \
           manual_compass \
           manual_als \
           manual_displaystate \
+          manual_locks \
           manual_rotation \
           host_system \
           processwatchdog \
