@@ -8,7 +8,7 @@ qmsystem2 (1.0.5) unstable; urgency=low
    * Fixes: NB#218788 - QmKeys does not inform clients about power key presses
    * Put back devicelock functionality without the devicelock dependency
 
- -- Matias Muhonen <ext-matias.muhonen@nokia.com> Thu, 13 Jan 2011 13:51:40 +0200
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Fri, 14 Jan 2011 13:16:02 +0200
 
 qmsystem2 (1.0.4) unstable; urgency=low
 
