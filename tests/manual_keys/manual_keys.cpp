@@ -376,11 +376,12 @@ private slots:
     {
         printf("This test will ask you to press the power button.\nGet ready! The test starts in 10 seconds...\n\n");
         QTest::qWait(10*1000);
-
         printf("Please press and release the powerButton. Listening events for 10 seconds\n");
         QTest::qWait(10*1000);
-
         printf("Did you see the PowerKey events?\n");
+        doTestNew(QmKeys::PowerKey, QmKeys::KeyDown);
+        doTestNew(QmKeys::PowerKey, QmKeys::KeyUp);
+
     }
 
     void testCamera4ever()
