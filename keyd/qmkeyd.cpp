@@ -39,6 +39,7 @@
 #define GPIO_KEYS "/dev/input/gpio-keys"
 #define KEYPAD "/dev/input/keypad"
 #define ECI "/dev/input/eci"
+#define PWRBUTTON "/dev/input/pwrbutton"
 
 #ifndef KEY_CAMERA_FOCUS
 #define KEY_CAMERA_FOCUS 0x210
@@ -64,9 +65,13 @@ static inline void *lea(void *base, int offs)
 
 static int  debugmode = 0;
 
-QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv), server(0), connections(0), gpioFile(-1), keypadFile(-1), eciFile(-1), btFile(-1),
-                                                                     gpioNotifier(0), keypadNotifier(0), eciNotifier(0), btNotifier(0), inputNotifier(0),
-                                                                     inotifyWd(-1), inotifyFd(-1), users(0)
+QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv),
+    server(0),
+    connections(0),
+    gpioFile(-1), keypadFile(-1), eciFile(-1), powerButtonFile(-1), btFile(-1),
+    gpioNotifier(0), keypadNotifier(0), eciNotifier(0), powerButtonNotifier(0), btNotifier(0), inputNotifier(0),
+    inotifyWd(-1), inotifyFd(-1),
+    users(0)
 {
     openlog("qmkeyd", LOG_NDELAY|LOG_PID, LOG_DAEMON);
 
@@ -106,7 +111,7 @@ QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv), server(0), 
 QmKeyd::~QmKeyd()
 {
     server->close();
-    delete server;
+    delete server, server = 0;
     closelog();
 
     removeInotifyWatch();
@@ -251,7 +256,7 @@ void QmKeyd::newConnection()
             struct ucred cr;
             socklen_t    cl = sizeof(cr);
             pid_t        pid = 0;
-            int          fd = socket->socketDescriptor(); 
+            int          fd = socket->socketDescriptor();
 
             if (getsockopt(fd, SOL_SOCKET, SO_PEERCRED, &cr, &cl) == 0) {
                 pid = cr.pid;
@@ -378,6 +383,9 @@ QList<int> QmKeyd::readFrom(struct input_event &ev)
             list.push_back(btFile);
             list.push_back(eciFile);
             break;
+        case KEY_POWER:
+            list.push_back(powerButtonFile);
+            break;
         }
     } else if (ev.type == EV_SW) {
         switch (ev.code) {
@@ -391,7 +399,6 @@ QList<int> QmKeyd::readFrom(struct input_event &ev)
 
 void QmKeyd::openHandles()
 {
-
     if (gpioFile == -1) {
         gpioFile = open(GPIO_KEYS, O_RDONLY | O_NONBLOCK);
         if (gpioFile != -1) {
@@ -399,7 +406,7 @@ void QmKeyd::openHandles()
             connect(gpioNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", GPIO_KEYS);
-            gpioNotifier = NULL;
+            gpioNotifier = 0;
         }
     }
 
@@ -410,7 +417,7 @@ void QmKeyd::openHandles()
             connect(keypadNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", KEYPAD);
-            keypadNotifier = NULL;
+            keypadNotifier = 0;
         }
     }
     if (eciFile == -1) {
@@ -420,7 +427,17 @@ void QmKeyd::openHandles()
             connect(eciNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", ECI);
-            eciNotifier = NULL;
+            eciNotifier = 0;
+        }
+    }
+    if (powerButtonFile == -1) {
+        powerButtonFile = open(PWRBUTTON, O_RDONLY | O_NONBLOCK);
+        if (powerButtonFile != -1) {
+            powerButtonNotifier = new QSocketNotifier(powerButtonFile, QSocketNotifier::Read);
+            connect(powerButtonNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
+        } else {
+            syslog(LOG_WARNING, "Could not open %s\n", PWRBUTTON);
+            powerButtonNotifier = 0;
         }
     }
 }
@@ -428,24 +445,20 @@ void QmKeyd::openHandles()
 void QmKeyd::closeHandles()
 {
     if (gpioFile != -1) {
-        close(gpioFile);
-        gpioFile = -1;
-        delete gpioNotifier;
-        gpioNotifier = NULL;
+        close(gpioFile), gpioFile = -1;
+        delete gpioNotifier, gpioNotifier = 0;
     }
-
     if (keypadFile != -1) {
-        close(keypadFile);
-        keypadFile = -1;
-        delete keypadNotifier;
-        keypadNotifier = NULL;
+        close(keypadFile), keypadFile = -1;
+        delete keypadNotifier, keypadNotifier = 0;
     }
-
     if (eciFile != -1) {
-        close(eciFile);
-        eciFile = -1;
-        delete eciNotifier;
-        eciNotifier = NULL;
+        close(eciFile), eciFile = -1;
+        delete eciNotifier, eciNotifier = 0;
+    }
+    if (powerButtonFile != -1) {
+        close(powerButtonFile), powerButtonFile = -1;
+        delete powerButtonNotifier, powerButtonNotifier = 0;
     }
 }
 
@@ -454,7 +467,6 @@ void QmKeyd::closeBT()
     if (btNotifier) {
         delete btNotifier, btNotifier = 0;
     }
-
     if (btFile != -1) {
         close(btFile), btFile = -1;
     }
@@ -465,6 +477,8 @@ void QmKeyd::removeInotifyWatch()
     if (inputNotifier) {
         delete inputNotifier, inputNotifier = 0;
     }
-    inotify_rm_watch(inotifyFd, inotifyWd);
-    close(inotifyFd), inotifyFd = -1;
+    if (inotifyFd != -1) {
+        inotify_rm_watch(inotifyFd, inotifyWd);
+        close(inotifyFd), inotifyFd = -1;
+    }
 }

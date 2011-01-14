@@ -63,19 +63,12 @@ private:
 
     QLocalServer *server;
     QVector<QLocalSocket*> connections;
-    int gpioFile;
-    int keypadFile;
-    int eciFile;
-    int btFile;
-    uint8_t keys[KEY_MAX/8 + 1];
-    uint8_t switches[SW_MAX/8 + 1];
-    QSocketNotifier *gpioNotifier;
-    QSocketNotifier *keypadNotifier;
-    QSocketNotifier *eciNotifier;
-    QSocketNotifier *btNotifier;
-    QSocketNotifier *inputNotifier;
-    int inotifyWd;
-    int inotifyFd;
+    uint8_t keys[KEY_MAX/8 + 1], switches[SW_MAX/8 + 1];
+
+    int gpioFile, keypadFile, eciFile, powerButtonFile, btFile;
+    QSocketNotifier *gpioNotifier, *keypadNotifier, *eciNotifier, *powerButtonNotifier, *btNotifier, *inputNotifier;
+
+    int inotifyWd, inotifyFd;
     char btfname[32];
     int users;
 };

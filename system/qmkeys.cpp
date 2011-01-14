@@ -88,6 +88,8 @@ namespace MeeGo
             return QmKeys::Pause;
         case KEY_RIGHTCTRL:
             return QmKeys::RightCtrl;
+        case KEY_POWER:
+            return QmKeys::PowerKey;
         default:
             return QmKeys::UnknownKey;
         }
@@ -109,6 +111,10 @@ namespace MeeGo
         case QmKeys::VolumeDown:
             ev.type = EV_KEY;
             ev.code = KEY_VOLUMEDOWN;
+            break;
+        case QmKeys::PowerKey:
+            ev.type = EV_KEY;
+            ev.code = KEY_POWER;
             break;
         case QmKeys::Phone:
         case QmKeys::PlayPause:
@@ -229,6 +235,7 @@ namespace MeeGo
                     case KEY_STOPCD:
                     case KEY_FASTFORWARD:
                     case KEY_RIGHTCTRL:
+                    case KEY_POWER:
                         {
                             QmKeys::Key key = codeToKey(ev.code);
                             QmKeys::State state;

@@ -2,6 +2,7 @@ qmsystem2 (1.0.5) unstable; urgency=low
 
    [Matias Muhonen]
    * Fixes: NB#218465 - Activate offline mode shown in offline mode
+   * Fixes: NB#218788 - QmKeys does not inform clients about power key presses
 
  -- Matias Muhonen <ext-matias.muhonen@nokia.com> Thu, 13 Jan 2011 13:51:40 +0200
 
