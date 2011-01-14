@@ -1,5 +1,8 @@
 qmsystem2 (1.0.5) unstable; urgency=low
 
+   [Yang Yang]
+   * Add power key test to manual-key-test
+
    [Matias Muhonen]
    * Fixes: NB#218465 - Activate offline mode shown in offline mode
    * Fixes: NB#218788 - QmKeys does not inform clients about power key presses
