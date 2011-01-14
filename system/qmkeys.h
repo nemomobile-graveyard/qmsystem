@@ -116,7 +116,8 @@ public:
       PreviousSong,
       Pause,
       Play,
-      RightCtrl
+      RightCtrl,
+      PowerKey
   };
 
   //! Supported positions for keys
