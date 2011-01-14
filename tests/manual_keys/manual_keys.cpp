@@ -370,6 +370,14 @@ private slots:
         QCOMPARE(sliderPos, keys->getSliderPosition());
     }
 
+    void testPowerButton()
+    {
+        printf("This test will ask you to press the power button.\nGet ready! The test starts in 10 seconds...\n\n");
+        QTest::qWait(10*1000);
+        doTestNew(QmKeys::PowerKey, QmKeys::KeyDown);
+        doTestNew(QmKeys::PowerKey, QmKeys::KeyUp);
+    }
+
     void testCamera4ever()
     {
         while (true) {
