@@ -87,6 +87,10 @@ Q_SIGNALS:
      */
     void activityChanged(MeeGo::QmActivity::Activity activity);
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 private:
     Q_DISABLE_COPY(QmActivity)
     MEEGO_DECLARE_PRIVATE(QmActivity)

@@ -33,14 +33,17 @@
 #include "qmactivity.h"
 #include "qmipcinterface_p.h"
 
+#include <QMutex>
+
 #if HAVE_MCE
     #include "mce/dbus-names.h"
     #include "mce/mode-names.h"
 #endif
 
+#define SIGNAL_INACTIVITY 0
+
 namespace MeeGo
 {
-
     class QmActivityPrivate : public QObject
     {
         Q_OBJECT
@@ -48,43 +51,37 @@ namespace MeeGo
 
     public:
         QmIPCInterface *requestIf;
-        QmIPCInterface *signalIf;
+        QMutex connectMutex;
+        size_t connectCount[1];
 
-        QmActivityPrivate(){
-#if HAVE_MCE
-            signalIf = new QmIPCInterface(
-                        MCE_SERVICE,
-                        MCE_SIGNAL_PATH,
-                        MCE_SIGNAL_IF);
-            requestIf = new QmIPCInterface(
-                        MCE_SERVICE,
-                        MCE_REQUEST_PATH,
-                        MCE_REQUEST_IF);
-            signalIf->connect(MCE_INACTIVITY_SIG, this, SLOT(slotActivityChanged(bool)));
-#endif
+        QmActivityPrivate() {
+            #if HAVE_MCE
+                requestIf = new QmIPCInterface(MCE_SERVICE,
+                                               MCE_REQUEST_PATH,
+                                               MCE_REQUEST_IF);
+            #endif
+            connectCount[SIGNAL_INACTIVITY] = 0;
         }
 
-        ~QmActivityPrivate(){
-#if HAVE_MCE
-            delete requestIf;
-            delete signalIf;
-#endif
+        ~QmActivityPrivate() {
+            #if HAVE_MCE
+                delete requestIf, requestIf = 0;
+            #endif
         }
 
     Q_SIGNALS:
         void activityChanged(MeeGo::QmActivity::Activity);
 
     public Q_SLOTS:
-        void slotActivityChanged(bool inactivity){
+
+        void slotActivityChanged(bool inactivity) {
             if (inactivity) {
                 emit activityChanged(QmActivity::Inactive);
             } else {
                 emit activityChanged(QmActivity::Active);
             }
         }
-
     };
-
 }
 
 #endif // QMACTIVITY_P_H

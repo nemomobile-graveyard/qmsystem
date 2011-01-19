@@ -33,31 +33,75 @@
 namespace MeeGo {
 
 QmActivity::QmActivity(QObject *parent)
-           : QObject(parent){
+           : QObject(parent) {
     MEEGO_INITIALIZE(QmActivity);
-    connect (priv, SIGNAL(activityChanged(MeeGo::QmActivity::Activity)),
-             this, SIGNAL(activityChanged(MeeGo::QmActivity::Activity)));
+
+    connect(priv, SIGNAL(activityChanged(MeeGo::QmActivity::Activity)),
+            this, SIGNAL(activityChanged(MeeGo::QmActivity::Activity)));
 }
 
-QmActivity::~QmActivity(){
+QmActivity::~QmActivity() {
+    MEEGO_PRIVATE(QmActivity)
+
+    disconnect(priv, SIGNAL(activityChanged(MeeGo::QmActivity::Activity)),
+               this, SIGNAL(activityChanged(MeeGo::QmActivity::Activity)));
+
     MEEGO_UNINITIALIZE(QmActivity);
 }
 
-QmActivity::Activity QmActivity::get() const{
-#if HAVE_MCE
-    MEEGO_PRIVATE_CONST(QmActivity)
-    QmIPCInterface *requestIf = priv->requestIf;
-    QList<QVariant> results;
+void QmActivity::connectNotify(const char *signal) {
+    MEEGO_PRIVATE(QmActivity)
 
-    results = requestIf->get(MCE_INACTIVITY_STATUS_GET);
-    if ( !results.empty() && !results[0].toBool() )
-        return Active;
-    else
-        return Inactive;
-#else
+    /* QObject::connect() needs to be thread-safe */
+    QMutexLocker locker(&priv->connectMutex);
+
+    if (QLatin1String(signal) == SIGNAL(activityChanged(MeeGo::QmActivity::Activity))) {
+        if (0 == priv->connectCount[SIGNAL_INACTIVITY]) {
+            #if HAVE_MCE
+                QDBusConnection::systemBus().connect(MCE_SERVICE,
+                                                     MCE_SIGNAL_PATH,
+                                                     MCE_SIGNAL_IF,
+                                                     MCE_INACTIVITY_SIG,
+                                                     priv,
+                                                     SLOT(slotActivityChanged(bool)));
+            #endif
+        }
+        priv->connectCount[SIGNAL_INACTIVITY]++;
+    }
+}
+void QmActivity::disconnectNotify(const char *signal) {
+    MEEGO_PRIVATE(QmActivity)
+
+    /* QObject::disconnect() needs to be thread-safe */
+    QMutexLocker locker(&priv->connectMutex);
+
+    if (QLatin1String(signal) == SIGNAL(activityChanged(MeeGo::QmActivity::Activity))) {
+        priv->connectCount[SIGNAL_INACTIVITY]--;
+
+        if (0 == priv->connectCount[SIGNAL_INACTIVITY]) {
+            #if HAVE_MCE
+                QDBusConnection::systemBus().disconnect(MCE_SERVICE,
+                                                        MCE_SIGNAL_PATH,
+                                                        MCE_SIGNAL_IF,
+                                                        MCE_INACTIVITY_SIG,
+                                                        priv,
+                                                        SLOT(slotActivityChanged(bool)));
+            #endif
+        }
+    }
+}
+
+QmActivity::Activity QmActivity::get() const {
+    #if HAVE_MCE
+        MEEGO_PRIVATE_CONST(QmActivity)
+        QmIPCInterface *requestIf = priv->requestIf;
+        QList<QVariant> results;
+
+        results = requestIf->get(MCE_INACTIVITY_STATUS_GET);
+        if (!results.empty() && !results[0].toBool())
+            return Active;
+    #endif
     return Inactive;
-#endif
-
 }
 
 }
