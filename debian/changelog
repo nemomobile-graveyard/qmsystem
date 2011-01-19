@@ -1,3 +1,10 @@
+qmsystem2 (1.0.6) unstable; urgency=low
+
+   [Matias Muhonen]
+   * Optimized some of the D-Bus signal listeners in constructors
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Wed, 19 Jan 2011 10:01:26 +0200
+
 qmsystem2 (1.0.5) unstable; urgency=low
 
    [Yang Yang]
