@@ -34,7 +34,7 @@
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 #include <QDBusReply>
-#include <QDebug>
+#include <QMutex>
 
 #if HAVE_MCE
     #include "mce/dbus-names.h"
@@ -61,6 +61,8 @@
 #define DEVLOCK_LOCK_STATE_LOCKED 1
 #define DEVLOCK_LOCK_STATE_UNDEFINED 8
 
+#define SIGNAL_LOCK_STATE 0
+
 namespace MeeGo
 {
     class QmLocksPrivate : public QObject
@@ -74,42 +76,20 @@ namespace MeeGo
             devlockIf(0) {
             #if HAVE_MCE
                 mceRequestIf = new QmIPCInterface(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
-
-                if (!mceRequestIf->isValid()) {
-                    qDebug() << "mce D-Bus interface not valid";
-                }
-
-                if (!QDBusConnection::systemBus().connect(MCE_SERVICE,
-                                                          MCE_SIGNAL_PATH,
-                                                          MCE_SIGNAL_IF,
-                                                          MCE_TKLOCK_MODE_SIG,
-                                                          this,
-                                                          SLOT(touchAndKeyboardStateChanged(const QString&)))) {
-                    qDebug() << "Unable to connect mce signal interface";
-                }
             #endif
 
             devlockIf = new QmIPCInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE);
 
-            if (!devlockIf->isValid()) {
-                qDebug() << "devicelock D-Bus interface not valid";
-            }
-
-            if (!QDBusConnection::systemBus().connect(DEVLOCK_SERVICE,
-                                                      DEVLOCK_PATH,
-                                                      DEVLOCK_SERVICE,
-                                                      DEVLOCK_SIGNAL,
-                                                      this,
-                                                      SLOT(deviceStateChanged(int,int)))) {
-                qDebug() << "Unable to connect devicelock signal interface";
-            }
+            connectCount[SIGNAL_LOCK_STATE] = 0;
         }
 
         ~QmLocksPrivate() {
-            if (mceRequestIf)
+            if (mceRequestIf) {
                 delete mceRequestIf, mceRequestIf = 0;
-            if (devlockIf)
+            }
+            if (devlockIf) {
                 delete devlockIf, devlockIf = 0;
+            }
         }
 
         static QmLocks::State stringToState(const QString &state) {
@@ -170,16 +150,12 @@ namespace MeeGo
                 if (async) {
                     QDBusPendingCall pcall = devlockIf->asyncCall(DEVLOCK_GET, DEVLOCK_LOCK_TYPE_DEVICE);
                     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pcall, this);
-                    if (!QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                                     this, SLOT(didReceiveDeviceLockState(QDBusPendingCallWatcher*)))) {
-                        qDebug() << "Failed to watch pending devicelock call";
-                    }
+                    QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                                     this, SLOT(didReceiveDeviceLockState(QDBusPendingCallWatcher*)));
                 } else {
                     QDBusReply<int> reply = devlockIf->call(DEVLOCK_GET, DEVLOCK_LOCK_TYPE_DEVICE);
                     if (reply.isValid()) {
                         state = QmLocksPrivate::stateToState(reply.value());
-                    } else {
-                        qDebug() << "Failed to query devicelock";
                     }
                 }
             } else if (what == QmLocks::TouchAndKeyboard) {
@@ -187,16 +163,12 @@ namespace MeeGo
                     if (async) {
                         QDBusPendingCall pcall = mceRequestIf->asyncCall(MCE_TKLOCK_MODE_GET);
                         QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pcall, this);
-                        if (!QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                                         this, SLOT(didReceiveTkLockState(QDBusPendingCallWatcher*)))) {
-                            qDebug() << "Failed to watch pending mce call";
-                        }
+                        QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                                         this, SLOT(didReceiveTkLockState(QDBusPendingCallWatcher*)));
                     } else {
                         QDBusReply<QString> reply = mceRequestIf->call(MCE_TKLOCK_MODE_GET);
                         if (reply.isValid()) {
                             state = QmLocksPrivate::stringToState(reply.value());
-                        } else {
-                            qDebug() << "Failed to query mce";
                         }
                     }
                 #endif /* HAVE_MCE */
@@ -220,6 +192,8 @@ namespace MeeGo
             return success;
         }
 
+        QMutex connectMutex;
+        size_t connectCount[1];
         QmIPCInterface *mceRequestIf;
         QmIPCInterface *devlockIf;
 

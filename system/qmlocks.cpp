@@ -9,6 +9,7 @@
    @author Ilya Dogolazky <ilya.dogolazky@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Tuomo Tanskanen <ext-tuomo.1.tanskanen@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    This file is part of SystemSW QtAPI.
 
@@ -30,15 +31,75 @@
 
 namespace MeeGo {
 
-
 QmLocks::QmLocks(QObject *parent)
              : QObject(parent) {
     MEEGO_INITIALIZE(QmLocks);
-    connect(priv, SIGNAL(stateChanged(MeeGo::QmLocks::Lock, MeeGo::QmLocks::State)), this, SIGNAL(stateChanged(MeeGo::QmLocks::Lock,MeeGo::QmLocks::State)));
+
+    connect(priv, SIGNAL(stateChanged(MeeGo::QmLocks::Lock, MeeGo::QmLocks::State)),
+            this, SIGNAL(stateChanged(MeeGo::QmLocks::Lock,MeeGo::QmLocks::State)));
 }
 
 QmLocks::~QmLocks() {
+    MEEGO_PRIVATE(QmLocks)
+
+    disconnect(priv, SIGNAL(stateChanged(MeeGo::QmLocks::Lock, MeeGo::QmLocks::State)),
+               this, SIGNAL(stateChanged(MeeGo::QmLocks::Lock,MeeGo::QmLocks::State)));
+
     MEEGO_UNINITIALIZE(QmLocks);
+}
+
+void QmLocks::connectNotify(const char *signal) {
+    MEEGO_PRIVATE(QmLocks)
+
+    /* QObject::connect() needs to be thread-safe */
+    QMutexLocker locker(&priv->connectMutex);
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(stateChanged(MeeGo::QmLocks::Lock, MeeGo::QmLocks::State))))) {
+        if (0 == priv->connectCount[SIGNAL_LOCK_STATE]) {
+            #if HAVE_MCE
+                QDBusConnection::systemBus().connect(MCE_SERVICE,
+                                                     MCE_SIGNAL_PATH,
+                                                     MCE_SIGNAL_IF,
+                                                     MCE_TKLOCK_MODE_SIG,
+                                                     priv,
+                                                     SLOT(touchAndKeyboardStateChanged(const QString&)));
+            #endif
+            QDBusConnection::systemBus().connect(DEVLOCK_SERVICE,
+                                                 DEVLOCK_PATH,
+                                                 DEVLOCK_SERVICE,
+                                                 DEVLOCK_SIGNAL,
+                                                 priv,
+                                                 SLOT(deviceStateChanged(int,int)));
+        }
+        priv->connectCount[SIGNAL_LOCK_STATE]++;
+    }
+}
+void QmLocks::disconnectNotify(const char *signal) {
+    MEEGO_PRIVATE(QmLocks)
+
+    /* QObject::disconnect() needs to be thread-safe */
+    QMutexLocker locker(&priv->connectMutex);
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(stateChanged(MeeGo::QmLocks::Lock, MeeGo::QmLocks::State))))) {
+        priv->connectCount[SIGNAL_LOCK_STATE]--;
+
+        if (0 == priv->connectCount[SIGNAL_LOCK_STATE]) {
+            #if HAVE_MCE
+                QDBusConnection::systemBus().disconnect(MCE_SERVICE,
+                                                        MCE_SIGNAL_PATH,
+                                                        MCE_SIGNAL_IF,
+                                                        MCE_TKLOCK_MODE_SIG,
+                                                        priv,
+                                                        SLOT(touchAndKeyboardStateChanged(const QString&)));
+            #endif
+            QDBusConnection::systemBus().disconnect(DEVLOCK_SERVICE,
+                                                    DEVLOCK_PATH,
+                                                    DEVLOCK_SERVICE,
+                                                    DEVLOCK_SIGNAL,
+                                                    priv,
+                                                    SLOT(deviceStateChanged(int,int)));
+        }
+    }
 }
 
 QmLocks::State QmLocks::getState(QmLocks::Lock what) const {

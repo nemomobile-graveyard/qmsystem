@@ -143,6 +143,10 @@ Q_SIGNALS:
      */
     void stateChanged(MeeGo::QmLocks::Lock what, MeeGo::QmLocks::State how);
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 private:
     Q_DISABLE_COPY(QmLocks)
     MEEGO_DECLARE_PRIVATE(QmLocks)
