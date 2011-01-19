@@ -73,8 +73,4 @@ QList<QVariant> QmIPCInterface::get(const QString& method,
     return results;
 }
 
-bool QmIPCInterface::connect(const QString & name, QObject * receiver, const char * slot){
-     return connection().connect(service(), path(), interface(), name, receiver, slot);
-}
-
 } // Namespace MeeGo

@@ -64,8 +64,6 @@ public:
     void callAsynchronously(const QString& method,
                             const QVariant& arg1 = QVariant(),
                             const QVariant& arg2 = QVariant());
-
-    bool connect(const QString & name, QObject * receiver, const char * slot);
 };
 
 } // MeeGo namespace
