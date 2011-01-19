@@ -140,6 +140,10 @@ Q_SIGNALS:
      */
     void devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState state);
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 private:
     Q_DISABLE_COPY(QmDeviceMode)
     MEEGO_DECLARE_PRIVATE(QmDeviceMode)

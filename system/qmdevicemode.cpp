@@ -73,7 +73,82 @@ namespace MeeGo
     }
 
     QmDeviceMode::~QmDeviceMode() {
+        MEEGO_PRIVATE(QmDeviceMode)
+
+        disconnect(priv, SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState)), this,
+                   SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState)));
+        disconnect(priv, SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode)), this,
+                   SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode)));
+
         MEEGO_UNINITIALIZE(QmDeviceMode);
+    }
+
+    void QmDeviceMode::connectNotify(const char *signal) {
+        MEEGO_PRIVATE(QmDeviceMode)
+
+        /* QObject::connect() needs to be thread-safe */
+        QMutexLocker locker(&priv->connectMutex);
+
+        if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode))))) {
+            if (0 == priv->connectCount[SIGNAL_DEVICE_MODE]) {
+                #if HAVE_MCE
+                    QDBusConnection::systemBus().connect(MCE_SERVICE,
+                                                         MCE_SIGNAL_PATH,
+                                                         MCE_SIGNAL_IF,
+                                                         MCE_RADIO_STATES_SIG,
+                                                         priv,
+                                                         SLOT(deviceModeChangedSlot(const quint32)));
+                #endif
+            }
+            priv->connectCount[SIGNAL_DEVICE_MODE]++;
+        } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState))))) {
+            if (0 == priv->connectCount[SIGNAL_PSM_MODE]) {
+                #if HAVE_MCE
+                    QDBusConnection::systemBus().connect(MCE_SERVICE,
+                                                         MCE_SIGNAL_PATH,
+                                                         MCE_SIGNAL_IF,
+                                                         MCE_PSM_STATE_SIG,
+                                                         priv,
+                                                         SLOT(devicePSMChangedSlot(bool)));
+                #endif
+            }
+            priv->connectCount[SIGNAL_PSM_MODE]++;
+        }
+    }
+
+    void QmDeviceMode::disconnectNotify(const char *signal) {
+        MEEGO_PRIVATE(QmDeviceMode)
+
+        /* QObject::disconnect() needs to be thread-safe */
+        QMutexLocker locker(&priv->connectMutex);
+
+        if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode))))) {
+            priv->connectCount[SIGNAL_DEVICE_MODE]--;
+
+            if (0 == priv->connectCount[SIGNAL_DEVICE_MODE]) {
+                #if HAVE_MCE
+                    QDBusConnection::systemBus().disconnect(MCE_SERVICE,
+                                                            MCE_SIGNAL_PATH,
+                                                            MCE_SIGNAL_IF,
+                                                            MCE_RADIO_STATES_SIG,
+                                                            priv,
+                                                            SLOT(deviceModeChangedSlot(const quint32)));
+                #endif
+            }
+        } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState))))) {
+            priv->connectCount[SIGNAL_PSM_MODE]--;
+
+            if (0 == priv->connectCount[SIGNAL_PSM_MODE]) {
+                #if HAVE_MCE
+                    QDBusConnection::systemBus().disconnect(MCE_SERVICE,
+                                                            MCE_SIGNAL_PATH,
+                                                            MCE_SIGNAL_IF,
+                                                            MCE_PSM_STATE_SIG,
+                                                            priv,
+                                                            SLOT(devicePSMChangedSlot(bool)));
+                #endif
+            }
+        }
     }
 
     QmDeviceMode::DeviceMode QmDeviceMode::getMode() const {
@@ -173,7 +248,7 @@ namespace MeeGo
                     value = data;
                     break;
                 }
-            } while (elem = g_slist_next(elem));
+            } while ((elem = g_slist_next(elem)));
             g_slist_free(list);
         }
 

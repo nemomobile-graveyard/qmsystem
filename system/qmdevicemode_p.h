@@ -31,6 +31,8 @@
 #include "qmdevicemode.h"
 #include "qmipcinterface_p.h"
 
+#include <QMutex>
+
 #if HAVE_MCE
     #include "mce/dbus-names.h"
     #include "mce/mode-names.h"
@@ -43,6 +45,9 @@
 #define THRESHOLDS PATH"/possible_psm_thresholds"
 #define THRESHOLD PATH"/psm_threshold"
 
+#define SIGNAL_DEVICE_MODE 0
+#define SIGNAL_PSM_MODE 1
+
 namespace MeeGo
 {
     class QmDeviceModePrivate : public QObject
@@ -52,28 +57,22 @@ namespace MeeGo
 
     public:
         QmDeviceModePrivate() {
-            signalIf = requestIf = 0;
+            requestIf = 0;
 
             #if HAVE_MCE
-                signalIf = new QmIPCInterface(MCE_SERVICE, MCE_SIGNAL_PATH, MCE_SIGNAL_IF);
                 requestIf = new QmIPCInterface(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
             #endif
 
+            connectCount[SIGNAL_DEVICE_MODE] = connectCount[SIGNAL_PSM_MODE] = 0;
+
             g_type_init();
             gcClient = gconf_client_get_default();
-
-            #if HAVE_MCE
-                signalIf->connect(MCE_RADIO_STATES_SIG, this, SLOT(deviceModeChangedSlot(const quint32)));
-                signalIf->connect(MCE_PSM_STATE_SIG, this, SLOT(devicePSMChangedSlot(bool)));
-            #endif
         }
 
         ~QmDeviceModePrivate() {
             #if HAVE_MCE
                 if (requestIf)
                     delete requestIf, requestIf = 0;
-                if (signalIf)
-                    delete signalIf, signalIf = 0;
             #endif
             g_object_unref(gcClient), gcClient = 0;
         }
@@ -100,8 +99,9 @@ namespace MeeGo
             }
         }
 
+        QMutex connectMutex;
+        size_t connectCount[2];
         QmIPCInterface *requestIf;
-        QmIPCInterface *signalIf;
         GConfClient *gcClient;
 
     Q_SIGNALS:
