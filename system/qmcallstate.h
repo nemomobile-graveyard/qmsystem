@@ -100,10 +100,6 @@ public:
      */
     bool setState(QmCallState::State state, QmCallState::Type type);
 
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-
 Q_SIGNALS:
     /**
      * Sent when call state has changed.
@@ -111,6 +107,10 @@ Q_SIGNALS:
      * @param type  Current call type.
      */
     void stateChanged(MeeGo::QmCallState::State state, MeeGo::QmCallState::Type type);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 
 private:
     Q_DISABLE_COPY(QmCallState)
