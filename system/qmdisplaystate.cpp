@@ -52,7 +52,7 @@ void QmDisplayState::connectNotify(const char *signal) {
     MEEGO_PRIVATE(QmDisplayState)
 
     /* QObject::connect() needs to be thread-safe */
-    priv->connectMutex.lock();
+    QMutexLocker locker(&priv->connectMutex);
 
     if (QLatin1String(signal) == SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState))) {
         if (0 == priv->connectCount[SIGNAL_DISPLAY_STATE]) {
@@ -67,15 +67,13 @@ void QmDisplayState::connectNotify(const char *signal) {
         }
         priv->connectCount[SIGNAL_DISPLAY_STATE]++;
     }
-
-    priv->connectMutex.unlock();
 }
 
 void QmDisplayState::disconnectNotify(const char *signal) {
     MEEGO_PRIVATE(QmDisplayState)
 
     /* QObject::disconnect() needs to be thread-safe */
-    priv->connectMutex.lock();
+    QMutexLocker locker(&priv->connectMutex);
 
     if (QLatin1String(signal) == SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState))) {
         priv->connectCount[SIGNAL_DISPLAY_STATE]--;
@@ -91,8 +89,6 @@ void QmDisplayState::disconnectNotify(const char *signal) {
             #endif
         }
     }
-
-    priv->connectMutex.unlock();
 }
 
 QmDisplayState::DisplayState QmDisplayState::get() const {
