@@ -63,11 +63,105 @@ namespace MeeGo {
 QmSystemState::QmSystemState(QObject *parent)
              : QObject(parent){
     MEEGO_INITIALIZE(QmSystemState);
-    connect(priv, SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication)), this, SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication)));
+
+    connect(priv, SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication)),
+            this, SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication)));
 }
 
 QmSystemState::~QmSystemState(){
+    MEEGO_PRIVATE(QmSystemState)
+
+    disconnect(priv, SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication)),
+               this, SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication)));
+
     MEEGO_UNINITIALIZE(QmSystemState);
+}
+
+void QmSystemState::connectNotify(const char *signal) {
+    MEEGO_PRIVATE(QmSystemState)
+
+    /* QObject::connect() needs to be thread-safe */
+    QMutexLocker locker(&priv->connectMutex);
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication))))) {
+        if (0 == priv->connectCount[SIGNAL_SYSTEM_STATE]) {
+            QDBusConnection::systemBus().connect(dsme_service,
+                                                 dsme_sig_path,
+                                                 dsme_sig_interface,
+                                                 dsme_shutdown_ind,
+                                                 priv,
+                                                 SLOT(emitShutdown()));
+            QDBusConnection::systemBus().connect(dsme_service,
+                                                 dsme_sig_path,
+                                                 dsme_sig_interface,
+                                                 dsme_save_unsaved_data_ind,
+                                                 priv,
+                                                 SLOT(emitSaveData()));
+            QDBusConnection::systemBus().connect(dsme_service,
+                                                 dsme_sig_path,
+                                                 dsme_sig_interface,
+                                                 dsme_battery_empty_ind,
+                                                 priv,
+                                                 SLOT(emitBatteryShutdown()));
+            QDBusConnection::systemBus().connect(dsme_service,
+                                                 dsme_sig_path,
+                                                 dsme_sig_interface,
+                                                 dsme_state_req_denied_ind,
+                                                 priv,
+                                                 SLOT(emitShutdownDenied(QString, QString)));
+            QDBusConnection::systemBus().connect(SYS_THERMALMANAGER_SERVICE,
+                                                 SYS_THERMALMANAGER_PATH,
+                                                 SYS_THERMALMANAGER_INTERFACE,
+                                                 SYS_THERMALMANAGER_STATE_SIG,
+                                                 priv,
+                                                 SLOT(emitThermalShutdown(QString)));
+        }
+        priv->connectCount[SIGNAL_SYSTEM_STATE]++;
+    }
+}
+
+void QmSystemState::disconnectNotify(const char *signal) {
+    MEEGO_PRIVATE(QmSystemState)
+
+    /* QObject::disconnect() needs to be thread-safe */
+    QMutexLocker locker(&priv->connectMutex);
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication))))) {
+        priv->connectCount[SIGNAL_SYSTEM_STATE]--;
+
+        if (0 == priv->connectCount[SIGNAL_SYSTEM_STATE]) {
+            QDBusConnection::systemBus().disconnect(dsme_service,
+                                                    dsme_sig_path,
+                                                    dsme_sig_interface,
+                                                    dsme_shutdown_ind,
+                                                    priv,
+                                                    SLOT(emitShutdown()));
+            QDBusConnection::systemBus().disconnect(dsme_service,
+                                                    dsme_sig_path,
+                                                    dsme_sig_interface,
+                                                    dsme_save_unsaved_data_ind,
+                                                    priv,
+                                                    SLOT(emitSaveData()));
+            QDBusConnection::systemBus().disconnect(dsme_service,
+                                                    dsme_sig_path,
+                                                    dsme_sig_interface,
+                                                    dsme_battery_empty_ind,
+                                                    priv,
+                                                    SLOT(emitBatteryShutdown()));
+            QDBusConnection::systemBus().disconnect(dsme_service,
+                                                    dsme_sig_path,
+                                                    dsme_sig_interface,
+                                                    dsme_state_req_denied_ind,
+                                                    priv,
+                                                    SLOT(emitShutdownDenied(QString, QString)));
+            QDBusConnection::systemBus().disconnect(SYS_THERMALMANAGER_SERVICE,
+                                                    SYS_THERMALMANAGER_PATH,
+                                                    SYS_THERMALMANAGER_INTERFACE,
+                                                    SYS_THERMALMANAGER_STATE_SIG,
+                                                    priv,
+                                                    SLOT(emitThermalShutdown(QString)));
+        }
+    }
 }
 
 bool QmSystemState::set(NextState nextState){

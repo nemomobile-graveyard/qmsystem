@@ -32,6 +32,10 @@
 #include "dsme/dsme_dbus_if.h"
 #include "msystemdbus_p.h"
 
+#include <QMutex>
+
+#define SIGNAL_SYSTEM_STATE 0
+
 namespace MeeGo
 {
 
@@ -41,41 +45,31 @@ namespace MeeGo
         MEEGO_DECLARE_PUBLIC(QmSystemState)
 
     public:
-        QmSystemStatePrivate(){
-            dsmeSignalIf = new QmIPCInterface(
-                           dsme_service,
-                           dsme_sig_path,
-                           dsme_sig_interface);
+        QmSystemStatePrivate() {
             dsmeRequestIf = new QmIPCInterface(
                            dsme_service,
                            dsme_req_path,
                            dsme_req_interface);
-            thermalSignalIf = new QmIPCInterface(
-                           SYS_THERMALMANAGER_SERVICE,
-                           SYS_THERMALMANAGER_PATH,
-                           SYS_THERMALMANAGER_INTERFACE);
             poweronRequestIf = new QmIPCInterface(
                            SYS_POWERONTIMER_SERVICE,
                            SYS_POWERONTIMER_PATH,
                            SYS_POWERONTIMER_INTERFACE);
 
-            dsmeSignalIf->connect(dsme_shutdown_ind, this, SLOT(emitShutdown()));
-            dsmeSignalIf->connect(dsme_save_unsaved_data_ind, this, SLOT(emitSaveData()));
-            dsmeSignalIf->connect(dsme_battery_empty_ind, this, SLOT(emitBatteryShutdown()));
-            dsmeSignalIf->connect(dsme_state_req_denied_ind, this, SLOT(emitShutdownDenied(QString, QString)));
-            thermalSignalIf->connect(SYS_THERMALMANAGER_STATE_SIG, this, SLOT(emitThermalShutdown(QString)));
+            connectCount[SIGNAL_SYSTEM_STATE] = 0;
         }
 
-        ~QmSystemStatePrivate(){
-            delete dsmeSignalIf;
-            delete dsmeRequestIf;
-            delete thermalSignalIf;
-            delete poweronRequestIf;
+        ~QmSystemStatePrivate() {
+            if (dsmeRequestIf) {
+                delete dsmeRequestIf, dsmeRequestIf = 0;
+            }
+            if (poweronRequestIf) {
+                delete poweronRequestIf, poweronRequestIf = 0;
+            }
         }
 
-        QmIPCInterface *dsmeSignalIf;
+        QMutex connectMutex;
+        size_t connectCount[1];
         QmIPCInterface *dsmeRequestIf;
-        QmIPCInterface *thermalSignalIf;
         QmIPCInterface *poweronRequestIf;
 
     Q_SIGNALS:
@@ -84,7 +78,7 @@ namespace MeeGo
 
     private Q_SLOTS:
 
-        void emitShutdown() {          
+        void emitShutdown() {
             emit systemStateChanged(QmSystemState::Shutdown);
         }
 
@@ -113,6 +107,5 @@ namespace MeeGo
             }
         }
     };
-
 }
 #endif // QMSYSTEMSTATE_P_H

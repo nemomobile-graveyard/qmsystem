@@ -103,7 +103,7 @@ public:
         BootReason_Usb,                //!< Usb charger plugged in
         BootReason_SWReset,            //!< SW reset issued by the system
         BootReason_RTCAlarm,           //!< Real Time Clock Alarm
-        BootReason_NSU                 //!< Software update       
+        BootReason_NSU                 //!< Software update
     };
 
 public:
@@ -146,6 +146,10 @@ Q_SIGNALS:
      * @param what Received state indication type.
      */
     void systemStateChanged(MeeGo::QmSystemState::StateIndication what);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 
 private:
     Q_DISABLE_COPY(QmSystemState)
