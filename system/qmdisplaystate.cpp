@@ -54,7 +54,7 @@ void QmDisplayState::connectNotify(const char *signal) {
     /* QObject::connect() needs to be thread-safe */
     QMutexLocker locker(&priv->connectMutex);
 
-    if (QLatin1String(signal) == SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState))) {
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState))))) {
         if (0 == priv->connectCount[SIGNAL_DISPLAY_STATE]) {
             #if HAVE_MCE
                 QDBusConnection::systemBus().connect(MCE_SERVICE,
@@ -75,7 +75,7 @@ void QmDisplayState::disconnectNotify(const char *signal) {
     /* QObject::disconnect() needs to be thread-safe */
     QMutexLocker locker(&priv->connectMutex);
 
-    if (QLatin1String(signal) == SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState))) {
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState))))) {
         priv->connectCount[SIGNAL_DISPLAY_STATE]--;
 
         if (0 == priv->connectCount[SIGNAL_DISPLAY_STATE]) {

@@ -55,7 +55,7 @@ void QmActivity::connectNotify(const char *signal) {
     /* QObject::connect() needs to be thread-safe */
     QMutexLocker locker(&priv->connectMutex);
 
-    if (QLatin1String(signal) == SIGNAL(activityChanged(MeeGo::QmActivity::Activity))) {
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(activityChanged(MeeGo::QmActivity::Activity))))) {
         if (0 == priv->connectCount[SIGNAL_INACTIVITY]) {
             #if HAVE_MCE
                 QDBusConnection::systemBus().connect(MCE_SERVICE,
@@ -75,7 +75,7 @@ void QmActivity::disconnectNotify(const char *signal) {
     /* QObject::disconnect() needs to be thread-safe */
     QMutexLocker locker(&priv->connectMutex);
 
-    if (QLatin1String(signal) == SIGNAL(activityChanged(MeeGo::QmActivity::Activity))) {
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(activityChanged(MeeGo::QmActivity::Activity))))) {
         priv->connectCount[SIGNAL_INACTIVITY]--;
 
         if (0 == priv->connectCount[SIGNAL_INACTIVITY]) {
