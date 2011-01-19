@@ -1,7 +1,7 @@
 qmsystem2 (1.0.6) unstable; urgency=low
 
    [Matias Muhonen]
-   * Optimized some of the D-Bus signal listeners in constructors
+   * Fixes: NB#218103 - qmsystem classes shouldn't connect to dbus signals in constructors
 
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Wed, 19 Jan 2011 10:01:26 +0200
 
