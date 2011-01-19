@@ -30,6 +30,8 @@
 #include "qmdisplaystate.h"
 #include "qmipcinterface_p.h"
 
+#include <QMutex>
+
 #if HAVE_MCE
     #include "mce/dbus-names.h"
     #include "mce/mode-names.h"
@@ -53,44 +55,38 @@
 #define BLANKING_CHARGING_KEY GCONF_DISPLAY_DIR "/" "inhibit_blank_mode"
 #define POSSIBLE_DIM_LIST_KEY GCONF_DISPLAY_DIR "/" "possible_display_dim_timeouts"
 
+#define SIGNAL_DISPLAY_STATE 0
+
 namespace MeeGo
 {
-
     class QmDisplayStatePrivate : public QObject
     {
         Q_OBJECT;
         MEEGO_DECLARE_PUBLIC(QmDisplayState)
 
     public:
-        QmDisplayStatePrivate(){
-#if HAVE_MCE
-            signalIf = new QmIPCInterface(
-                        MCE_SERVICE,
-                        MCE_SIGNAL_PATH,
-                        MCE_SIGNAL_IF);
-            requestIf = new QmIPCInterface(
-                        MCE_SERVICE,
-                        MCE_REQUEST_PATH,
-                        MCE_REQUEST_IF);
-#endif
-            g_type_init ();
+        QmDisplayStatePrivate() {
+            #if HAVE_MCE
+                requestIf = new QmIPCInterface(MCE_SERVICE,
+                                               MCE_REQUEST_PATH,
+                                               MCE_REQUEST_IF);
+            #endif
+            g_type_init();
             gc = gconf_client_get_default();
 
-#if HAVE_MCE
-            signalIf->connect(MCE_DISPLAY_SIG, this, SLOT(slotDisplayStateChanged(const QString&)));
-#endif
+            connectCount[SIGNAL_DISPLAY_STATE] = 0;
         }
 
-        ~QmDisplayStatePrivate(){
-#if HAVE_MCE
-            delete signalIf;
-            delete requestIf;
-#endif
-            g_object_unref (gc);
+        ~QmDisplayStatePrivate() {
+            #if HAVE_MCE
+                 delete requestIf, requestIf = 0;
+            #endif
+            g_object_unref(gc), gc = 0;
         }
 
+        QMutex connectMutex;
+        size_t connectCount[1];
         QmIPCInterface *requestIf;
-        QmIPCInterface *signalIf;
         GConfClient *gc;
 
     Q_SIGNALS:
@@ -98,17 +94,17 @@ namespace MeeGo
 
     private Q_SLOTS:
 
-        void slotDisplayStateChanged(const QString& state){
-#if HAVE_MCE
-            if (state == MCE_DISPLAY_OFF_STRING)
-                emit displayStateChanged(QmDisplayState::Off);
-            else if (state == MCE_DISPLAY_DIM_STRING)
-                emit displayStateChanged(QmDisplayState::Dimmed);
-            else if (state == MCE_DISPLAY_ON_STRING)
-                emit displayStateChanged(QmDisplayState::On);
-#else
-    Q_UNUSED(state);
-#endif
+        void slotDisplayStateChanged(const QString& state) {
+            #if HAVE_MCE
+                if (state == MCE_DISPLAY_OFF_STRING)
+                    emit displayStateChanged(QmDisplayState::Off);
+                else if (state == MCE_DISPLAY_DIM_STRING)
+                    emit displayStateChanged(QmDisplayState::Dimmed);
+                else if (state == MCE_DISPLAY_ON_STRING)
+                    emit displayStateChanged(QmDisplayState::On);
+            #else
+                Q_UNUSED(state);
+            #endif
         }
     };
 }

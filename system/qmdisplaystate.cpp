@@ -30,19 +30,71 @@
 
 namespace MeeGo {
 
-
 QmDisplayState::QmDisplayState(QObject *parent)
-              : QObject(parent){
-    MEEGO_INITIALIZE(QmDisplayState);
-    connect(priv, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)), this, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)));
+              : QObject(parent) {
+     MEEGO_INITIALIZE(QmDisplayState);
 
+     connect(priv, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)),
+             this, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)));
 }
 
-QmDisplayState::~QmDisplayState(){
+QmDisplayState::~QmDisplayState() {
+    MEEGO_PRIVATE(QmDisplayState)
+
+    disconnect(priv, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)),
+               this, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)));
+
     MEEGO_UNINITIALIZE(QmDisplayState);
 }
 
-QmDisplayState::DisplayState QmDisplayState::get() const{
+void QmDisplayState::connectNotify(const char *signal) {
+    MEEGO_PRIVATE(QmDisplayState)
+
+    /* QObject::connect needs to be thread-safe */
+    priv->connectMutex.lock();
+
+    if (QLatin1String(signal) == SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState))) {
+        if (0 == priv->connectCount[SIGNAL_DISPLAY_STATE]) {
+            #if HAVE_MCE
+                QDBusConnection::systemBus().connect(MCE_SERVICE,
+                                                     MCE_SIGNAL_PATH,
+                                                     MCE_SIGNAL_IF,
+                                                     MCE_DISPLAY_SIG,
+                                                     priv,
+                                                     SLOT(slotDisplayStateChanged(const QString&)));
+            #endif
+        }
+        priv->connectCount[SIGNAL_DISPLAY_STATE]++;
+    }
+
+    priv->connectMutex.unlock();
+}
+
+void QmDisplayState::disconnectNotify(const char *signal) {
+    MEEGO_PRIVATE(QmDisplayState)
+
+    /* QObject::disconnect needs to be thread-safe */
+    priv->connectMutex.lock();
+
+    if (QLatin1String(signal) == SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState))) {
+        priv->connectCount[SIGNAL_DISPLAY_STATE]--;
+
+        if (0 == priv->connectCount[SIGNAL_DISPLAY_STATE]) {
+            #if HAVE_MCE
+                QDBusConnection::systemBus().disconnect(MCE_SERVICE,
+                                                        MCE_SIGNAL_PATH,
+                                                        MCE_SIGNAL_IF,
+                                                        MCE_DISPLAY_SIG,
+                                                        priv,
+                                                        SLOT(slotDisplayStateChanged(const QString&)));
+            #endif
+        }
+    }
+
+    priv->connectMutex.unlock();
+}
+
+QmDisplayState::DisplayState QmDisplayState::get() const {
     QmDisplayState::DisplayState state = Off;
 
 #if HAVE_MCE
@@ -65,7 +117,7 @@ QmDisplayState::DisplayState QmDisplayState::get() const{
     return state;
 }
 
-bool QmDisplayState::set(QmDisplayState::DisplayState state){
+bool QmDisplayState::set(QmDisplayState::DisplayState state) {
 #if HAVE_MCE
     MEEGO_PRIVATE(QmDisplayState)
 
@@ -207,7 +259,7 @@ void QmDisplayState::setBlankingWhenCharging(bool blanking) {
     gconf_client_set_int(priv->gc, BLANKING_CHARGING_KEY, b, NULL);
 }
 
-bool QmDisplayState::setBlankingPause(void){
+bool QmDisplayState::setBlankingPause(void) {
 #if HAVE_MCE
     MEEGO_PRIVATE_CONST(QmDisplayState)
 

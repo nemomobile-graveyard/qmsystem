@@ -165,6 +165,10 @@ Q_SIGNALS:
      */
     void displayStateChanged(MeeGo::QmDisplayState::DisplayState state);
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 private:
     Q_DISABLE_COPY(QmDisplayState)
     MEEGO_DECLARE_PRIVATE(QmDisplayState)
