@@ -100,6 +100,10 @@ public:
      */
     bool setState(QmCallState::State state, QmCallState::Type type);
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 Q_SIGNALS:
     /**
      * Sent when call state has changed.
