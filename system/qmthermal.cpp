@@ -29,20 +29,62 @@
 
 namespace MeeGo {
 
-
-
 QmThermal::QmThermal(QObject *parent)
-             : QObject(parent){
+             : QObject(parent) {
     MEEGO_INITIALIZE(QmThermal)
-    connect(priv, SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState)), this, SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState)));
+
+    connect(priv, SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState)),
+            this, SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState)));
 }
 
 QmThermal::~QmThermal(){
-    MEEGO_UNINITIALIZE(QmThermal);
+    MEEGO_PRIVATE(QmThermal)
 
+    disconnect(priv, SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState)),
+               this, SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState)));
+
+    MEEGO_UNINITIALIZE(QmThermal);
 }
 
-QmThermal::ThermalState QmThermal::get() const{
+void QmThermal::connectNotify(const char *signal) {
+    MEEGO_PRIVATE(QmThermal)
+
+    /* QObject::connect() needs to be thread-safe */
+    QMutexLocker locker(&priv->connectMutex);
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState))))) {
+        if (0 == priv->connectCount[SIGNAL_THERMAL_STATE]) {
+            QDBusConnection::systemBus().connect(SYS_THERMALMANAGER_SERVICE,
+                                                 SYS_THERMALMANAGER_PATH,
+                                                 SYS_THERMALMANAGER_INTERFACE,
+                                                 SYS_THERMALMANAGER_STATE_SIG,
+                                                 priv,
+                                                 SLOT(thermalStateChanged(const QString&)));
+        }
+        priv->connectCount[SIGNAL_THERMAL_STATE]++;
+    }
+}
+void QmThermal::disconnectNotify(const char *signal) {
+    MEEGO_PRIVATE(QmThermal)
+
+    /* QObject::disconnect() needs to be thread-safe */
+    QMutexLocker locker(&priv->connectMutex);
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState))))) {
+        priv->connectCount[SIGNAL_THERMAL_STATE]--;
+
+        if (0 == priv->connectCount[SIGNAL_THERMAL_STATE]) {
+            QDBusConnection::systemBus().disconnect(SYS_THERMALMANAGER_SERVICE,
+                                                    SYS_THERMALMANAGER_PATH,
+                                                    SYS_THERMALMANAGER_INTERFACE,
+                                                    SYS_THERMALMANAGER_STATE_SIG,
+                                                    priv,
+                                                    SLOT(thermalStateChanged(const QString&)));
+        }
+    }
+}
+
+QmThermal::ThermalState QmThermal::get() const {
     MEEGO_PRIVATE_CONST(QmThermal)
     QString state;
     QList<QVariant> resp;
@@ -57,6 +99,5 @@ QmThermal::ThermalState QmThermal::get() const{
     state = resp[0].toString();
     return QmThermalPrivate::stringToState(state);
 }
-
 
 } // MeeGo namespace

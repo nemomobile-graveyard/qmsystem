@@ -86,6 +86,10 @@ Q_SIGNALS:
      */
     void thermalChanged(MeeGo::QmThermal::ThermalState state);
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 private:
     Q_DISABLE_COPY(QmThermal)
     MEEGO_DECLARE_PRIVATE(QmThermal)

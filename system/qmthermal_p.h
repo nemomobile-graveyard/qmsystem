@@ -28,8 +28,9 @@
 #define QMTHERMAL_P_H
 
 #include "qmthermal.h"
-
 #include "qmipcinterface_p.h"
+
+#include <QMutex>
 
 #define SYS_THERMALMANAGER_SERVICE        "com.nokia.thermalmanager"
 #define SYS_THERMALMANAGER_INTERFACE      "com.nokia.thermalmanager"
@@ -40,45 +41,45 @@
 #define ALERT   "alert"
 #define WARNING "warning"
 
+#define SIGNAL_THERMAL_STATE 0
+
 namespace MeeGo
 {
-
     class QmThermalPrivate : public QObject
     {
         Q_OBJECT
         MEEGO_DECLARE_PUBLIC(QmThermal)
 
     public:
-        QmThermalPrivate(){
-            If = new QmIPCInterface(
-                           SYS_THERMALMANAGER_SERVICE,
-                           SYS_THERMALMANAGER_PATH,
-                           SYS_THERMALMANAGER_INTERFACE);
-            If->connect(SYS_THERMALMANAGER_STATE_SIG, this, SLOT(thermalStateChanged(const QString&)));
+        QmThermalPrivate() {
+            If = new QmIPCInterface(SYS_THERMALMANAGER_SERVICE,
+                                    SYS_THERMALMANAGER_PATH,
+                                    SYS_THERMALMANAGER_INTERFACE);
 
+            connectCount[SIGNAL_THERMAL_STATE] = 0;
         }
 
-        ~QmThermalPrivate(){
-            delete If;
+        ~QmThermalPrivate() {
+            if (If) {
+                delete If, If = 0;
+            }
         }
 
-        static QmThermal::ThermalState stringToState(const QString& state){
+        static QmThermal::ThermalState stringToState(const QString& state) {
             QmThermal::ThermalState mState = QmThermal::Unknown;
 
-            if (state.isEmpty()){
-                qWarning("Unable to get a string value for thermal state");
-            }else if (state == NORMAL)
+            if (state == NORMAL) {
                 mState = QmThermal::Normal;
-            else if (state == WARNING)
+            } else if (state == WARNING) {
                 mState = QmThermal::Warning;
-            else if (state == ALERT)
+            } else if (state == ALERT) {
                 mState = QmThermal::Alert;
-            else
-                qWarning("Unable to get a valid string value");
-
+            }
             return mState;
         }
 
+        QMutex connectMutex;
+        size_t connectCount[1];
         QmIPCInterface *If;
 
     Q_SIGNALS:
@@ -87,9 +88,7 @@ namespace MeeGo
     private Q_SLOTS:
         void thermalStateChanged(const QString &state) {
             emit thermalChanged(QmThermalPrivate::stringToState(state));
-
         }
     };
-
 }
 #endif // QMTHERMAL_P_H
