@@ -30,7 +30,8 @@
 #include "qmusbmode.h"
 #include "qmipcinterface_p.h"
 #include <gconf/gconf-client.h>
-#include <QDebug>
+
+#include <QMutex>
 
 #if HAVE_USB_MODED_DEV
     #include <usb_moded-dbus.h>
@@ -42,6 +43,9 @@
 
 #define USB_MODE_GCONF          "/Meego/System/UsbMode"
 
+#define SIGNAL_USB_MODE 0
+#define SIGNAL_USB_ERROR 1
+
 namespace MeeGo
 {
     class QmUSBModePrivate : public QObject
@@ -52,25 +56,27 @@ namespace MeeGo
 
         QmIPCInterface *requestIf;
         GConfClient *gcClient;
+        QMutex connectMutex;
+        size_t connectCount[2];
 
         QmUSBModePrivate(QObject *parent = 0) : QObject(parent)
         {
             requestIf = new QmIPCInterface(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE);
-            requestIf->connect(USB_MODE_SIGNAL_NAME, this, SLOT(modeChanged(const QString&)));
-            requestIf->connect(USB_MODE_ERROR_SIGNAL_NAME, this, SLOT(didReceiveError(const QString&)));
+
+            connectCount[SIGNAL_USB_MODE] = connectCount[SIGNAL_USB_ERROR] = 0;
 
             g_type_init();
             gcClient = gconf_client_get_default();
         }
 
-        ~QmUSBModePrivate()
-        {
-            delete requestIf;
-            g_object_unref(gcClient);
+        ~QmUSBModePrivate() {
+            if (requestIf) {
+                delete requestIf, requestIf = 0;
+            }
+            g_object_unref(gcClient), gcClient = 0;
         }
 
-        static QString modeToString(QmUSBMode::Mode mode)
-        {
+        static QString modeToString(QmUSBMode::Mode mode) {
             switch (mode) {
             case QmUSBMode::Connected:
                 return USB_CONNECTED;
@@ -91,13 +97,11 @@ namespace MeeGo
             case QmUSBMode::ModeRequest:
                 return USB_CONNECTED_DIALOG_SHOW;
             default:
-                qWarning() << "A bad mode: " << mode;
                 return "";
             }
         }
 
-        static QmUSBMode::Mode stringToMode(const QString &str)
-        {
+        static QmUSBMode::Mode stringToMode(const QString &str) {
             if (str == USB_CONNECTED) {
                 return QmUSBMode::Connected;
             } else if (str == USB_DISCONNECTED) {
@@ -117,13 +121,11 @@ namespace MeeGo
             } else if (str == USB_CONNECTED_DIALOG_SHOW) {
                 return QmUSBMode::ModeRequest;
             } else {
-                qWarning() << "A bad mode: " << str;
                 return QmUSBMode::Undefined;
             }
         }
 
-        bool setMode(QmUSBMode::Mode mode)
-        {
+        bool setMode(QmUSBMode::Mode mode) {
             QString str = modeToString(mode);
             if (str.isEmpty()) {
                 return false;
@@ -132,8 +134,7 @@ namespace MeeGo
             return true;
         }
 
-        QmUSBMode::Mode getMode()
-        {
+        QmUSBMode::Mode getMode() {
             QList<QVariant> ret = requestIf->get(USB_MODE_STATE_REQUEST);
             if (ret.size() == 1) {
                 return stringToMode(ret.first().toString());
@@ -141,8 +142,7 @@ namespace MeeGo
             return QmUSBMode::Undefined;
         }
 
-        bool setDefaultMode(QmUSBMode::Mode mode)
-        {
+        bool setDefaultMode(QmUSBMode::Mode mode) {
             QString str = modeToString(mode);
             if (str.isEmpty()) {
                 return false;
@@ -151,22 +151,17 @@ namespace MeeGo
             if (ret == TRUE) {
                 return true;
             } else {
-                qWarning() << "Could not set the default usb mode";
                 return false;
             }
         }
 
-        QmUSBMode::Mode getDefaultMode()
-        {
+        QmUSBMode::Mode getDefaultMode() {
             QmUSBMode::Mode mode = QmUSBMode::Undefined;
             gchar *val = gconf_client_get_string(gcClient, USB_MODE_GCONF, NULL);
             if (val) {
                 mode = stringToMode(QString(val));
-            } else {
-                qWarning() << "Could not get the default usb mode";
             }
             g_free(val);
-
             return mode;
         }
 
@@ -175,14 +170,12 @@ namespace MeeGo
         void error(const QString &errorCode);
 
     private Q_SLOTS:
-        void didReceiveError(const QString &errorCode)
-        {
+        void didReceiveError(const QString &errorCode) {
             emit error(errorCode);
         }
 
     public Q_SLOTS:
-        void modeChanged(const QString &mode)
-        {
+        void modeChanged(const QString &mode) {
             emit modeChanged(stringToMode(mode));
         }
     };

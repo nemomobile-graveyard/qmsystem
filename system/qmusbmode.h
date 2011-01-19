@@ -35,9 +35,7 @@ QT_BEGIN_HEADER
 
 namespace MeeGo
 {
-
     class QmUSBModePrivate;
-
 
     /**
      * @scope Internal
@@ -125,10 +123,13 @@ namespace MeeGo
          */
         void error(const QString &errorCode);
 
+    protected:
+        void connectNotify(const char *signal);
+        void disconnectNotify(const char *signal);
+
     private:
         Q_DISABLE_COPY(QmUSBMode);
         MEEGO_DECLARE_PRIVATE(QmUSBMode);
-
     };
 }
 

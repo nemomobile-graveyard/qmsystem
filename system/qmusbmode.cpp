@@ -27,26 +27,87 @@
 
 namespace MeeGo {
 
-    QmUSBMode::QmUSBMode(QObject *parent) : QObject(parent)
-    {
+    QmUSBMode::QmUSBMode(QObject *parent) : QObject(parent) {
         MEEGO_INITIALIZE(QmUSBMode);
         connect(priv, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)), this, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)));
         connect(priv, SIGNAL(error(const QString&)), this, SIGNAL(error(const QString&)));
     }
 
-    QmUSBMode::~QmUSBMode()
-    {
+    QmUSBMode::~QmUSBMode() {
+        MEEGO_PRIVATE(QmUSBMode);
+
+        disconnect(priv, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)), this, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)));
+        disconnect(priv, SIGNAL(error(const QString&)), this, SIGNAL(error(const QString&)));
+
         MEEGO_UNINITIALIZE(QmUSBMode);
     }
 
-    QmUSBMode::Mode QmUSBMode::getMode()
-    {
+    void QmUSBMode::connectNotify(const char *signal) {
+        MEEGO_PRIVATE(QmUSBMode)
+
+        /* QObject::connect() needs to be thread-safe */
+        QMutexLocker locker(&priv->connectMutex);
+
+        if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode mode))))) {
+            if (0 == priv->connectCount[SIGNAL_USB_MODE]) {
+                QDBusConnection::systemBus().connect(USB_MODE_SERVICE,
+                                                     USB_MODE_OBJECT,
+                                                     USB_MODE_INTERFACE,
+                                                     USB_MODE_SIGNAL_NAME,
+                                                     priv,
+                                                     SLOT(modeChanged(const QString&)));
+            }
+            priv->connectCount[SIGNAL_USB_MODE]++;
+        } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(error(const QString&))))) {
+            if (0 == priv->connectCount[SIGNAL_USB_ERROR]) {
+                QDBusConnection::systemBus().connect(USB_MODE_SERVICE,
+                                                     USB_MODE_OBJECT,
+                                                     USB_MODE_INTERFACE,
+                                                     USB_MODE_ERROR_SIGNAL_NAME,
+                                                     priv,
+                                                     SLOT(didReceiveError(const QString&)));
+            }
+            priv->connectCount[SIGNAL_USB_ERROR]++;
+        }
+    }
+
+    void QmUSBMode::disconnectNotify(const char *signal) {
+        MEEGO_PRIVATE(QmUSBMode)
+
+        /* QObject::disconnect() needs to be thread-safe */
+        QMutexLocker locker(&priv->connectMutex);
+
+        if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode mode))))) {
+            priv->connectCount[SIGNAL_USB_MODE]--;
+
+            if (0 == priv->connectCount[SIGNAL_USB_MODE]) {
+                QDBusConnection::systemBus().disconnect(USB_MODE_SERVICE,
+                                                        USB_MODE_OBJECT,
+                                                        USB_MODE_INTERFACE,
+                                                        USB_MODE_SIGNAL_NAME,
+                                                        priv,
+                                                        SLOT(modeChanged(const QString&)));
+            }
+        } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(error(const QString&))))) {
+            priv->connectCount[SIGNAL_USB_ERROR]--;
+
+            if (0 == priv->connectCount[SIGNAL_USB_ERROR]) {
+                QDBusConnection::systemBus().disconnect(USB_MODE_SERVICE,
+                                                        USB_MODE_OBJECT,
+                                                        USB_MODE_INTERFACE,
+                                                        USB_MODE_ERROR_SIGNAL_NAME,
+                                                        priv,
+                                                        SLOT(didReceiveError(const QString&)));
+            }
+        }
+    }
+
+    QmUSBMode::Mode QmUSBMode::getMode() {
         MEEGO_PRIVATE(QmUSBMode);
         return priv->getMode();
     }
 
-    bool QmUSBMode::setMode(QmUSBMode::Mode mode)
-    {
+    bool QmUSBMode::setMode(QmUSBMode::Mode mode) {
         MEEGO_PRIVATE(QmUSBMode);
         switch (mode) {
         case OviSuite:
@@ -58,8 +119,7 @@ namespace MeeGo {
         }
     }
 
-    bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode)
-    {
+    bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode) {
         MEEGO_PRIVATE(QmUSBMode);
         switch (mode) {
         case OviSuite:
@@ -73,8 +133,7 @@ namespace MeeGo {
         }
     }
 
-    QmUSBMode::Mode QmUSBMode::getDefaultMode()
-    {
+    QmUSBMode::Mode QmUSBMode::getDefaultMode() {
         MEEGO_PRIVATE(QmUSBMode);
         return priv->getDefaultMode();
     }
