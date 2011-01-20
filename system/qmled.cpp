@@ -33,9 +33,6 @@
     #include <mce/mode-names.h>
 #endif
 
-#include <QDebug>
-
-
 namespace MeeGo {
 
 class QmLEDPrivate
@@ -43,73 +40,72 @@ class QmLEDPrivate
     MEEGO_DECLARE_PUBLIC(QmLED)
 
 public:
-    QmLEDPrivate(){
-#if HAVE_MCE
-        requestIf = new QmIPCInterface(
-                    MCE_SERVICE,
-                    MCE_REQUEST_PATH,
-                    MCE_REQUEST_IF);
-#endif
+    QmLEDPrivate() {
+        #if HAVE_MCE
+             requestIf = new QmIPCInterface(MCE_SERVICE,
+                                            MCE_REQUEST_PATH,
+                                            MCE_REQUEST_IF);
+        #endif
     }
 
-    ~QmLEDPrivate(){
-#if HAVE_MCE
-        delete requestIf;
-#endif
+    ~QmLEDPrivate() {
+        #if HAVE_MCE
+            delete requestIf, requestIf = 0;
+        #endif
     }
 
     QmIPCInterface *requestIf;
 };
 
 QmLED::QmLED(QObject *parent)
-              : QObject(parent){
+              : QObject(parent) {
     MEEGO_INITIALIZE(QmLED)
 }
 
-QmLED::~QmLED(){
+QmLED::~QmLED() {
     MEEGO_UNINITIALIZE(QmLED);
 }
 
-bool QmLED::activate(const QString &pattern){
-#if HAVE_MCE
-    MEEGO_PRIVATE(QmLED);
-    priv->requestIf->callAsynchronously(MCE_ACTIVATE_LED_PATTERN, pattern);
-    return true;
-#else
-    Q_UNUSED(pattern);
-    return false;
-#endif
+bool QmLED::activate(const QString &pattern) {
+    #if HAVE_MCE
+        MEEGO_PRIVATE(QmLED);
+        priv->requestIf->callAsynchronously(MCE_ACTIVATE_LED_PATTERN, pattern);
+        return true;
+    #else
+        Q_UNUSED(pattern);
+        return false;
+    #endif
 }
 
-bool QmLED::deactivate(const QString &pattern){
-#if HAVE_MCE
-    MEEGO_PRIVATE(QmLED);
-    priv->requestIf->callAsynchronously(MCE_DEACTIVATE_LED_PATTERN, pattern);
-    return true;
-#else
-    Q_UNUSED(pattern);
-    return false;
-#endif
+bool QmLED::deactivate(const QString &pattern) {
+    #if HAVE_MCE
+         MEEGO_PRIVATE(QmLED);
+         priv->requestIf->callAsynchronously(MCE_DEACTIVATE_LED_PATTERN, pattern);
+         return true;
+    #else
+        Q_UNUSED(pattern);
+        return false;
+    #endif
 }
 
-bool QmLED::enable(void){
-#if HAVE_MCE
-    MEEGO_PRIVATE(QmLED);
-    priv->requestIf->callAsynchronously(MCE_ENABLE_LED);
-    return true;
-#else
-    return false;
-#endif
+bool QmLED::enable(void) {
+    #if HAVE_MCE
+        MEEGO_PRIVATE(QmLED);
+        priv->requestIf->callAsynchronously(MCE_ENABLE_LED);
+        return true;
+    #else
+        return false;
+    #endif
 }
 
-bool QmLED::disable(void){
-#if HAVE_MCE
-    MEEGO_PRIVATE(QmLED);
-    priv->requestIf->callAsynchronously(MCE_DISABLE_LED);
-    return true;
-#else
-    return false;
-#endif
+bool QmLED::disable(void) {
+    #if HAVE_MCE
+        MEEGO_PRIVATE(QmLED);
+        priv->requestIf->callAsynchronously(MCE_DISABLE_LED);
+        return true;
+    #else
+        return false;
+    #endif
 }
 
 } //namespace MeeGo
