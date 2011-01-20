@@ -44,16 +44,6 @@ QmIPCInterface::QmIPCInterface(const char* service,
 QmIPCInterface::~QmIPCInterface(){
 }
 
-bool QmIPCInterface::callSynchronously(const QString& method,
-                                       const QVariant& arg1,
-                                       const QVariant& arg2 ) {
-    QDBusMessage msg = call(method, arg1, arg2);
-    if (msg.type() == QDBusMessage::ReplyMessage) {
-        return true;
-    }
-    return false;
-}
-
 void QmIPCInterface::callAsynchronously(const QString& method,
                                         const QVariant& arg1,
                                         const QVariant& arg2 ) {

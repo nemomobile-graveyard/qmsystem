@@ -50,9 +50,6 @@ public:
                    QObject *parent = 0);
     virtual ~QmIPCInterface();
 
-    bool callSynchronously(const QString& method,
-                           const QVariant& arg1 = QVariant(),
-                           const QVariant& arg2 = QVariant());
     QList<QVariant> get(const QString& method,
                         const QVariant& arg1 = QVariant(),
                         const QVariant& arg2 = QVariant());
