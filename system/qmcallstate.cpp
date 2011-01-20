@@ -36,7 +36,7 @@ QmCallState::QmCallState(QObject *parent) : QObject(parent) {
             this, SIGNAL(stateChanged(MeeGo::QmCallState::State,MeeGo::QmCallState::Type)));
 }
 
-QmCallState::~QmCallState(){
+QmCallState::~QmCallState() {
     MEEGO_PRIVATE(QmCallState)
 
     disconnect(priv, SIGNAL(stateChanged(MeeGo::QmCallState::State, MeeGo::QmCallState::Type)),

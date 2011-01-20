@@ -168,7 +168,7 @@ bool QmSystemState::set(NextState nextState) {
     MEEGO_PRIVATE(QmSystemState)
 
     QString method;
-    switch (nextState){
+    switch (nextState) {
         case Powerup:
             method = QString(dsme_req_powerup);
             break;

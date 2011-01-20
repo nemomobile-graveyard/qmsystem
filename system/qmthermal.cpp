@@ -37,7 +37,7 @@ QmThermal::QmThermal(QObject *parent)
             this, SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState)));
 }
 
-QmThermal::~QmThermal(){
+QmThermal::~QmThermal() {
     MEEGO_PRIVATE(QmThermal)
 
     disconnect(priv, SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState)),
@@ -91,8 +91,7 @@ QmThermal::ThermalState QmThermal::get() const {
 
     resp = priv->If->get(SYS_THERMALMANAGER_STATE_GET);
 
-    if (resp.isEmpty()){
-        qWarning("Unable to get the thermal state");
+    if (resp.isEmpty()) {
         return Error;
     }
 

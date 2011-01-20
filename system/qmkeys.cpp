@@ -148,7 +148,7 @@ namespace MeeGo
                 state = QmKeys::KeyHalfDown;
             } else if (focus == 1 && camera == 1) {
                 state = QmKeys::KeyDown;
-            } else if (focus == 0 && camera == 1){
+            } else if (focus == 0 && camera == 1) {
                 state = QmKeys::KeyDown;
             }
         } else {

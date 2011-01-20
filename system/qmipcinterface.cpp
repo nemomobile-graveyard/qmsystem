@@ -41,7 +41,7 @@ QmIPCInterface::QmIPCInterface(const char* service,
                                         parent) {
 }
 
-QmIPCInterface::~QmIPCInterface(){
+QmIPCInterface::~QmIPCInterface() {
 }
 
 void QmIPCInterface::callAsynchronously(const QString& method,

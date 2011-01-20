@@ -40,14 +40,14 @@ namespace MeeGo {
 
 #define LOG_ERROR { qWarning() << Q_FUNC_INFO << " PID=" << (unsigned long)getpid() << " " << strerror(errno) <<  " errno=" << errno; }
 
-QmHeartbeatPrivate::QmHeartbeatPrivate(){
+QmHeartbeatPrivate::QmHeartbeatPrivate() {
     //Init
     iphbdHandler = 0;
     signalNeed = QmHeartbeat::NoSignalNeeded;
     notifier = 0;
 }
 
-QmHeartbeatPrivate::~QmHeartbeatPrivate(){
+QmHeartbeatPrivate::~QmHeartbeatPrivate() {
     //Call iphb_close if the developer forgot to call it
     close();
 }
@@ -90,7 +90,7 @@ bool QmHeartbeatPrivate::open(QmHeartbeat::SignalNeed signalNeed) {
 
 void QmHeartbeatPrivate::close() {
     //Avoiding ~QmHeartbeat to call iphb_close again
-    if (iphbdHandler){
+    if (iphbdHandler) {
         //Actually sets priv->iphbdHandler to 0
         iphbdHandler = iphb_close(iphbdHandler);
     }
@@ -115,15 +115,15 @@ void QmHeartbeatPrivate::socketReady(int sock) {
 }
 
 QmHeartbeat::QmHeartbeat(QObject *parent)
-           : QObject(parent){
+           : QObject(parent) {
     MEEGO_INITIALIZE(QmHeartbeat)
 }
 
-QmHeartbeat::~QmHeartbeat(){
+QmHeartbeat::~QmHeartbeat() {
     MEEGO_UNINITIALIZE(QmHeartbeat);
 }
 
-bool QmHeartbeat::open(QmHeartbeat::SignalNeed signalNeed){
+bool QmHeartbeat::open(QmHeartbeat::SignalNeed signalNeed) {
     MEEGO_PRIVATE(QmHeartbeat);
     bool retVal = priv->open(signalNeed);
     if (retVal) {
@@ -160,7 +160,7 @@ bool QmHeartbeat::IWokeUp(void) {
     }
 }
 
-QTime QmHeartbeat::wait(unsigned short mintime, unsigned short maxtime, QmHeartbeat::WaitMode wait){
+QTime QmHeartbeat::wait(unsigned short mintime, unsigned short maxtime, QmHeartbeat::WaitMode wait) {
     MEEGO_PRIVATE(QmHeartbeat);
 
     // qDebug()) << Q_FUNC_INFO << "Wait, mintime=" << mintime << "maxtime=" << maxtime << "wait mode=" << wait;

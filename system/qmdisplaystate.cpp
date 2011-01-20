@@ -121,7 +121,7 @@ bool QmDisplayState::set(QmDisplayState::DisplayState state) {
         QmIPCInterface *requestIf = priv->requestIf;
         QString method;
 
-        switch (state){
+        switch (state) {
             case Off:
                 method = QString(MCE_DISPLAY_OFF_REQ);
                 break;
