@@ -61,14 +61,14 @@
 namespace MeeGo {
 
 QmSystemState::QmSystemState(QObject *parent)
-             : QObject(parent){
+             : QObject(parent) {
     MEEGO_INITIALIZE(QmSystemState);
 
     connect(priv, SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication)),
             this, SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication)));
 }
 
-QmSystemState::~QmSystemState(){
+QmSystemState::~QmSystemState() {
     MEEGO_PRIVATE(QmSystemState)
 
     disconnect(priv, SIGNAL(systemStateChanged(MeeGo::QmSystemState::StateIndication)),
@@ -164,7 +164,7 @@ void QmSystemState::disconnectNotify(const char *signal) {
     }
 }
 
-bool QmSystemState::set(NextState nextState){
+bool QmSystemState::set(NextState nextState) {
     MEEGO_PRIVATE(QmSystemState)
 
     QString method;
@@ -244,12 +244,12 @@ QmSystemState::BootReason QmSystemState::getBootReason() {
     return bootReason;
 }
 
-unsigned int QmSystemState::getPowerOnTimeInSeconds(){
+unsigned int QmSystemState::getPowerOnTimeInSeconds() {
     unsigned int result = 0;
     MEEGO_PRIVATE(QmSystemState)
     QmIPCInterface *requestIf = priv->poweronRequestIf;
     QList<QVariant> results = requestIf->get(SYS_POWERONTIMER_TIME_GET);
-    if( ! results.isEmpty() ) {
+    if (!results.isEmpty()) {
       result = results.first().toUInt();
     }
     return result;
