@@ -48,7 +48,7 @@ namespace MeeGo {
         /* QObject::connect() needs to be thread-safe */
         QMutexLocker locker(&priv->connectMutex);
 
-        if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode mode))))) {
+        if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode))))) {
             if (0 == priv->connectCount[SIGNAL_USB_MODE]) {
                 QDBusConnection::systemBus().connect(USB_MODE_SERVICE,
                                                      USB_MODE_OBJECT,
@@ -77,7 +77,7 @@ namespace MeeGo {
         /* QObject::disconnect() needs to be thread-safe */
         QMutexLocker locker(&priv->connectMutex);
 
-        if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode mode))))) {
+        if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode))))) {
             priv->connectCount[SIGNAL_USB_MODE]--;
 
             if (0 == priv->connectCount[SIGNAL_USB_MODE]) {
