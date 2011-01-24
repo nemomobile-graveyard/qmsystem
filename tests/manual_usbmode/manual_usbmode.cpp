@@ -74,15 +74,14 @@ private:
 
         printf("\n\nPlease plug in the usb cable.\n");
         printf("You have 10 seconds...\n\n");
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < 111; i++) {
             QTest::qWait(1000);
             if (currentMode == defaultMode) {
+                printf("Current mode equals to DefaultMode\n\n");
                 break;
             }
         }
         QVERIFY(!modeStack.isEmpty());
-        qDebug("Waiting for %s signal", mode2str(defaultMode).toAscii().data());
-        QTest::qWait(6000);
         QCOMPARE(modeStack.pop(), defaultMode);
         QVERIFY(!modeStack.isEmpty());
         if (defaultMode == QmUSBMode::Ask) {
