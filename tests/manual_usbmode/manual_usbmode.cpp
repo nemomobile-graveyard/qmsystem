@@ -81,6 +81,8 @@ private:
             }
         }
         QVERIFY(!modeStack.isEmpty());
+        qDebug("Waiting for %s signal", mode2str(defaultMode).toAscii().data());
+        QTest::qWait(6000);
         QCOMPARE(modeStack.pop(), defaultMode);
         QVERIFY(!modeStack.isEmpty());
         if (defaultMode == QmUSBMode::Ask) {
@@ -97,7 +99,8 @@ private:
             QVERIFY(qmmode->setMode(mode));
             qDebug("Time elapsed after setMode returns: %d ms", now.elapsed());
             QVERIFY(now.elapsed()<18000);
-            QTest::qWait(1000);
+            qDebug("Waiting for SIGNALS for 6s");
+            QTest::qWait(6000);
             QCOMPARE(currentMode, mode);
             QCOMPARE(qmmode->getMode(), currentMode);
         }
