@@ -3,10 +3,11 @@
  * @brief Contains QmUSBMode
 
    <p>
-   @copyright (C) 2009-2010 Nokia Corporation
+   @copyright (C) 2009-2011 Nokia Corporation
    @license LGPL Lesser General Public License
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    @scope Internal
 
@@ -29,108 +30,129 @@
 #define QMUSBMODE_H
 
 #include "system_global.h"
-#include <QtCore/qobject.h>
+#include <QObject>
 
 QT_BEGIN_HEADER
 
 namespace MeeGo
 {
-    class QmUSBModePrivate;
 
-    /**
-     * @scope Internal
-     *
-     * @brief Provides information and actions on USB state.
-     *
-     * This class is used to interact with the usb-moded daemon.
-     * When the USB state is changed, the modeChanged signal is emitted.
-     * Basically, when the cable is plugged, the signaled mode is Connected.
-     * If there is a default mode other than Ask set, this will be the next usb mode.
-     * Otherwise a ModeRequest signal is emitted, and the user should respond by calling setMode().
-     * If the user fails to do this in 30 seconds, the mode will be set to ChargingOnly.
-     * The user can also change the state by calling setMode() function.
-     *
-     * The normal operation is either to set the default mode to be OviSuite or MassStorage, which is then
-     * used when the cable is plugged, or set the default mode to be Ask, listen for a ModeRequest signal, and
-     * then set MassStorage or OviSuite mode. Transitions such as MassStorage -> OviSuite without re-plugging
-     * the cable are not supported.
+class QmUSBModePrivate;
+
+/*!
+ * @scope Internal
+ * @brief Provides a way to set and get the mode of the USB (Universal Serial Bus) on the device.
+ *
+ * When the USB state is changed, the modeChanged signal is emitted.
+ * First, when the USB cable is plugged in, the QmUSBMode::Connected mode is signaled.
+ * If there is a default USB mode other than QmUSBMode::Ask set, it will be the next USB mode.
+ * Otherwise, QmUSBMode::ModeRequest is emitted, for which one should respond by calling setMode(QmUSBMode::Mode).
+ * If no USB mode is set in 30 seconds, the USB mode will be set to QmUSBMode::ChargingOnly.
+ *
+ * The USB state can be also set by calling setMode(QmUSBMode::Mode).
+ *
+ * Typically, the default mode is either set to QmUSBMode::OviSuite or QmUSBMode::MassStorage, which is then
+ * used when the USB cable is plugged in. The other option is to set the default mode to QmUSBMode::Ask,
+ * listen for the QmUSBMode::ModeRequest mode, and then set the QmUSBMode::MassStorage or QmUSBMode::OviSuite mode.
+ *
+ * Switching the USB mode from QmUSBMode::MassStorage to QmUSBMode::OviSuite (and vice versa) is not supported
+ * without re-plugging the USB cable.
+ */
+class QmUSBMode : public QObject
+{
+    Q_OBJECT
+
+public:
+    QmUSBMode(QObject *parent = 0);
+    ~QmUSBMode();
+
+    /*!
+     * @brief The mode of the USB (Universal Serial Bus) on the device.
      */
-    class QmUSBMode : public QObject
-    {
-        Q_OBJECT;
-
-    public:
-
-        /** All the possible modes and states. **/
-        enum Mode {
-            Connected = 0, /** < Signaled when the cable is plugged */
-            DataInUse,     /** < Signaled when the chosen mode can cause data loss */
-            Disconnected,  /** < Signaled when the cable is unplugged */
-            MassStorage,   /** < Mass storage mode */
-            ChargingOnly,  /** < Charging only mode */
-            OviSuite,      /** < Ovi suite mode */
-            ModeRequest,   /** < Signaled when the user is expected to call setMode() */
-            Ask,           /** < Mode for waiting setMode() */
-            Undefined      /** < Undefined */
-        };
-
-        QmUSBMode(QObject *parent = 0);
-        ~QmUSBMode();
-
-        /**
-         * Gets the current mode.
-         * @return the current mode.
-         */
-        Mode getMode();
-
-        /**
-         * Sets the mode. Note that calling setMode does not necessarily change the mode immediately.
-         * To know, when the mode changed, the modeChanged signal should be listened to.
-         *
-         * @param mode the mode to be set. Valid modes are OviSuite, MassStorage and ChargingOnly.
-         * @return true if a valid mode was requested, false otherwise.
-         */
-        bool setMode(Mode mode);
-
-        /**
-         * Sets the default mode.
-         *
-         * @param mode the new default mode. Valid modes are OviSuite, MassStorage, ChargingOnly and Ask.
-         * @return true if successful
-         */
-        bool setDefaultMode(Mode mode);
-
-        /**
-         * Gets the default mode.
-         *
-         * @return the default mode
-         */
-        Mode getDefaultMode();
-
-    Q_SIGNALS:
-
-        /**
-         * Sent when the mode has changed
-         *
-         * @param mode the current mode.
-         */
-        void modeChanged(MeeGo::QmUSBMode::Mode mode);
-
-        /**
-         * This signal is emitted after an error occurred.
-         *
-         * @param errorCode a code representing the error.
-         */
-        void error(const QString &errorCode);
-
-    protected:
-        void connectNotify(const char *signal);
-        void disconnectNotify(const char *signal);
-
-    private:
-        Q_DISABLE_COPY(QmUSBMode);
-        MEEGO_DECLARE_PRIVATE(QmUSBMode);
+    enum Mode {
+        Connected = 0,    //!< Signaled when the USB cable is plugged in.
+        DataInUse,        //!< Signaled when the mass storage is in use and the chosen USB mode can cause data loss, mode change denied.
+        Disconnected,     //!< Signaled when the USB cable is unplugged.
+        MassStorage,      //!< Mass storage mode.
+        ChargingOnly,     //!< Charging only mode.
+        OviSuite,         //!< Ovi suite mode. Requires an MTP (media transfer protocol) client on the USB host.
+        ModeRequest,      //!< Signaled as an indication that the USB mode should be set with setMode(QmUSBMode::Mode).
+        Ask,              //!< Waiting for the USB mode to be set with setMode(QmUSBMode::Mode).
+        Undefined         //!< Unknown/error.
     };
+
+    /*!
+     * @brief Gets the current USB mode.
+     * @return Returns the current USB mode.
+     */
+    QmUSBMode::Mode getMode();
+
+    /*!
+     * @brief Sets the USB mode. Note that calling setMode is non-blocking, so the method returns immediately.
+     * If the USB mode change succeeded, the modeChanged signal is emitted.
+     * @param mode The USB mode to be set. The OviSuite, MassStorage and ChargingOnly modes can be requested.
+     * @return Returns true if a valid mode was requested, false otherwise.
+     */
+    bool setMode(QmUSBMode::Mode mode);
+
+    /*!
+     * @brief Sets the default USB mode.
+     * @param mode the new default USB mode. The OviSuite, MassStorage, ChargingOnly and Ask modes can be set.
+     * @return Returns true if successful, false otherwise.
+     */
+    bool setDefaultMode(QmUSBMode::Mode mode);
+
+    /*!
+     * @brief Gets the default USB mode.
+     * @return Returns the default USB mode.
+     */
+    QmUSBMode::Mode getDefaultMode();
+
+    /*!
+     * @brief Mount path.
+     */
+    enum MountPath {
+        DocumentDirectoryMount = 0   //!< Mount for user content.
+    };
+
+    /*!
+     * @brief Mount options.
+     */
+    enum MountOption {
+        ReadOnlyMount  =  0x0000001, //!< Read only.
+        ReadWriteMount =  0x0000002  //!< Read/write.
+    };
+    Q_DECLARE_FLAGS(MountOptionFlags, MountOption)
+
+    /*!
+     * @brief Gets the status of a mount.
+     * @return Returns the mount status as MountOptionFlags.
+     */
+    QmUSBMode::MountOptionFlags mountStatus(QmUSBMode::MountPath mounthPath);
+
+Q_SIGNALS:
+
+    /*!
+     * @brief This signal is emitted when the USB mode is changed.
+     * @param mode the current mode.
+     */
+    void modeChanged(MeeGo::QmUSBMode::Mode mode);
+
+    /*!
+     * @brief This signal is emitted if there was an error changing the USB mode.
+     * @param errorCode an error code representing the error.
+     */
+    void error(const QString &errorCode);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
+private:
+    Q_DISABLE_COPY(QmUSBMode);
+    MEEGO_DECLARE_PRIVATE(QmUSBMode);
+};
+
 }
 
 QT_END_HEADER
