@@ -3,7 +3,7 @@
  * @brief Contains QmCompass, which provides compass measurement.
 
    <p>
-   @copyright (C) 2009-2010 Nokia Corporation
+   @copyright (C) 2009-2011 Nokia Corporation
    @license LGPL Lesser General Public License
 
    @author Ilya Dogolazky <ilya.dogolazky@nokia.com>

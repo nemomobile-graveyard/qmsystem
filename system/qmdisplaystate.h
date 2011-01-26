@@ -3,7 +3,7 @@
  * @brief Contains QmDisplayState which provides information and actions on device display state.
 
    <p>
-   @copyright (C) 2009-2010 Nokia Corporation
+   @copyright (C) 2009-2011 Nokia Corporation
    @license LGPL Lesser General Public License
 
    @author Antonio Aloisio <antonio.aloisio@nokia.com>

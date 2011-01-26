@@ -3,7 +3,7 @@
  * @brief Contains QmThermal which provides information on device thermal states.
 
    <p>
-   @copyright (C) 2009-2010 Nokia Corporation
+   @copyright (C) 2009-2011 Nokia Corporation
    @license LGPL Lesser General Public License
 
    @author Antonio Aloisio <antonio.aloisio@nokia.com>

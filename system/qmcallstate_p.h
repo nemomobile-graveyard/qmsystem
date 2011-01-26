@@ -3,7 +3,7 @@
  * @brief Contains QmCallStatePrivate
 
    <p>
-   Copyright (C) 2009-2010 Nokia Corporation
+   Copyright (C) 2009-2011 Nokia Corporation
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
 

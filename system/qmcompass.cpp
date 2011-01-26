@@ -3,7 +3,7 @@
  * @brief QmCompass
 
    <p>
-   Copyright (C) 2009-2010 Nokia Corporation
+   Copyright (C) 2009-2011 Nokia Corporation
 
    @author Ilya Dogolazky <ilya.dogolazky@nokia.com>
    @author Sagar Shinde <ext-sagar.shinde@nokia.com>

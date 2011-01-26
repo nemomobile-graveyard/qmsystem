@@ -3,7 +3,7 @@
  * @brief Contains Polling thread used to poll on libbme-ipc sockets
 
    <p>
-   Copyright (C) 2009-2010 Nokia Corporation
+   Copyright (C) 2009-2011 Nokia Corporation
 
    @author Aliaksei Katovich <aliaksei.katovich@nokia.com>
    @author Antonio Aloisio <antonio.aloisio@nokia.com>
