@@ -3,7 +3,7 @@
  * @brief Contains QmUSBModePrivate
 
    <p>
-   Copyright (C) 2009-2010 Nokia Corporation
+   Copyright (C) 2009-2011 Nokia Corporation
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Matias Muhonen <ext-matias.muhonen@nokia.com>
@@ -33,6 +33,10 @@
 #include <gconf/gconf-client.h>
 
 #include <QMutex>
+#include <QPair>
+#include <QVector>
+#include <QStringList>
+#include <mntent.h>
 
 #if HAVE_USB_MODED_DEV
     #include <usb_moded-dbus.h>
@@ -66,6 +70,9 @@ public:
 
     static QString modeToString(QmUSBMode::Mode mode);
     static QmUSBMode::Mode stringToMode(const QString &str);
+
+    QVector< QPair< QString , QString > > mountEntries();
+    QString mountOptions(QVector< QPair< QString , QString > > mountEntries, const QString &fileName);
 
 Q_SIGNALS:
     void modeChanged(MeeGo::QmUSBMode::Mode mode);

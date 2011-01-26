@@ -128,7 +128,7 @@ public:
      * @brief Gets the status of a mount.
      * @return Returns the mount status as MountOptionFlags.
      */
-    QmUSBMode::MountOptionFlags mountStatus(QmUSBMode::MountPath mounthPath);
+    QmUSBMode::MountOptionFlags mountStatus(QmUSBMode::MountPath mountPath);
 
 Q_SIGNALS:
 

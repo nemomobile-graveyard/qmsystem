@@ -161,9 +161,29 @@ QmUSBMode::Mode QmUSBMode::getDefaultMode() {
     return mode;
 }
 
-QmUSBMode::MountOptionFlags QmUSBMode::mountStatus(QmUSBMode::MountPath mounthPath) {
-    QmUSBMode::MountOptionFlags mountOptionFlags;
-    return mountOptionFlags;
+QmUSBMode::MountOptionFlags QmUSBMode::mountStatus(QmUSBMode::MountPath mountPath) {
+    MEEGO_PRIVATE(QmUSBMode);
+
+    QmUSBMode::MountOptionFlags mountOptions;
+    QString mount = "/home/user/MyDocs";
+    QStringList mountOpts;
+
+    if (QmUSBMode::DocumentDirectoryMount != mountPath) {
+        /* We don't currently support other mount paths */
+        goto out;
+    }
+
+    mountOpts = priv->mountOptions(priv->mountEntries(), mount).split(",");
+
+    if (mountOpts.contains("rw")) {
+        mountOptions |= QmUSBMode::ReadWriteMount;
+    }
+    if (mountOpts.contains("ro") || mountOpts.contains("rodir")) {
+        mountOptions |= QmUSBMode::ReadOnlyMount;
+    }
+
+out:
+    return mountOptions;
 }
 
 // private class
@@ -230,6 +250,33 @@ QmUSBMode::Mode QmUSBModePrivate::stringToMode(const QString &str) {
     } else {
         return QmUSBMode::Undefined;
     }
+}
+
+QVector< QPair< QString , QString > > QmUSBModePrivate::mountEntries() {
+    QVector< QPair< QString , QString > > entries;
+    FILE *f = setmntent(_PATH_MOUNTED, "r");
+    mntent m;
+    char buf[1024];
+    while (getmntent_r(f, &m, buf, sizeof(buf)) != 0) {
+        entries << QPair<QString, QString>(QString::fromAscii(m.mnt_dir),
+                                           QString::fromAscii(m.mnt_opts));
+    }
+    endmntent(f);
+    qSort(entries.begin(), entries.end());
+    return entries;
+}
+
+QString QmUSBModePrivate::mountOptions(QVector< QPair< QString , QString > > mountEntries, const QString &fileName) {
+    QString mountOptions;
+    const size_t max = mountEntries.size();
+    /* Find the longest matching path */
+    for (int i=max-1; i >= 0; i--) {
+        QPair<QString, QString> entry = mountEntries.at(i);
+        if (fileName.startsWith(entry.first)) {
+            return entry.second;
+        }
+    }
+    return mountOptions;
 }
 
 void QmUSBModePrivate::didReceiveError(const QString &errorCode) {
