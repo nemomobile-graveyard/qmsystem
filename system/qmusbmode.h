@@ -146,7 +146,8 @@ Q_SIGNALS:
 
     /*!
      * @brief This signal is emitted if there was an error changing the USB mode.
-     * @param errorCode an error code representing the error.
+     * @param errorCode an error code representing the error. The following error codes are supported:
+     * \li \c qtn_usb_filessystem_inuse The file system is in use.
      */
     void error(const QString &errorCode);
 
