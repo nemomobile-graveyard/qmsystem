@@ -134,6 +134,12 @@ Q_SIGNALS:
 
     /*!
      * @brief This signal is emitted when the USB mode is changed.
+     * The signal can be emitted in the following conditions:
+     * \li The USB cable is plugged in/unplugged (QmUSBMode::Connected, QmUSBMode::Disconnected)
+     * \li USB mode change was denied (QmUSBMode::DataInUse)
+     * \li No default USB mode is set and a USB cable is connected (QmUSBMode::ModeRequest)
+     * \li The USB mode was changed (QmUSBMode::MassStorage, QmUSBMode::ChargingOnly, QmUSBMode::OviSuite)
+     * \li An error occurred changing the USB Mode (QmUSBMode::Undefined)
      * @param mode the current mode.
      */
     void modeChanged(MeeGo::QmUSBMode::Mode mode);
