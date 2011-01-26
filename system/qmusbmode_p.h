@@ -66,19 +66,13 @@ public:
 
     static QString modeToString(QmUSBMode::Mode mode);
     static QmUSBMode::Mode stringToMode(const QString &str);
-    bool setMode(QmUSBMode::Mode mode);
-    QmUSBMode::Mode getMode();
-    bool setDefaultMode(QmUSBMode::Mode mode);
-    QmUSBMode::Mode getDefaultMode();
 
 Q_SIGNALS:
     void modeChanged(MeeGo::QmUSBMode::Mode mode);
     void error(const QString &errorCode);
 
-private Q_SLOTS:
-    void didReceiveError(const QString &errorCode);
-
 public Q_SLOTS:
+    void didReceiveError(const QString &errorCode);
     void modeChanged(const QString &mode);
 };
 
