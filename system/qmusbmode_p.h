@@ -6,6 +6,7 @@
    Copyright (C) 2009-2010 Nokia Corporation
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    @scope Private
 
@@ -48,136 +49,39 @@
 
 namespace MeeGo
 {
-    class QmUSBModePrivate : public QObject
-    {
-    public:
-        Q_OBJECT;
-        MEEGO_DECLARE_PUBLIC(QmUSBMode);
 
-        QmIPCInterface *requestIf;
-        GConfClient *gcClient;
-        QMutex connectMutex;
-        size_t connectCount[2];
+class QmUSBModePrivate : public QObject
+{
+public:
+    Q_OBJECT;
+    MEEGO_DECLARE_PUBLIC(QmUSBMode);
 
-        QmUSBModePrivate(QObject *parent = 0) : QObject(parent)
-        {
-            requestIf = new QmIPCInterface(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE);
+    QmIPCInterface *requestIf;
+    GConfClient *gcClient;
+    QMutex connectMutex;
+    size_t connectCount[2];
 
-            connectCount[SIGNAL_USB_MODE] = connectCount[SIGNAL_USB_ERROR] = 0;
+    QmUSBModePrivate(QObject *parent = 0);
+    ~QmUSBModePrivate();
 
-            g_type_init();
-            gcClient = gconf_client_get_default();
-        }
+    static QString modeToString(QmUSBMode::Mode mode);
+    static QmUSBMode::Mode stringToMode(const QString &str);
+    bool setMode(QmUSBMode::Mode mode);
+    QmUSBMode::Mode getMode();
+    bool setDefaultMode(QmUSBMode::Mode mode);
+    QmUSBMode::Mode getDefaultMode();
 
-        ~QmUSBModePrivate() {
-            if (requestIf) {
-                delete requestIf, requestIf = 0;
-            }
-            g_object_unref(gcClient), gcClient = 0;
-        }
+Q_SIGNALS:
+    void modeChanged(MeeGo::QmUSBMode::Mode mode);
+    void error(const QString &errorCode);
 
-        static QString modeToString(QmUSBMode::Mode mode) {
-            switch (mode) {
-            case QmUSBMode::Connected:
-                return USB_CONNECTED;
-            case QmUSBMode::DataInUse:
-                return DATA_IN_USE;
-            case QmUSBMode::Disconnected:
-                return USB_DISCONNECTED;
-            case QmUSBMode::MassStorage:
-                return MODE_MASS_STORAGE;
-            case QmUSBMode::ChargingOnly:
-                return MODE_CHARGING;
-            case QmUSBMode::OviSuite:
-                return MODE_OVI_SUITE;
-            case QmUSBMode::Ask:
-                return MODE_ASK;
-            case QmUSBMode::Undefined:
-                return MODE_UNDEFINED;
-            case QmUSBMode::ModeRequest:
-                return USB_CONNECTED_DIALOG_SHOW;
-            default:
-                return "";
-            }
-        }
+private Q_SLOTS:
+    void didReceiveError(const QString &errorCode);
 
-        static QmUSBMode::Mode stringToMode(const QString &str) {
-            if (str == USB_CONNECTED) {
-                return QmUSBMode::Connected;
-            } else if (str == USB_DISCONNECTED) {
-                return QmUSBMode::Disconnected;
-            } else if (str == DATA_IN_USE) {
-                return QmUSBMode::DataInUse;
-            } else if (str == MODE_MASS_STORAGE) {
-                return QmUSBMode::MassStorage;
-            } else if (str == MODE_OVI_SUITE) {
-                return QmUSBMode::OviSuite;
-            } else if (str == MODE_CHARGING) {
-                return QmUSBMode::ChargingOnly;
-            } else if (str == MODE_ASK) {
-                return QmUSBMode::Ask;
-            } else if (str == MODE_UNDEFINED) {
-                return QmUSBMode::Undefined;
-            } else if (str == USB_CONNECTED_DIALOG_SHOW) {
-                return QmUSBMode::ModeRequest;
-            } else {
-                return QmUSBMode::Undefined;
-            }
-        }
+public Q_SLOTS:
+    void modeChanged(const QString &mode);
+};
 
-        bool setMode(QmUSBMode::Mode mode) {
-            QString str = modeToString(mode);
-            if (str.isEmpty()) {
-                return false;
-            }
-            requestIf->callAsynchronously(USB_MODE_STATE_SET, str);
-            return true;
-        }
+} // namespace MeeGo
 
-        QmUSBMode::Mode getMode() {
-            QList<QVariant> ret = requestIf->get(USB_MODE_STATE_REQUEST);
-            if (ret.size() == 1) {
-                return stringToMode(ret.first().toString());
-            }
-            return QmUSBMode::Undefined;
-        }
-
-        bool setDefaultMode(QmUSBMode::Mode mode) {
-            QString str = modeToString(mode);
-            if (str.isEmpty()) {
-                return false;
-            }
-            gboolean ret = gconf_client_set_string(gcClient, USB_MODE_GCONF, str.toAscii().data(), NULL);
-            if (ret == TRUE) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        QmUSBMode::Mode getDefaultMode() {
-            QmUSBMode::Mode mode = QmUSBMode::Undefined;
-            gchar *val = gconf_client_get_string(gcClient, USB_MODE_GCONF, NULL);
-            if (val) {
-                mode = stringToMode(QString(val));
-            }
-            g_free(val);
-            return mode;
-        }
-
-    Q_SIGNALS:
-        void modeChanged(MeeGo::QmUSBMode::Mode mode);
-        void error(const QString &errorCode);
-
-    private Q_SLOTS:
-        void didReceiveError(const QString &errorCode) {
-            emit error(errorCode);
-        }
-
-    public Q_SLOTS:
-        void modeChanged(const QString &mode) {
-            emit modeChanged(stringToMode(mode));
-        }
-    };
-}
 #endif // QMUSBMODE_P_H
