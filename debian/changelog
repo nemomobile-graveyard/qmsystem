@@ -1,3 +1,10 @@
+qmsystem2 (1.0.7) unstable; urgency=low
+
+   [Matias Muhonen]
+   * QmUSBMode changes
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Wed, 26 Jan 2011 13:47:57 +0200
+
 qmsystem2 (1.0.6) unstable; urgency=low
 
    [Matias Muhonen]
