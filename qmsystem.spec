@@ -1,5 +1,5 @@
 Name:     qmsystem
-Version:  1.0.0
+Version:  1.0.6_1
 Release:  1
 Summary:  QmSystem library
 Group:    System/System Control
@@ -10,21 +10,22 @@ Patch0:   %{name}-1.0.0-tests-directories.patch
 
 BuildRequires: pkgconfig(dbus-1)
 BuildRequires: pkgconfig(dsme)
+BuildRequires: pkgconfig(dsme_dbus_if)
 BuildRequires: pkgconfig(gconf-2.0)
 BuildRequires: pkgconfig(libiphb) >= 0.1.4
-#BuildRequires: pkgconfig(mce) >= 1.10.15
+BuildRequires: pkgconfig(mce) >= 1.10.15
 BuildRequires: pkgconfig(QtCore) >= 4.5
-BuildRequires: pkgconfig(sensord) >= 0.6.12
+BuildRequires: pkgconfig(sensord) >= 0.6.33
 #BuildRequires: pkgconfig(sysinfo) >= 1.0.17
-BuildRequires: pkgconfig(timed) >= 1.3.20
+BuildRequires: pkgconfig(timed) >= 2.31
 #BuildRequires: pkgconfig(usb_moded) >= 0.24
 #BuildRequires: devicelock-devel >= 0.2.11
 BuildRequires: doxygen
 BuildRequires: fdupes
 BuildRequires: graphviz
 
-Requires: sensorfw >= 0.6.12
-Requires: timed >= 1.3.21
+Requires: sensorfw >= 0.6.33
+Requires: timed >= 2.31
 
 %description
 This package contains the QmSystem library.
