@@ -288,17 +288,16 @@ QVector< QPair< QString , QString > > QmUSBModePrivate::mountEntries() {
                                            QString::fromAscii(m.mnt_opts));
     }
     endmntent(f);
-    qSort(entries.begin(), entries.end());
     return entries;
 }
 
 QString QmUSBModePrivate::mountOptions(QVector< QPair< QString , QString > > mountEntries, const QString &fileName) {
     QString mountOptions;
     const size_t max = mountEntries.size();
-    /* Find the longest matching path */
-    for (int i=max-1; i >= 0; i--) {
+    for (int i=0; i < max; i++) {
         QPair<QString, QString> entry = mountEntries.at(i);
-        if (fileName.startsWith(entry.first)) {
+        /* Check if the mnt_dir matches the mount we are looking */
+        if (entry.first == fileName) {
             return entry.second;
         }
     }
