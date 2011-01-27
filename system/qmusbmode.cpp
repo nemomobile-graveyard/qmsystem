@@ -149,7 +149,7 @@ bool QmUSBMode::setMode(QmUSBMode::Mode mode) {
     }
 
     QDBusMessage usbModeSetCall = QDBusMessage::createMethodCall(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE, USB_MODE_STATE_SET);
-	usbModeSetCall << usbModeString;
+    usbModeSetCall << usbModeString;
 
     (void)QDBusConnection::systemBus().call(usbModeSetCall, QDBus::NoBlock);
     return true;
