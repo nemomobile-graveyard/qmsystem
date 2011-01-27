@@ -29,27 +29,11 @@
 #define QMUSBMODE_P_H
 
 #include "qmusbmode.h"
-#include "qmipcinterface_p.h"
-#include <gconf/gconf-client.h>
 
+#include <gconf/gconf-client.h>
 #include <QMutex>
 #include <QPair>
 #include <QVector>
-#include <QStringList>
-#include <mntent.h>
-
-#if HAVE_USB_MODED_DEV
-    #include <usb_moded-dbus.h>
-    #include <usb_moded-modes.h>
-#else
-    /* Use QmSystem D-Bus i/f declarations because usb-moded-dev is not available */
-    #include "msystemdbus_p.h"
-#endif
-
-#define USB_MODE_GCONF          "/Meego/System/UsbMode"
-
-#define SIGNAL_USB_MODE 0
-#define SIGNAL_USB_ERROR 1
 
 namespace MeeGo
 {
@@ -60,7 +44,6 @@ public:
     Q_OBJECT;
     MEEGO_DECLARE_PUBLIC(QmUSBMode);
 
-    QmIPCInterface *requestIf;
     GConfClient *gcClient;
     QMutex connectMutex;
     size_t connectCount[2];

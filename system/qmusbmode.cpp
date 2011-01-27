@@ -26,6 +26,25 @@
 #include "qmusbmode.h"
 #include "qmusbmode_p.h"
 
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusReply>
+
+#include <QStringList>
+#include <mntent.h>
+
+#if HAVE_USB_MODED_DEV
+    #include <usb_moded-dbus.h>
+    #include <usb_moded-modes.h>
+#else
+    /* Use QmSystem D-Bus i/f declarations because usb-moded-dev is not available */
+    #include "msystemdbus_p.h"
+#endif
+
+#define USB_MODE_GCONF          "/Meego/System/UsbMode"
+#define SIGNAL_USB_MODE 0
+#define SIGNAL_USB_ERROR 1
+
 namespace MeeGo {
 
 QmUSBMode::QmUSBMode(QObject *parent) : QObject(parent) {
@@ -106,9 +125,12 @@ void QmUSBMode::disconnectNotify(const char *signal) {
 
 QmUSBMode::Mode QmUSBMode::getMode() {
     MEEGO_PRIVATE(QmUSBMode);
-    QList<QVariant> ret = priv->requestIf->get(USB_MODE_STATE_REQUEST);
-    if (ret.size() == 1) {
-        return priv->stringToMode(ret.first().toString());
+
+    QDBusReply<QString> usbModeReply = QDBusConnection::systemBus().call(
+                                           QDBusMessage::createMethodCall(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE,
+                                                                          USB_MODE_STATE_REQUEST));
+    if (usbModeReply.isValid()) {
+        return priv->stringToMode(usbModeReply.value());
     }
     return QmUSBMode::Undefined;
 }
@@ -121,11 +143,15 @@ bool QmUSBMode::setMode(QmUSBMode::Mode mode) {
         return false;
     }
 
-    QString str = priv->modeToString(mode);
-    if (str.isEmpty()) {
+    QString usbModeString = priv->modeToString(mode);
+    if (usbModeString.isEmpty()) {
         return false;
     }
-    priv->requestIf->callAsynchronously(USB_MODE_STATE_SET, str);
+
+    QDBusMessage usbModeSetCall = QDBusMessage::createMethodCall(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE, USB_MODE_STATE_SET);
+	usbModeSetCall << usbModeString;
+
+    (void)QDBusConnection::systemBus().call(usbModeSetCall, QDBus::NoBlock);
     return true;
 }
 
@@ -189,7 +215,6 @@ out:
 // private class
 
 QmUSBModePrivate::QmUSBModePrivate(QObject *parent) : QObject(parent) {
-    requestIf = new QmIPCInterface(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE);
     connectCount[SIGNAL_USB_MODE] = connectCount[SIGNAL_USB_ERROR] = 0;
 
     g_type_init();
@@ -197,9 +222,6 @@ QmUSBModePrivate::QmUSBModePrivate(QObject *parent) : QObject(parent) {
 }
 
 QmUSBModePrivate::~QmUSBModePrivate() {
-    if (requestIf) {
-        delete requestIf, requestIf = 0;
-    }
     g_object_unref(gcClient), gcClient = 0;
 }
 
