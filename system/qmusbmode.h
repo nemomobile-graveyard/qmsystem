@@ -112,7 +112,17 @@ public:
      * @brief Mount path.
      */
     enum MountPath {
-        DocumentDirectoryMount = 0   //!< Mount for user content.
+        /*!
+         * @brief Mount for user content.
+         *
+         * The document directory (/home/user/MyDocs) is available as a mount point
+         * depending on the USB mode:
+         * 1) If the USB cable have been unplugged, the document directory will be
+         *    available regardless of the chosen USB mode.
+         * 2) If the USB cable have been plugged in, the document directory will not be
+         *    available in the mass storage mode.
+         */
+        DocumentDirectoryMount = 0
     };
 
     /*!
