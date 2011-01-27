@@ -84,6 +84,7 @@
     #define USB_DISCONNECTED                "USB disconnected"
     #define DATA_IN_USE                     "data_in_use"
     #define USB_CONNECTED_DIALOG_SHOW       "mode_requested_show_dialog"
+    #define USB_PRE_UNMOUNT                 "pre-unmount"
 
     #define MODE_MASS_STORAGE               "mass_storage"
     #define MODE_OVI_SUITE                  "ovi_suite"

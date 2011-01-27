@@ -155,6 +155,14 @@ Q_SIGNALS:
     void modeChanged(MeeGo::QmUSBMode::Mode mode);
 
     /*!
+     * @brief This signal is emitted before a file system is being unmounted.
+     * Applications can use the signal as an indication that a certain mount path
+    *  will be unavailable soon.
+     * @param mountPath the mount which is going to be unmounted.
+     */
+    void fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath mountPath);
+
+    /*!
      * @brief This signal is emitted if there was an error changing the USB mode.
      * @param errorCode an error code representing the error. The following error codes are supported:
      * \li \c qtn_usb_filessystem_inuse The file system is in use.

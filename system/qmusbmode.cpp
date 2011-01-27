@@ -51,6 +51,7 @@ QmUSBMode::QmUSBMode(QObject *parent) : QObject(parent) {
     MEEGO_INITIALIZE(QmUSBMode);
 
     connect(priv, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)), this, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)));
+    connect(priv, SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)), this, SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)));
     connect(priv, SIGNAL(error(const QString&)), this, SIGNAL(error(const QString&)));
 }
 
@@ -58,6 +59,7 @@ QmUSBMode::~QmUSBMode() {
     MEEGO_PRIVATE(QmUSBMode);
 
     disconnect(priv, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)), this, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)));
+    disconnect(priv, SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)), this, SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)));
     disconnect(priv, SIGNAL(error(const QString&)), this, SIGNAL(error(const QString&)));
 
     MEEGO_UNINITIALIZE(QmUSBMode);
@@ -69,7 +71,8 @@ void QmUSBMode::connectNotify(const char *signal) {
     /* QObject::connect() needs to be thread-safe */
     QMutexLocker locker(&priv->connectMutex);
 
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode))))) {
+    if ((QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode))))) ||
+        (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)))))) {
         if (0 == priv->connectCount[SIGNAL_USB_MODE]) {
             QDBusConnection::systemBus().connect(USB_MODE_SERVICE,
                                                  USB_MODE_OBJECT,
@@ -98,7 +101,8 @@ void QmUSBMode::disconnectNotify(const char *signal) {
     /* QObject::disconnect() needs to be thread-safe */
     QMutexLocker locker(&priv->connectMutex);
 
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode))))) {
+    if ((QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode))))) ||
+        (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)))))) {
         priv->connectCount[SIGNAL_USB_MODE]--;
 
         if (0 == priv->connectCount[SIGNAL_USB_MODE]) {
@@ -306,7 +310,12 @@ void QmUSBModePrivate::didReceiveError(const QString &errorCode) {
 }
 
 void QmUSBModePrivate::modeChanged(const QString &mode) {
-    emit modeChanged(stringToMode(mode));
+    if (mode == USB_PRE_UNMOUNT) {
+        /* The pre-unmount signal only concerns MyDocs, for now */
+        emit fileSystemWillUnmount(QmUSBMode::DocumentDirectoryMount);
+    } else {
+        emit modeChanged(stringToMode(mode));
+    }
 }
 
 } // namespace MeeGo
