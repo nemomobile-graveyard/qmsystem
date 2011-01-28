@@ -117,9 +117,9 @@ public:
          *
          * The document directory (/home/user/MyDocs) is available as a mount point
          * depending on the USB mode:
-         * 1) If the USB cable have been unplugged, the document directory will be
+         * 1) If the USB cable has been unplugged, the document directory will be
          *    available regardless of the chosen USB mode.
-         * 2) If the USB cable have been plugged in, the document directory will not be
+         * 2) If the USB cable has been plugged in, the document directory will not be
          *    available in the mass storage mode.
          */
         DocumentDirectoryMount = 0

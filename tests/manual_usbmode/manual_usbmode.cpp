@@ -18,8 +18,31 @@ public slots:
     void modeChanged(MeeGo::QmUSBMode::Mode mode) {
         qDebug() << "Received a modeChanged signal: " << mode2str(mode);
         currentMode = mode;
+        if (currentMode == QmUSBMode::MassStorage) {
+            QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
+            qDebug() << "\n\nReadOnlyMount " << mountOptions.testFlag(QmUSBMode::ReadOnlyMount);
+            qDebug() << "\n\nReadWriteMount " << mountOptions.testFlag(QmUSBMode::ReadWriteMount);
+            QVERIFY(!mountOptions.testFlag(QmUSBMode::ReadOnlyMount));
+            QVERIFY(!mountOptions.testFlag(QmUSBMode::ReadWriteMount));
+            QVERIFY(unmountReceived);
+
+        }
+
+        if (currentMode == QmUSBMode::OviSuite) {
+            QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
+            qDebug() << "\n\nReadOnlyMount " << mountOptions.testFlag(QmUSBMode::ReadOnlyMount);
+            qDebug() << "\n\nReadWriteMount " << mountOptions.testFlag(QmUSBMode::ReadWriteMount);
+            QVERIFY(mountOptions.testFlag(QmUSBMode::ReadOnlyMount) || mountOptions.testFlag(QmUSBMode::ReadWriteMount));
+        }
+
         signalReceived = true;
         modeStack.push(mode);
+    }
+
+    void fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath mountPath) {
+        qDebug() << "\nReceived a fileSystemWillUnmount signal: " << mountPath;
+        qDebug() << "Mount Path: " << mountPath;
+        unmountReceived = true;
     }
 
     void error(const QString &errorCode) {
@@ -31,6 +54,7 @@ private:
     QmUSBMode *qmmode;
     QmUSBMode::Mode currentMode;
     bool signalReceived;
+    bool unmountReceived;
     ModeStack modeStack;
 
     QString mode2str(QmUSBMode::Mode mode) {
@@ -67,7 +91,11 @@ private:
         QVERIFY(currentMode == QmUSBMode::Disconnected ||
                 currentMode == QmUSBMode::Undefined);
 
+        QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
+        QVERIFY((mountOptions & QmUSBMode::ReadOnlyMount) || (mountOptions & QmUSBMode::ReadWriteMount));
+
         signalReceived = false;
+        unmountReceived = false;
         currentMode = QmUSBMode::Undefined;
         QVERIFY(qmmode->setDefaultMode(defaultMode));
         QCOMPARE(qmmode->getDefaultMode(), defaultMode);
@@ -112,6 +140,8 @@ private slots:
         QVERIFY(qmmode);
         QVERIFY(connect(qmmode, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)),
                         this, SLOT(modeChanged(MeeGo::QmUSBMode::Mode))));
+        QVERIFY(connect(qmmode, SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)),
+                        this, SLOT(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath))));
         QVERIFY(connect(qmmode, SIGNAL(error(const QString)),
                         this, SLOT(error(const QString))));
     }
