@@ -3,6 +3,7 @@ qmsystem2 (1.0.7) unstable; urgency=low
    [Matias Muhonen]
    * Fixes: NB#221794 - QT API (QmUSBMode) should support new signals and provide "Mount" status
    * Bump copyright year
+   * Depend on mce in the default build configuration
 
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Wed, 26 Jan 2011 13:47:57 +0200
 
