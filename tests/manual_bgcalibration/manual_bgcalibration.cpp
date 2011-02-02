@@ -58,8 +58,8 @@ private slots:
     }
 
     void testManual() {
-        printf("background calibration test begins. waiting 10 seconds.\n");
-        QTest::qWait(10000);
+        printf("background calibration test begins. waiting 5 seconds.\n");
+        QTest::qWait(5000);
         sensor->reset();
         QTest::qWait(1000);
         QmMagnetometerReading r = sensor->magneticField();

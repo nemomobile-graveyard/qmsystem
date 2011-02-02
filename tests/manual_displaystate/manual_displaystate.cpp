@@ -1,4 +1,3 @@
-
 #include <QObject>
 #include <qmdisplaystate.h>
 #include <QTest>
@@ -11,14 +10,21 @@ using namespace std;
 class TestClass : public QObject
 {
     Q_OBJECT
-
+public slots:
+    void displayStateChanged(MeeGo::QmDisplayState::DisplayState state) {
+        qDebug() << "Received a displayStateChanged signal: " << stateToString(state);
+        currentState = state;
+    }
 private:
     QmDisplayState *displaystate;
+    QmDisplayState::DisplayState currentState;
     
 private slots:
     void initTestCase() {
         displaystate = new MeeGo::QmDisplayState();
         QVERIFY(displaystate);
+        QVERIFY(connect(displaystate, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)),
+                        this, SLOT(displayStateChanged(MeeGo::QmDisplayState::DisplayState))));
     }
 
     QString stateToString(QmDisplayState::DisplayState state) {
@@ -80,7 +86,7 @@ private slots:
         for (int i=0; i < 3; i++)
         {
             printf("%d second mark...\n", i*60);
-            displaystate->setBlankingPause();
+            QVERIFY(displaystate->setBlankingPause());
             QTest::qWait(60*1000);
         }
         QTime timestamp = QTime::currentTime();
