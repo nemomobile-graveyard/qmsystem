@@ -310,12 +310,12 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
 
 
     /**
-     * This method is deprecated, DO NOT USE IT!
+     * @deprecated This method is deprecated. Do not use.
      */
     bool setAutosync(bool enable);
 
     /**
-     * This method is deprecated, DO NOT USE IT!
+     * @deprecated This method is deprecated. Do not use.
      */
     int getAutosync();
 

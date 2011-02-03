@@ -278,20 +278,20 @@ public:
     BatteryCondition getBatteryCondition() const;
 
     /*!
-     * @brief Depreceated, use getRemainingCapacityPct
-     * @state Deprecated
+     * @brief Deprecated, use getRemainingCapacityPct
+     * @deprecated Deprecated, use getRemainingCapacityPct
      */
     int getBatteryEnergyLevel() const;
 
     /*!
-     * @brief Depreceated, use getBatteryState
-     * @state Deprecated
+     * @brief Deprecated, use getBatteryState
+     * @deprecated Deprecated, use getBatteryState
      */
     Level getLevel() const;
 
     /*!
-     * @brief Depreceated, use getChargingState
-     * @state Deprecated
+     * @brief Deprecated, use getChargingState
+     * @deprecated Deprecated, use getChargingState
      */
     State getState() const;
 
@@ -335,19 +335,19 @@ Q_SIGNALS:
     void batteryCurrent(int current);
 
     /*!
-     * @brief Depreceated, use batteryRemainingCapacityChanged
+     * @brief Deprecated, use batteryRemainingCapacityChanged
      * @state Deprecated
      */
     void batteryEnergyLevelChanged(int percentage);
 
     /*!
-     * @brief Depreceated, use chargingStateChanged
+     * @brief Deprecated, use chargingStateChanged
      * @state Deprecated
      */
     void batteryStatusChanged(MeeGo::QmBattery::State);
 
     /*!
-     * @brief Depreceated, use batteryStateChanged
+     * @brief Deprecated, use batteryStateChanged
      * @state Deprecated
      */
     void batteryLevelChanged(MeeGo::QmBattery::Level level);

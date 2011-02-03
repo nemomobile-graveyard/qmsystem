@@ -3,6 +3,9 @@ qmsystem2 (1.0.8) unstable; urgency=low
   [Yang Yang]
   * Add test displayStateChanged signal to manual-displaystate-test
 
+  [Matias Muhonen]
+   * Mark deprecated methods with the @deprecated annotation
+
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Wed, 2 Feb 2011 13:37:19 +0200
 
 qmsystem2 (1.0.7) unstable; urgency=low

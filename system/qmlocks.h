@@ -58,7 +58,7 @@ public:
     {
         /**
          * Device lock.
-         * @state Deprecated
+         * @deprecated The device lock functionality is deprecated. Please use the devicelock interface.
          */
         Device = 0,
         /**

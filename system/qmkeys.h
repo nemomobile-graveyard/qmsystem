@@ -148,35 +148,35 @@ public:
 
   /*!
    * @brief Deprecated, use getKeyState() instead
-   * @state Deprecated
+   * @deprecated Deprecated, use getKeyState() instead
    * @return Current keyboard slider position.
    */
   QmKeys::KeyboardSliderPosition getSliderPosition();
 
   /*!
    * @brief Deprecated, use getKeyState() instead
-   * @state Deprecated
+   * @deprecated Deprecated, use getKeyState() instead
    * @return Current lens cover position.
    */
   QmKeys::LensCoverPosition getLensCoverPosition();
 
   /*!
    * @brief Deprecated, use getKeyState() instead
-   * @state Deprecated
+   * @deprecated Deprecated, use getKeyState() instead
    * @return Current state of the camera launcher key
    */
   QmKeys::CameraKeyPosition getCameraLauncherPosition();
 
   /*!
    * @brief Deprecated, use getKeyState() instead
-   * @state Deprecated
+   * @deprecated Deprecated, use getKeyState() instead
    * @return is volume up key down
    */
   bool isVolumeUpDown();
 
   /*!
    * @brief Deprecated, use getKeyState() instead
-   * @state Deprecated
+   * @deprecated Deprecated, use getKeyState() instead
    * @return is the volume down key down
    */
   bool isVolumeDownDown();
@@ -192,35 +192,35 @@ Q_SIGNALS:
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
-   * @state Deprecated
+   * @deprecated Deprecated, use keyEvent() instead.
    * @param where New slider position.
    */
   void keyboardSliderMoved(QmKeys::KeyboardSliderPosition where);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
-   * @state Deprecated
+   * @deprecated Deprecated, use keyEvent() instead.
    * @param where New cover position.
    */
   void lensCoverMoved(QmKeys::LensCoverPosition where);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
-   * @state Deprecated
+   * @deprecated Deprecated, use keyEvent() instead.
    * @param where New camera luncher position.
    */
   void cameraLauncherMoved(QmKeys::CameraKeyPosition);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
-   * @state Deprecated
+   * @deprecated Deprecated, use keyEvent() instead.
    * @param is the volume up key down
    */
   void volumeUpMoved(bool);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
-   * @state Deprecated
+   * @deprecated Deprecated, use keyEvent() instead.
    * @param is the volume down key down
    */
   void volumeDownMoved(bool);
