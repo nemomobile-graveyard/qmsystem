@@ -5,7 +5,7 @@ qmsystem2 (1.0.8) unstable; urgency=low
 
   [Matias Muhonen]
    * Mark deprecated methods with the @deprecated annotation
-   * Make it possible to skip building Doxygen docs with the nodocs option
+   * Fixes: NB#225060 - QmSystem still generates documentation packages when the DEB_BUILD_OPTIONS "nodocs" is given
 
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Wed, 2 Feb 2011 13:37:19 +0200
 
