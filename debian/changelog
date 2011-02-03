@@ -1,7 +1,7 @@
 qmsystem2 (1.0.8) unstable; urgency=low
 
   [Yang Yang]
-  * Add test displayStateChanged signal to manual-displaystate-test
+  * Add test displayStateChanged signal to manual-displaystate-test, and rotate to manual-orientation-test
 
   [Matias Muhonen]
    * Mark deprecated methods with the @deprecated annotation

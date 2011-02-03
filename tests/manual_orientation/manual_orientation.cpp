@@ -112,14 +112,14 @@ private slots:
         testFunc(QmOrientation::RightUp);
         testFunc(QmOrientation::FaceDown);
         testFunc(QmOrientation::FaceUp);
+        printf("\nPlease rotate the device untill the orientation changed, and then rotate back slightly,\n if the orientation changes when you rotate back, FAIL the test!!\n You have 20 seconds to do this\n\n");
+        QTest::qWait(10000);
     }
-
     
     void cleanupTestCase() {
         QVERIFY2(sensor->stop(), sensor->lastError().toLocal8Bit());
         delete sensor;
     }
-
 
 private:
     QmOrientation *sensor;
