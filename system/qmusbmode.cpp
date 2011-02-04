@@ -284,8 +284,8 @@ QVector< QPair< QString , QString > > QmUSBModePrivate::mountEntries() {
     mntent m;
     char buf[1024];
     while (getmntent_r(f, &m, buf, sizeof(buf)) != 0) {
-        entries << QPair<QString, QString>(QString::fromAscii(m.mnt_dir),
-                                           QString::fromAscii(m.mnt_opts));
+        entries << qMakePair(QString::fromAscii(m.mnt_dir),
+                             QString::fromAscii(m.mnt_opts));
     }
     endmntent(f);
     return entries;
