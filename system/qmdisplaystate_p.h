@@ -39,13 +39,6 @@
 
 #include <gconf/gconf-client.h>
 
-#include <QDebug>
-
-//Strings received from the D-Bus daemon
-#define OFF     "off"
-#define DIMMED  "dimmed"
-#define ON      "on"
-
 //Strings for GConf keys.
 #define GCONF_DISPLAY_DIR "/system/osso/dsm/display"
 #define MAX_BRIGHTNESS_KEY GCONF_DISPLAY_DIR "/" "max_display_brightness_levels"

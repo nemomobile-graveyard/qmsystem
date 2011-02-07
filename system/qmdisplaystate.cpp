@@ -105,11 +105,11 @@ QmDisplayState::DisplayState QmDisplayState::get() const {
         if (!results.isEmpty())
             stateStr = results[0].toString();
 
-        if (stateStr == DIMMED)
+        if (stateStr == MCE_DISPLAY_DIM_STRING)
             state = Dimmed;
-        else if (stateStr == ON)
+        else if (stateStr == MCE_DISPLAY_ON_STRING)
             state = On;
-        else if (stateStr == OFF)
+        else if (stateStr == MCE_DISPLAY_OFF_STRING)
             state = Off;
     #endif
 
