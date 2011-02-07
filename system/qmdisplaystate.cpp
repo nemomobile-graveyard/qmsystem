@@ -29,6 +29,10 @@
 #include "qmdisplaystate.h"
 #include "qmdisplaystate_p.h"
 
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusReply>
+
 namespace MeeGo {
 
 QmDisplayState::QmDisplayState(QObject *parent)
@@ -93,34 +97,29 @@ void QmDisplayState::disconnectNotify(const char *signal) {
 
 QmDisplayState::DisplayState QmDisplayState::get() const {
     QmDisplayState::DisplayState state = Unknown;
-
     #if HAVE_MCE
-        MEEGO_PRIVATE_CONST(QmDisplayState)
+        QDBusReply<QString> displayStateReply = QDBusConnection::systemBus().call(
+                                                    QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF,
+                                                                                   MCE_DISPLAY_STATUS_GET));
+        if (!displayStateReply.isValid()) {
+            return state;
+        }
 
-        QmIPCInterface *requestIf = priv->requestIf;
-        QList<QVariant> results;
-        QString stateStr;
+        QString stateStr = displayStateReply.value();
 
-        results = requestIf->get(MCE_DISPLAY_STATUS_GET);
-        if (!results.isEmpty())
-            stateStr = results[0].toString();
-
-        if (stateStr == MCE_DISPLAY_DIM_STRING)
+        if (stateStr == MCE_DISPLAY_DIM_STRING) {
             state = Dimmed;
-        else if (stateStr == MCE_DISPLAY_ON_STRING)
+        } else if (stateStr == MCE_DISPLAY_ON_STRING) {
             state = On;
-        else if (stateStr == MCE_DISPLAY_OFF_STRING)
+        } else if (stateStr == MCE_DISPLAY_OFF_STRING) {
             state = Off;
+        }
     #endif
-
     return state;
 }
 
 bool QmDisplayState::set(QmDisplayState::DisplayState state) {
     #if HAVE_MCE
-        MEEGO_PRIVATE(QmDisplayState)
-
-        QmIPCInterface *requestIf = priv->requestIf;
         QString method;
 
         switch (state) {
@@ -137,7 +136,8 @@ bool QmDisplayState::set(QmDisplayState::DisplayState state) {
                 return false;
         }
 
-        requestIf->callAsynchronously(method);
+        QDBusMessage displayStateSetCall = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, method);
+        (void)QDBusConnection::systemBus().call(displayStateSetCall, QDBus::NoBlock);
         return true;
     #else
         Q_UNUSED(state);
@@ -259,22 +259,20 @@ void QmDisplayState::setBlankingWhenCharging(bool blanking) {
 
 bool QmDisplayState::setBlankingPause(void) {
     #if HAVE_MCE
-        MEEGO_PRIVATE_CONST(QmDisplayState)
-
-        QmIPCInterface *requestIf = priv->requestIf;
-        requestIf->callAsynchronously(MCE_PREVENT_BLANK_REQ);
+        QDBusMessage blankingPauseCall = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF,
+                                                                        MCE_PREVENT_BLANK_REQ);
+        (void)QDBusConnection::systemBus().call(blankingPauseCall, QDBus::NoBlock);
         return true;
     #else
-         return false;
+        return false;
     #endif
 }
 
 bool QmDisplayState::cancelBlankingPause(void) {
     #if HAVE_MCE
-        MEEGO_PRIVATE_CONST(QmDisplayState)
-
-        QmIPCInterface *requestIf = priv->requestIf;
-        requestIf->callAsynchronously(MCE_CANCEL_PREVENT_BLANK_REQ);
+        QDBusMessage cancelBlankingPauseCall = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF,
+                                                                              MCE_CANCEL_PREVENT_BLANK_REQ);
+        (void)QDBusConnection::systemBus().call(cancelBlankingPauseCall, QDBus::NoBlock);
         return true;
     #else
         return false;

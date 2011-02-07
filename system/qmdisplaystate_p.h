@@ -28,7 +28,6 @@
 #define QMDISPLAYSTATE_P_H
 
 #include "qmdisplaystate.h"
-#include "qmipcinterface_p.h"
 
 #include <QMutex>
 
@@ -59,11 +58,6 @@ namespace MeeGo
 
     public:
         QmDisplayStatePrivate() {
-            #if HAVE_MCE
-                requestIf = new QmIPCInterface(MCE_SERVICE,
-                                               MCE_REQUEST_PATH,
-                                               MCE_REQUEST_IF);
-            #endif
             g_type_init();
             gc = gconf_client_get_default();
 
@@ -71,15 +65,11 @@ namespace MeeGo
         }
 
         ~QmDisplayStatePrivate() {
-            #if HAVE_MCE
-                 delete requestIf, requestIf = 0;
-            #endif
             g_object_unref(gc), gc = 0;
         }
 
         QMutex connectMutex;
         size_t connectCount[1];
-        QmIPCInterface *requestIf;
         GConfClient *gc;
 
     Q_SIGNALS:
