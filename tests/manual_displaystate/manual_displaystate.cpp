@@ -1,5 +1,6 @@
 #include <QObject>
 #include <qmdisplaystate.h>
+#include <qmlocks.h>
 #include <QTest>
 #include <QDebug>
 #include <iostream>
@@ -18,11 +19,14 @@ public slots:
 private:
     QmDisplayState *displaystate;
     QmDisplayState::DisplayState currentState;
+    MeeGo::QmLocks *locks;
     
 private slots:
     void initTestCase() {
         displaystate = new MeeGo::QmDisplayState();
         QVERIFY(displaystate);
+        locks = new MeeGo::QmLocks();
+        QVERIFY(locks);
         QVERIFY(connect(displaystate, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)),
                         this, SLOT(displayStateChanged(MeeGo::QmDisplayState::DisplayState))));
     }
@@ -83,6 +87,7 @@ private slots:
         printf("This test will try to keep the display on for 3 minutes by calling setBlankingPause \n");
         printf("Please see that the display statays on...\n\n");
 
+        locks->setState(MeeGo::QmLocks::Device, MeeGo::QmLocks::Unlocked);
         for (int i=0; i < 3; i++)
         {
             printf("%d second mark...\n", i*60);
