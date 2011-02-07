@@ -8,6 +8,7 @@
    @author Antonio Aloisio <antonio.aloisio@nokia.com>
    @author Ilya Dogolazky <ilya.dogolazky@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    This file is part of SystemSW QtAPI.
 
@@ -26,9 +27,10 @@
  */
 #include "qmactivity.h"
 #include "qmactivity_p.h"
-#include "qmipcinterface_p.h"
 
-#include <QDebug>
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusReply>
 
 namespace MeeGo {
 
@@ -92,16 +94,21 @@ void QmActivity::disconnectNotify(const char *signal) {
 }
 
 QmActivity::Activity QmActivity::get() const {
+    QmActivity::Activity status = Inactive;
     #if HAVE_MCE
-        MEEGO_PRIVATE_CONST(QmActivity)
-        QmIPCInterface *requestIf = priv->requestIf;
-        QList<QVariant> results;
+        QDBusReply<bool> inactivityStatusReply = QDBusConnection::systemBus().call(
+                                                     QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF,
+                                                                                    MCE_INACTIVITY_STATUS_GET));
+        if (!inactivityStatusReply.isValid()) {
+            return status;
+        }
 
-        results = requestIf->get(MCE_INACTIVITY_STATUS_GET);
-        if (!results.empty() && !results[0].toBool())
-            return Active;
+        bool inactivityStatus = inactivityStatusReply.value();
+        if (inactivityStatus) {
+            status = Active;
+        }
     #endif
-    return Inactive;
+    return status;
 }
 
 }

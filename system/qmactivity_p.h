@@ -31,7 +31,6 @@
 #define QMACTIVITY_P_H
 
 #include "qmactivity.h"
-#include "qmipcinterface_p.h"
 
 #include <QMutex>
 
@@ -50,23 +49,14 @@ namespace MeeGo
         MEEGO_DECLARE_PUBLIC(QmActivity)
 
     public:
-        QmIPCInterface *requestIf;
         QMutex connectMutex;
         size_t connectCount[1];
 
         QmActivityPrivate() {
-            #if HAVE_MCE
-                requestIf = new QmIPCInterface(MCE_SERVICE,
-                                               MCE_REQUEST_PATH,
-                                               MCE_REQUEST_IF);
-            #endif
             connectCount[SIGNAL_INACTIVITY] = 0;
         }
 
         ~QmActivityPrivate() {
-            #if HAVE_MCE
-                delete requestIf, requestIf = 0;
-            #endif
         }
 
     Q_SIGNALS:
