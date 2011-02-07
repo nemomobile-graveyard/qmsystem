@@ -92,7 +92,7 @@ void QmDisplayState::disconnectNotify(const char *signal) {
 }
 
 QmDisplayState::DisplayState QmDisplayState::get() const {
-    QmDisplayState::DisplayState state = Off;
+    QmDisplayState::DisplayState state = Unknown;
 
     #if HAVE_MCE
         MEEGO_PRIVATE_CONST(QmDisplayState)
@@ -109,6 +109,8 @@ QmDisplayState::DisplayState QmDisplayState::get() const {
             state = Dimmed;
         else if (stateStr == ON)
             state = On;
+        else if (stateStr == OFF)
+            state = Off;
     #endif
 
     return state;
