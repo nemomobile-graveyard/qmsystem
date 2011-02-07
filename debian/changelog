@@ -1,7 +1,7 @@
 qmsystem2 (1.0.9) unstable; urgency=low
 
   [Yang Yang]
-  * Disable tklock before setBlankingPause in manual-displaystate-test
+  * Disable touch screen autolock before setBlankingPause in manual-displaystate-test
 
   [Tapio Rantala]
   * Don't say Off to displaystate when mce doesn't say it
