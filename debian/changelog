@@ -2,7 +2,7 @@ qmsystem2 (1.0.9) unstable; urgency=low
 
   [Tapio Rantala]
   * Don't say Off to displaystate when mce doesn't say it
-  * Fixes: NB#225378 - MeeGo::QmDisplayState() emits wrong state for display in sb and non-dali devices
+  * Fixes: NB#225378 - MeeGo::QmDisplayState() emits wrong state for display
 
  -- Tapio Rantala <ext-tapio.rantala@nokia.com>  Mon, 07 Feb 2011 10:08:07 +0200
 
