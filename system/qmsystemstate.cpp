@@ -32,6 +32,10 @@
 
 #include "qmsysteminformation.h"
 
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusReply>
+
 #include <QFile>
 #include <QTextStream>
 
@@ -246,12 +250,16 @@ QmSystemState::BootReason QmSystemState::getBootReason() {
 
 unsigned int QmSystemState::getPowerOnTimeInSeconds() {
     unsigned int result = 0;
-    MEEGO_PRIVATE(QmSystemState)
-    QmIPCInterface *requestIf = priv->poweronRequestIf;
-    QList<QVariant> results = requestIf->get(SYS_POWERONTIMER_TIME_GET);
-    if (!results.isEmpty()) {
-      result = results.first().toUInt();
+    QDBusReply<int> powerontimerReply = QDBusConnection::systemBus().call(
+                                            QDBusMessage::createMethodCall(SYS_POWERONTIMER_SERVICE,
+                                                                           SYS_POWERONTIMER_PATH,
+                                                                           SYS_POWERONTIMER_INTERFACE,
+                                                                           SYS_POWERONTIMER_TIME_GET));
+    if (!powerontimerReply.isValid()) {
+        return result;
     }
+
+    result = powerontimerReply.value();
     return result;
 }
 

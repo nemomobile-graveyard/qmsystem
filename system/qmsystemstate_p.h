@@ -50,11 +50,6 @@ namespace MeeGo
                            dsme_service,
                            dsme_req_path,
                            dsme_req_interface);
-            poweronRequestIf = new QmIPCInterface(
-                           SYS_POWERONTIMER_SERVICE,
-                           SYS_POWERONTIMER_PATH,
-                           SYS_POWERONTIMER_INTERFACE);
-
             connectCount[SIGNAL_SYSTEM_STATE] = 0;
         }
 
@@ -62,15 +57,11 @@ namespace MeeGo
             if (dsmeRequestIf) {
                 delete dsmeRequestIf, dsmeRequestIf = 0;
             }
-            if (poweronRequestIf) {
-                delete poweronRequestIf, poweronRequestIf = 0;
-            }
         }
 
         QMutex connectMutex;
         size_t connectCount[1];
         QmIPCInterface *dsmeRequestIf;
-        QmIPCInterface *poweronRequestIf;
 
     Q_SIGNALS:
 
