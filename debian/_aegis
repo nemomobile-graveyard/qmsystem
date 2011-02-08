@@ -25,7 +25,7 @@
   </request>
   <request>
     <credential name="mce::TKLockControl" />
-    <for path="/usr/bin/manual-display-test" id="manual-display-test" />
+    <for path="/usr/bin/displaystate-test" id="displaystate-test" />
   </request>
   <request>
     <credential name="mce::TKLockControl" />
