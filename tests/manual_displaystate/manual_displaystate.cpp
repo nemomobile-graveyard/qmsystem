@@ -87,8 +87,10 @@ private slots:
         printf("This test will try to keep the display on for 3 minutes by calling setBlankingPause \n");
         printf("Please see that the display statays on...\n\n");
 
-        QVERIFY(locks->setState(MeeGo::QmLocks::TouchAndKeyboard, MeeGo::QmLocks::Unlocked));
-        printf("Disable touch screen and keyboard auto lock\n");
+        if (MeeGo::QmLocks::Locked == locks->getState(MeeGo::QmLocks::TouchAndKeyboard)) {
+            QVERIFY(locks->setState(MeeGo::QmLocks::TouchAndKeyboard, MeeGo::QmLocks::Unlocked));
+            printf("Unlock touch screen and keyboard\n");
+        }
         for (int i=0; i < 3; i++)
         {
             printf("%d second mark...\n", i*60);
@@ -149,6 +151,7 @@ private slots:
 
     void cleanupTestCase() {
         delete displaystate;
+        delete locks;
     }
 };
 
