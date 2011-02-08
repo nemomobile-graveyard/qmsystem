@@ -27,9 +27,8 @@
 #include <QObject>
 #include <qmdisplaystate.h>
 #include <QTest>
-#include <QDBusMessage>
-#include <QDBusConnection>
 #include <QDebug>
+#include <qmlocks.h>
 
 class SignalDump : public QObject {
     Q_OBJECT
@@ -53,16 +52,15 @@ class TestClass : public QObject
 private:
     MeeGo::QmDisplayState *displaystate;
     SignalDump signalDump;
+    MeeGo::QmLocks *locks;
     
 private slots:
     void initTestCase() {
-        QDBusMessage msg = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
-        QList<QVariant> args;
-        args.append(QVariant("unlocked"));
-        msg.setArguments(args);
-        QCOMPARE(QDBusMessage::ReplyMessage, QDBusConnection::systemBus().call(msg).type());
         displaystate = new MeeGo::QmDisplayState();
         QVERIFY(displaystate);
+        locks = new MeeGo::QmLocks();
+        QVERIFY(locks);
+        QVERIFY(locks->setState(MeeGo::QmLocks::TouchAndKeyboard, MeeGo::QmLocks::Unlocked));
     }
 
     void testConnectSignals() {
