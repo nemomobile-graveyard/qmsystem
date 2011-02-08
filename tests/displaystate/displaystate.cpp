@@ -28,7 +28,6 @@
 #include <qmdisplaystate.h>
 #include <QTest>
 #include <QDebug>
-#include <qmlocks.h>
 
 class SignalDump : public QObject {
     Q_OBJECT
@@ -52,15 +51,11 @@ class TestClass : public QObject
 private:
     MeeGo::QmDisplayState *displaystate;
     SignalDump signalDump;
-    MeeGo::QmLocks *locks;
     
 private slots:
     void initTestCase() {
         displaystate = new MeeGo::QmDisplayState();
         QVERIFY(displaystate);
-        locks = new MeeGo::QmLocks();
-        QVERIFY(locks);
-        QVERIFY(locks->setState(MeeGo::QmLocks::TouchAndKeyboard, MeeGo::QmLocks::Unlocked));
     }
 
     void testConnectSignals() {
