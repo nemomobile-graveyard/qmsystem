@@ -102,24 +102,38 @@ private slots:
     }
 
     void testDisplayBrightnessValue() {
+        int originalDisplayBrightnessValue = displaystate->getDisplayBrightnessValue();
+
         displaystate->setDisplayBrightnessValue(3);
         int result = displaystate->getDisplayBrightnessValue();
         QVERIFY(result == 3);
+
+        displaystate->setDisplayBrightnessValue(originalDisplayBrightnessValue);
     }
 
     void testDisplayBlankTimeout() {
+        int originalDisplayBlankTimeout = displaystate->getDisplayBlankTimeout();
+
         displaystate->setDisplayBlankTimeout(10);
         int result = displaystate->getDisplayBlankTimeout();
         QVERIFY(result == 10);
+
+        displaystate->setDisplayBlankTimeout(originalDisplayBlankTimeout);
     }
 
     void testDisplayDimTimeout() {
+        int originalDisplayDimTimeout = displaystate->getDisplayDimTimeout();
+
         displaystate->setDisplayDimTimeout(15);
         int result = displaystate->getDisplayDimTimeout();
         QVERIFY(result == 15);
+
+        displaystate->setDisplayDimTimeout(originalDisplayDimTimeout);
     }
 
     void testBlankingCharging() {
+        bool originalBlankingWhenCharging = displaystate->getBlankingWhenCharging();
+
         displaystate->setBlankingWhenCharging(true);
         bool result = displaystate->getBlankingWhenCharging();
         QVERIFY(result == true);
@@ -128,7 +142,7 @@ private slots:
         result = displaystate->getBlankingWhenCharging();
         QVERIFY(result == false);
 
-
+        displaystate->setBlankingWhenCharging(originalBlankingWhenCharging);
     }
 
     void cleanupTestCase() {
