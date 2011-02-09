@@ -408,13 +408,15 @@ QmBatteryPrivate::getRemainingIdleTime(QmBattery::RemainingTimeMode mode) const
 	int result = 0;
 	(void) mode;
 
-	QDBusInterface usetime(USETIME_SERVICE,
-			       USETIME_PATH,
-			       USETIME_IF,
-			       QDBusConnection::sessionBus());
+	QDBusMessage msg = QDBusMessage::createMethodCall(
+		USETIME_SERVICE, USETIME_PATH, USETIME_IF,
+		USETIME_METHOD_GET_TIME);
 
-	QDBusReply<int> tReply = usetime.call(USETIME_METHOD_GET_TIME,
-					      USETIME_MODE_IDLE, 0);
+	QList<QVariant> args;
+	args << USETIME_MODE_IDLE << 0;
+	msg.setArguments(args);
+
+	QDBusReply<int> tReply = QDBusConnection::systemBus().call(msg);
 	if(tReply.isValid()) {
 		result = tReply.value() * 60;
 	} else {
