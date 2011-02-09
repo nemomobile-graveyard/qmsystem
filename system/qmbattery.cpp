@@ -35,6 +35,8 @@
 #include "qmbattery_p.h"
 
 #include <QDBusMetaType>
+#include <QDBusInterface>
+#include <QDBusReply>
 #include <QDebug>
 #include <QSocketNotifier>
 #include <QTimer>
@@ -50,6 +52,26 @@ extern "C" {
 #define BMECLI_TIMEOUT 3000  /* ms */
 #define BMECURRENT_TIMEOUT 5010
 #define STAT_EXPIRATION_TIMEOUT 5 /* seconds */
+
+/**
+ * @todo Once usetime-dev is available, include usetime/dbus.h and remove the
+         definitions from here.
+ */
+
+/** Usetime D-Bus service */
+#define USETIME_SERVICE "com.nokia.usetime"
+
+/** Usetime D-Bus interface */
+#define USETIME_IF "com.nokia.usetime"
+
+/** Usetime D-Bus path */
+#define USETIME_PATH "/com/nokia/usetime"
+
+/** Device is idle */
+#define USETIME_MODE_IDLE   1
+
+/** Get use time */
+#define USETIME_METHOD_GET_TIME "getTime"
 
 #define dbg(a) qDebug() << __PRETTY_FUNCTION__ << ": " << a
 
@@ -380,6 +402,51 @@ int QmBatteryPrivate::getStat(int index) const
     return stat_[index];
 }
 
+int
+QmBatteryPrivate::getRemainingIdleTime(QmBattery::RemainingTimeMode mode) const
+{
+	int result = 0;
+	(void) mode;
+
+	QDBusInterface usetime(USETIME_SERVICE,
+			       USETIME_PATH,
+			       USETIME_IF,
+			       QDBusConnection::sessionBus());
+
+	QDBusReply<int> tReply = usetime.call(USETIME_METHOD_GET_TIME,
+					      USETIME_MODE_IDLE, 0);
+	if(tReply.isValid()) {
+		result = tReply.value() * 60;
+	} else {
+		/**
+		 * @note The following error means that the usetime package
+		 *       is not installed or that the usetime daemon is not
+		 *       running.
+		 *
+		 * 4 QDBusError::ServiceUnknown
+		 * "org.freedesktop.DBus.Error.ServiceUnknown"
+		 * "The name com.nokia.usetime was not provided by any
+		 * .service files"
+		 */
+		qDebug() << "No idle time estimate available";
+		if (tReply.error().isValid()) {
+			qDebug() << tReply.error().type()
+				 << tReply.error().name()
+				 << tReply.error().message();
+		}
+
+		/* Fall back to estimation based on constant consuption */
+		queryData_();
+		result = stat_[BATTERY_TIME_IDLE] * 3600;
+	}
+
+	qDebug() << "Idle time: " << result / 60 << "minutes ("
+		 << result / 3600 << "hours )";
+
+	return result;
+}
+
+
 bool QmBatteryPrivate::startCurrentMeasurement(QmBattery::Period rate)
 {
     unsigned int period = 0;
@@ -646,14 +713,7 @@ int QmBattery::getRemainingTalkTime(QmBattery::RemainingTimeMode mode) const
 
 int QmBattery::getRemainingIdleTime(QmBattery::RemainingTimeMode mode) const
 {
-    /*
-     * ToDo: Re-implement when real idle time estimate is available. For now,
-     * just use the value provided by bme (which is based on assumed constant
-     * consumption).
-     */
-
-    (void) mode;
-    return pimpl_->getStat(BATTERY_TIME_IDLE) * 3600;
+	return pimpl_->getRemainingIdleTime(mode);
 }
 
 QmBattery::BatteryCondition QmBattery::getBatteryCondition() const

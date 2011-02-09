@@ -1,3 +1,10 @@
+qmsystem2 (1.0.10) unstable; urgency=low
+
+  [Matti Halme]
+  * Query idle time estimate from use time daemon if present
+
+ -- Matti Halme <matti.halme@nokia.com>  Wed, 09 Feb 2011 10:11:41 +0200
+
 qmsystem2 (1.0.9) unstable; urgency=low
 
   [Yang Yang]

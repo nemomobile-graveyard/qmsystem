@@ -70,6 +70,7 @@ public:
     bool stopCurrentMeasurement();
 
     int getStat(int) const;
+    int getRemainingIdleTime(QmBattery::RemainingTimeMode mode) const;
 
 private Q_SLOTS:
     void onEmEvent(int);
