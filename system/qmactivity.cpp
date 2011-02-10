@@ -104,7 +104,7 @@ QmActivity::Activity QmActivity::get() const {
         }
 
         bool inactivityStatus = inactivityStatusReply.value();
-        if (inactivityStatus) {
+        if (!inactivityStatus) {
             status = Active;
         }
     #endif
