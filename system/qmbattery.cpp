@@ -108,7 +108,7 @@ public:
         }
 
         if (!self->is_opened()) {
-            qDebug() << "EM: error opening: " << strerror(errno);
+            qCritical() << "EM: error opening: " << strerror(errno);
         }
         return self->is_opened();
     }
@@ -133,12 +133,21 @@ public:
 
     bool stat(bmestat_t *stat)
     {
-        if (!is_opened())
+        if (!is_opened()) {
+	    qCritical() << "EM: not open";
             return false;
+	}
 
         if (::bmeipc_stat(sd_, stat) < 0) {
-            qCritical() << "EM: failed to request state: " << strerror(errno);
-            return false;
+	    close();
+	    if (!open()) {
+		return false;
+	    }
+	    if (::bmeipc_stat(sd_, stat) < 0) {
+		qCritical() << "EM: failed to request state: "
+			    << strerror(errno);
+		return false;
+	    }
         }
         return true;
     }
@@ -146,8 +155,10 @@ public:
     inline bool query(const void *msg1, int len1
                       , void *msg2 = NULL, int len2 = -1)
     {
-        if (!is_opened())
+        if (!is_opened()) {
+	    qCritical() << "EM: not open";
             return false;
+	}
 
         return (::bmeipc_query(sd_, msg1, len1, msg2, len2) >= 0);
     }
