@@ -6,6 +6,9 @@ qmsystem2 (1.0.11) unstable; urgency=low
   [Matti Halme]
   * Re-open connection to bme in case of failure. Fixes: NB#227642.
 
+  [Matias Muhonen]
+  * Attempt to fix the warnings given by the static analysis tool in QmKeyd
+
  -- Matti Halme <matti.halme@nokia.com>  Tue, 15 Feb 2011 13:32:34 +0200
 
 qmsystem2 (1.0.10) unstable; urgency=low

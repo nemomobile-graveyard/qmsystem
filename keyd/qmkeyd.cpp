@@ -184,6 +184,10 @@ void QmKeyd::detectBT(int inotify)
     char buf[2<<10];
     struct inotify_event *ev;
 
+    memset(fname, 0, sizeof(fname));
+    memset(buf, 0, sizeof(buf));
+    memset(ev, 0, sizeof(ev));
+
     int n = read(inotify, buf, sizeof buf);
 
     if (n == -1) {
