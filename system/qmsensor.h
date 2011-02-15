@@ -11,6 +11,7 @@
    @author Sagar Shinde <ext-sagar.shinde@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Timo Rongas <ext-timo.2.rongas@nokia.com>
+   @author Lihan Guo <ext-lihan.4.guo@nokia.com>
 
    @scope Internal
 
@@ -98,7 +99,6 @@ namespace MeeGo {
      *
      * @code
      * als->stop();
-     * als->closeSession();
      * delete als;
      * @endcode
      */
@@ -170,7 +170,8 @@ namespace MeeGo {
         SessionType requestSession(SessionType type = SessionTypeControl);
 
         /**
-         * Closes an open session.
+         * Closes an open session by calling stop().
+         * @deprecated Deprecated, use stop() instead
          */
         void closeSession();
 

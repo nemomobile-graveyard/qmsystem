@@ -7,6 +7,7 @@
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Timo Rongas <ext-timo.2.rongas@nokia.com>
+   @author Lihan Guo <ext-lihan.4.guo@nokia.com>ngas@nokia.com>
 
    This file is part of SystemSW QtAPI.
 
@@ -249,8 +250,6 @@ namespace MeeGo {
     void QmSensor::closeSession()
     {
         stop();
-        MEEGO_PRIVATE(QmSensor);
-        priv->closeSession();
     }
 
     bool QmSensor::verifySessionLevel(QmSensor::SessionType type)
