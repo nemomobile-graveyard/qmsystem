@@ -37,7 +37,10 @@ QT_BEGIN_HEADER
 
 namespace MeeGo {
     /**
-     * Compass measurement.
+     * Compass measurement. Provides compass azimuth in relation
+     * to device Y-axis (See QmAccelerometer for axis directions).
+     * Applications must rotate the measurements themselves
+     * if they need data aligned to UI orientation.
      */
     class QmCompassReading : public QmSensorReading
     {
