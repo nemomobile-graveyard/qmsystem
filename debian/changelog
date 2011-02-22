@@ -3,7 +3,10 @@ qmsystem2 (1.0.13) unstable; urgency=low
   [Matias Muhonen]
   * Fixes: NB#228033 - VolumeControl does not function in video, Audio and Call Applications.
 
- -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Tue, 22 Feb 2011 13:20:37 +0200
+  [Matti Halme]
+  * Emit delayed charging state signal in case of USB100. Fixes: NB#228167.
+
+ -- Matti Halme <matti.halme@nokia.com>  Tue, 22 Feb 2011 16:51:13 +0200
 
 qmsystem2 (1.0.12) unstable; urgency=low
 
