@@ -300,7 +300,8 @@ void QmKeyd::disconnected()
     socket->deleteLater();
 }
 
-/* Client socket ready: the protocol, except the client to query the state of a key */
+/* Client socket ready: received data (an event) for querying the state of a key.
+   If the key is pressed, we bounce back the event with ev.value = 1 */
 void QmKeyd::clientSocketReadyRead() {
     QLocalSocket *socket = qobject_cast<QLocalSocket*>(sender());
     if (!socket) {
@@ -312,6 +313,7 @@ void QmKeyd::clientSocketReadyRead() {
         struct input_event ev;
         memset(&ev, 0, sizeof(ev));
 
+        // Receive an event from the client socket
         int ret = socket->read((char*)&ev, sizeof(ev));
         if (ret <= 0) {
             break;
@@ -359,7 +361,7 @@ void QmKeyd::didReceiveKeyEventFromFile(int fd)
         }
 
         if (ret == sizeof(ev) && isKeySupported(ev)) {
-            // Broadcast the input event back to the clients over socket.
+            // Broadcast the input event back to the clients over the client socket.
             QLocalSocket *socket;
             foreach (socket, connections) {
                 socket->write((char*)&ev, sizeof(ev));
