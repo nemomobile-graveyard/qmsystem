@@ -69,7 +69,7 @@ private:
     QSocketNotifier *gpioNotifier, *keypadNotifier, *eciNotifier, *powerButtonNotifier, *btNotifier, *inputNotifier;
 
     int inotifyWd, inotifyFd;
-    char btfname[32];
+    char *btfname;
     int users;
 };
 

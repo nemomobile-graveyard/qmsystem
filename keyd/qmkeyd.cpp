@@ -68,7 +68,7 @@ static int  debugmode = 0;
 QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv),
     server(0),
     connections(0),
-    gpioFile(-1), keypadFile(-1), eciFile(-1), powerButtonFile(-1), btFile(-1),
+    gpioFile(-1), keypadFile(-1), eciFile(-1), powerButtonFile(-1), btFile(-1), btfname(0),
     gpioNotifier(0), keypadNotifier(0), eciNotifier(0), powerButtonNotifier(0), btNotifier(0), inputNotifier(0),
     inotifyWd(-1), inotifyFd(-1),
     users(0)
@@ -103,9 +103,6 @@ QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv),
     if (!connect(inputNotifier, SIGNAL(activated(int)), this, SLOT(detectBT(int)))) {
         failStart("Failed to connect the inotify activated signal\n");
     }
-
-    /* Make sure btfname is a null-terminated string */
-    *btfname = '\0';
 }
 
 QmKeyd::~QmKeyd()
@@ -179,14 +176,10 @@ void QmKeyd::cleanSocket()
 
 void QmKeyd::detectBT(int inotify)
 {
-    int fd;
-    char fname[32];
     char buf[2<<10];
-    struct inotify_event *ev;
+    struct inotify_event *ev = 0;
 
-    memset(fname, 0, sizeof *fname);
     memset(buf, 0, sizeof *buf);
-    memset(ev, 0, sizeof *ev);
 
     int n = read(inotify, buf, sizeof buf);
 
@@ -201,34 +194,39 @@ void QmKeyd::detectBT(int inotify)
     } else {
         ev = (inotify_event *)lea(buf, 0);
         while (n >= (int)sizeof *ev) {
+            char *fname = 0;
             int k = sizeof *ev + ev->len;
 
             if ((k < (int)sizeof *ev) || (k > n)) {
                 break;
             }
 
-            snprintf(fname, sizeof(fname), "/dev/input/%s", ev->name);
+            if (asprintf(&fname, "/dev/input/%s", ev->name) < 0) {
+                break;
+            }
 
             switch (ev->mask) {
                 case IN_DELETE:
                      /* Check if the current headset was disconnected */
-                     if (btFile != -1 && strncmp(btfname, fname, sizeof(btfname)) == 0) {
+                     if (btfname && strcmp(btfname, fname) == 0) {
                          closeBT();
                      }
                      break;
 
                 case IN_CREATE:
+                     int fd;
+
                      /* Check if a headset was connected */
                      if ((fd = open(fname, O_RDONLY | O_NONBLOCK)) == -1) {
                          syslog(LOG_WARNING, "Could not open %s for detecting a headset\n", fname);
-                         continue;
+                         goto next_ev;
                      }
 
                      if (isHeadset(fd)) {
                          /* Yes, found a new headset. Close an existing headset, if there's one */
                          closeBT();
 
-                         strncpy(btfname, fname, sizeof(btfname));
+                         btfname = strdup(fname);
                          btFile = fd;
 
                          /* Receive notifications for the headset */
@@ -238,6 +236,11 @@ void QmKeyd::detectBT(int inotify)
                          close(fd);
                      }
                      break;
+            }
+
+next_ev:
+            if (fname) {
+                free(fname);
             }
 
             n -= k;
@@ -479,6 +482,9 @@ void QmKeyd::closeBT()
     }
     if (btFile != -1) {
         close(btFile), btFile = -1;
+    }
+    if (btfname) {
+        free(btfname), btfname = 0;
     }
 }
 
