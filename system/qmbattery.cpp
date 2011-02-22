@@ -543,8 +543,10 @@ void QmBatteryPrivate::emitEventBatmon_()
 
 void QmBatteryPrivate::waitForUSB500mA()
 {
+    // USB 500 event didn't come. Emit the delayed signals.
     timer->stop();
     emit parent_->chargerEvent(parent_->getChargerType());
+    emit parent_->chargingStateChanged(parent_->getChargingState());
 }
 
 void QmBatteryPrivate::onEmEvent(int /*socket*/)
