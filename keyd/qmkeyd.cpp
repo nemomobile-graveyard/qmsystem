@@ -184,9 +184,9 @@ void QmKeyd::detectBT(int inotify)
     char buf[2<<10];
     struct inotify_event *ev;
 
-    memset(fname, 0, sizeof(fname));
-    memset(buf, 0, sizeof(buf));
-    memset(ev, 0, sizeof(ev));
+    memset(fname, 0, sizeof *fname);
+    memset(buf, 0, sizeof *buf);
+    memset(ev, 0, sizeof *ev);
 
     int n = read(inotify, buf, sizeof buf);
 
@@ -337,7 +337,7 @@ void QmKeyd::clientSocketReadyRead() {
 bool QmKeyd::isKeyPressed(int fd, int key)
 {
     uint8_t keys[KEY_MAX/8 + 1];
-    memset(keys, 0, sizeof(keys));
+    memset(keys, 0, sizeof *keys);
     ioctl(fd, EVIOCGKEY(sizeof(keys)), keys);
 
     return !!(keys[key/8] & (1 << (key % 8)));
