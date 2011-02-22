@@ -233,7 +233,7 @@ void QmKeyd::detectBT(int inotify)
 
                          /* Receive notifications for the headset */
                          btNotifier = new QSocketNotifier(btFile, QSocketNotifier::Read);
-                         connect(btNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
+                         connect(btNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyEventFromFile(int)));
                      } else {
                          close(fd);
                      }
@@ -251,7 +251,7 @@ void QmKeyd::newConnection()
     while (server->hasPendingConnections()) {
         QLocalSocket *socket = server->nextPendingConnection();
         connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-        connect(socket, SIGNAL(readyRead()), this, SLOT(socketReadyRead()));
+        connect(socket, SIGNAL(readyRead()), this, SLOT(clientSocketReadyRead()));
         connections.push_back(socket);
         users++;
 
@@ -297,72 +297,85 @@ void QmKeyd::disconnected()
     socket->deleteLater();
 }
 
-void QmKeyd::socketReadyRead() {
+/* Client socket ready: the protocol, except the client to query the state of a key */
+void QmKeyd::clientSocketReadyRead() {
     QLocalSocket *socket = qobject_cast<QLocalSocket*>(sender());
     if (!socket) {
         syslog(LOG_WARNING, "An invalid socket to be read\n");
         return;
     }
-    struct input_event ev;
-    int ret = socket->read((char*)&ev, sizeof(ev));
-    if (ret == sizeof(ev)) {
-        QList<int> fdList = readFrom(ev);
-        int fd;
-        /*The EVIOCGKEY ioctl is used to determine the global key and button state for a device.
-         *EVIOCGKEY sets a bit in the bit array for each key or button that is pressed.
-         */
-        foreach (fd, fdList) {
-            if (fd != -1 && ioctl(fd, EVIOCGKEY(sizeof(keys)), keys) != -1) {
-                if (((keys[ev.code/8]) & (1 << (ev.code % 8))) != 0) {
-                    ev.value = 1;
-                    break;
-                } else {
-                    ev.value = 0;
-                }
-            } else {
-                ev.value = 0;
-            }
+
+    for (;;) {
+        struct input_event ev;
+        memset(&ev, 0, sizeof(ev));
+
+        int ret = socket->read((char*)&ev, sizeof(ev));
+        if (ret <= 0) {
+            break;
         }
-        if (socket->write((char*)&ev, sizeof(ev)) != sizeof(ev)) {
-            int          fd = socket->socketDescriptor();
-            syslog(LOG_WARNING, "Could not write to a socket %d\n", fd);
+
+        if (ret == sizeof(ev) && isKeySupported(ev)) {
+            ev.value = 0;
+
+            if ((gpioFile != -1 && isKeyPressed(gpioFile, ev.code)) ||
+                (keypadFile != -1 && isKeyPressed(keypadFile, ev.code)) ||
+                (eciFile != -1 && isKeyPressed(eciFile, ev.code)) ||
+                (powerButtonFile != -1 && isKeyPressed(powerButtonFile, ev.code)) ||
+                (btFile != -1 && isKeyPressed(btFile, ev.code))) {
+                ev.value = 1;
+            }
+
+            // Bounce the event back
+            if (socket->write((char*)&ev, sizeof(ev)) != sizeof(ev)) {
+                int          fd = socket->socketDescriptor();
+                syslog(LOG_WARNING, "Could not write to a socket %d\n", fd);
+            }
         }
     }
 }
 
-void QmKeyd::readyRead(int fd)
+bool QmKeyd::isKeyPressed(int fd, int key)
 {
-    int ret = 0;
-    do {
+    uint8_t keys[KEY_MAX/8 + 1];
+    memset(keys, 0, sizeof(keys));
+    ioctl(fd, EVIOCGKEY(sizeof(keys)), keys);
+
+    return !!(keys[key/8] & (1 << (key % 8)));
+}
+
+/* Called when we get an input event from a file descriptor. */
+void QmKeyd::didReceiveKeyEventFromFile(int fd)
+{
+    for (;;) {
         struct input_event ev;
-        ret = read(fd, &ev, sizeof(ev));
-        if (ret == sizeof(ev) && !readFrom(ev).isEmpty()) {
+        memset(&ev, 0, sizeof(ev));
+        int ret = read(fd, &ev, sizeof(ev));
+
+        if (ret <= 0) {
+            break;
+        }
+
+        if (ret == sizeof(ev) && isKeySupported(ev)) {
+            // Broadcast the input event back to the clients over socket.
             QLocalSocket *socket;
             foreach (socket, connections) {
                 socket->write((char*)&ev, sizeof(ev));
             }
         }
-    } while (ret > 0);
+    }
 }
 
-QList<int> QmKeyd::readFrom(struct input_event &ev)
+bool QmKeyd::isKeySupported(struct input_event &ev)
 {
-    QList<int> list;
+    bool supported = false;
+
     if (ev.type == EV_KEY) {
         switch (ev.code) {
         case KEY_RIGHTCTRL:
-            list.push_back(keypadFile);
-            break;
         case KEY_CAMERA:
         case KEY_CAMERA_FOCUS:
-            list.push_back(gpioFile);
-            break;
         case KEY_VOLUMEUP:
         case KEY_VOLUMEDOWN:
-            list.push_back(keypadFile);
-            list.push_back(eciFile);
-            list.push_back(btFile);
-            break;
         case KEY_UP:
         case KEY_LEFT:
         case KEY_RIGHT:
@@ -373,32 +386,25 @@ QList<int> QmKeyd::readFrom(struct input_event &ev)
         case KEY_FORWARD:
         case KEY_PLAYPAUSE:
         case KEY_PHONE:
-            list.push_back(eciFile);
-            break;
         case KEY_PAUSECD:
         case KEY_PLAYCD:
         case KEY_STOPCD:
         case KEY_NEXTSONG:
         case KEY_FASTFORWARD:
         case KEY_PREVIOUSSONG:
-            list.push_back(btFile);
-            break;
         case KEY_REWIND:
-            list.push_back(btFile);
-            list.push_back(eciFile);
-            break;
         case KEY_POWER:
-            list.push_back(powerButtonFile);
+            supported = true;
             break;
         }
     } else if (ev.type == EV_SW) {
         switch (ev.code) {
         case SW_KEYPAD_SLIDE:
-            list.push_back(gpioFile);
+            supported = true;
             break;
         }
     }
-    return list;
+    return supported;
 }
 
 void QmKeyd::openHandles()
@@ -407,7 +413,7 @@ void QmKeyd::openHandles()
         gpioFile = open(GPIO_KEYS, O_RDONLY | O_NONBLOCK);
         if (gpioFile != -1) {
             gpioNotifier = new QSocketNotifier(gpioFile, QSocketNotifier::Read);
-            connect(gpioNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
+            connect(gpioNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyEventFromFile(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", GPIO_KEYS);
             gpioNotifier = 0;
@@ -418,7 +424,7 @@ void QmKeyd::openHandles()
         keypadFile = open(KEYPAD, O_RDONLY | O_NONBLOCK);
         if (keypadFile != -1) {
             keypadNotifier = new QSocketNotifier(keypadFile, QSocketNotifier::Read);
-            connect(keypadNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
+            connect(keypadNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyEventFromFile(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", KEYPAD);
             keypadNotifier = 0;
@@ -428,7 +434,7 @@ void QmKeyd::openHandles()
         eciFile = open(ECI, O_RDONLY | O_NONBLOCK);
         if (eciFile != -1) {
             eciNotifier = new QSocketNotifier(eciFile, QSocketNotifier::Read);
-            connect(eciNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
+            connect(eciNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyEventFromFile(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", ECI);
             eciNotifier = 0;
@@ -438,7 +444,7 @@ void QmKeyd::openHandles()
         powerButtonFile = open(PWRBUTTON, O_RDONLY | O_NONBLOCK);
         if (powerButtonFile != -1) {
             powerButtonNotifier = new QSocketNotifier(powerButtonFile, QSocketNotifier::Read);
-            connect(powerButtonNotifier, SIGNAL(activated(int)), this, SLOT(readyRead(int)));
+            connect(powerButtonNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyEventFromFile(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", PWRBUTTON);
             powerButtonNotifier = 0;

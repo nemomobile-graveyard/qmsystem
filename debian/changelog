@@ -1,3 +1,10 @@
+qmsystem2 (1.0.13) unstable; urgency=low
+
+  [Matias Muhonen]
+  * Fixes: NB#228033 - VolumeControl does not function in video, Audio and Call Applications.
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Tue, 22 Feb 2011 13:20:37 +0200
+
 qmsystem2 (1.0.12) unstable; urgency=low
 
   [Timo Rongas]

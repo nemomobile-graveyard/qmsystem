@@ -47,23 +47,23 @@ public:
 private slots:
     void newConnection();
     void disconnected();
-    void readyRead(int);
-    void socketReadyRead();
+    void didReceiveKeyEventFromFile(int);
+    void clientSocketReadyRead();
     void detectBT(int);
 
 private:
     void cleanSocket();
-    QList<int> readFrom(struct input_event &ev);
+    bool isKeySupported(struct input_event &ev);
     bool isHeadset(int fd);
     void openHandles();
     void closeHandles();
     void closeBT();
     void removeInotifyWatch();
     void failStart(const char *fmt, ...);
+    bool isKeyPressed(int fd, int key);
 
     QLocalServer *server;
     QVector<QLocalSocket*> connections;
-    uint8_t keys[KEY_MAX/8 + 1], switches[SW_MAX/8 + 1];
 
     int gpioFile, keypadFile, eciFile, powerButtonFile, btFile;
     QSocketNotifier *gpioNotifier, *keypadNotifier, *eciNotifier, *powerButtonNotifier, *btNotifier, *inputNotifier;
