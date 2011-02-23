@@ -5,9 +5,9 @@
    <p>
    Copyright (C) 2009-2011 Nokia Corporation
 
+   @author Ilya Dogolazky <ilya.dogolazky@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Yang Yang <ext-yang.25.yang@nokia.com>
-   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    @scope Private
 
@@ -29,119 +29,132 @@
 #ifndef QMTIME_P_H
 #define QMTIME_P_H
 
+#include <string>
+using namespace std;
+
 #include <QDebug>
 #include <QMutex>
-#include <QSocketNotifier>
 #include <timed/interface>
 
-#include <fcntl.h>
 #include <gconf/gconf-client.h>
 
 #include "qmtime.h"
 
-namespace MeeGo {
+#if QMTIME_SUPPORT_TIME_FORMAT
+#define TIME_FORMAT_KEY "/meegotouch/i18n/lc_timeformat24h"
+#endif
 
-    class SaveEnvTz {
-    public:
-        static QMutex mtx;
-        QString envTz;
-
-        SaveEnvTz() {
-            mtx.lock();
-            char *tmp = getenv("TZ");
-            if (tmp) {
-                envTz = QString(tmp);
-            } else {
-                envTz = "";
-            }
-        }
-
-        ~SaveEnvTz() {
-            if (envTz.isEmpty()) {
-                unsetenv("TZ");
-            } else {
-                setenv("TZ", envTz.toAscii().data(), 1);
-                tzset();
-            }
-            mtx.unlock();
-        }
-    };
-
-    class QmTimePrivate : public QObject
-    {
-        Q_OBJECT;
-        MEEGO_DECLARE_PUBLIC(QmTime);
-
-    public:
-
-        Maemo::Timed::Interface ifc;
-
-        QmTimePrivate() : QObject(NULL)
-        {
-            if (!ifc.isValid()) {
-                qWarning() << "Timed::Interface is not valid";
-            }
-            if (!ifc.settings_changed_connect(this, SLOT(settings_changed(const Maemo::Timed::WallClock::Info&,bool)))) {
-                qWarning() << "Could not connect to Timed::Interface::settings_changed";
-            }
-        }
-
-        // getRemoteTime() and get_dst() are pretty much straight from the old clockd.
-
-        // The idea here is to change TZ and set the localtime to the remoteTime parameter.
-        // Also, return time_t in the TZ timezone.
-        time_t getRemoteTime(const QDateTime &dateTime, const QString &tz, struct tm *remoteTime) {
-            SaveEnvTz saveEnvTz;
-
-            time_t timet = dateTime.toTime_t();
-
-            setenv("TZ", tz.toAscii().data(), 1);
-            tzset();
-            time_t ret = -1;
-            if (localtime_r(&timet, remoteTime)) {
-                ret = mktime(remoteTime) - (timezone - get_dst(timet));
-            }
-
-            return ret;
-        }
-
-        int get_dst(time_t tick)
-        {
-            struct tm  tm;
-            struct tm *res;
-            int        ret = 0;
-
-            res = localtime_r(&tick, &tm);
-            if (res) {
-                if (tm.tm_isdst > 0) {
-                    time_t t1, t2;
-                    t1 = mktime(&tm);
-                    tm.tm_isdst = 0;
-                    t2 = mktime(&tm);
-                    ret = t2 - t1;
-                }
-            }
-            return ret;
-        }
-
-        static void timeformat_gconfkey_changed(GConfClient*, guint, GConfEntry*, gpointer data)
-        {
-            QmTime *time = (QmTime *)data;
-            if (time)
-                emit time->timeOrSettingsChanged(MeeGo::QmTimeOnlySettingsChanged);
-        }
-
-public Q_SLOTS:
-        void settings_changed(const Maemo::Timed::WallClock::Info &info, bool time_changed)
-        {
-            Q_UNUSED(info);
-            Q_UNUSED(time_changed);
-            emit timeOrSettingsChanged(MeeGo::QmTimeTimeChanged);
-        }
-
-Q_SIGNALS:
-        void timeOrSettingsChanged(MeeGo::QmTimeWhatChanged);
-    };
+// Signal names
+static inline const char *p_signal()
+{
+    return SIGNAL(change_signal(MeeGo::QmTime::WhatChanged));
 }
+
+static inline const char *signal()
+{
+    return SIGNAL(timeOrSettingsChanged(MeeGo::QmTime::WhatChanged));
+}
+
+// Obsolete signal names
+#if QMTIME_SUPPORT_DEPRECATED
+static inline const char *p_signal_o()
+{
+    return SIGNAL(change_signal(MeeGo::QmTimeWhatChanged));
+}
+
+static inline const char *signal_o()
+{
+    return SIGNAL(timeOrSettingsChanged(MeeGo::QmTimeWhatChanged));
+}
+#endif
+
+// Slot name
+static inline const char *p_slot_timed()
+{
+    return SLOT(timed_signal(const Maemo::Timed::WallClock::Info &, bool));
+}
+
+namespace MeeGo {
+    class QmTimePrivate2;
+    class QmTime;
+}
+
+class MeeGo::QmTimePrivate2 : public QObject
+{
+    Q_OBJECT;
+    friend class MeeGo::QmTime;
+
+    QmTimePrivate2(QObject *parent);
+    virtual ~QmTimePrivate2();
+
+    // objects
+    static QmTimePrivate2 object;
+    static QmTimePrivate2 *get_object();
+    static void unref_object();
+
+    int counter;
+    bool initialized;
+
+    void initialize();
+    void uninitialize();
+    void uninitialize_v2();
+    void first_run_init();
+
+    // Policies
+    QmTime::SettingsSynchronizationPolicy sync_policy;
+    QmTime::DisconnectionPolicy disconn_policy;
+
+    // Cached values
+    bool timed_info_valid;
+    Maemo::Timed::WallClock::Info info;
+#if QMTIME_SUPPORT_TIME_FORMAT
+    MeeGo::QmTime::TimeFormat format;
+#endif
+
+#if QMTIME_SUPPORT_TIME_FORMAT
+    // Gconf stuff
+    GConfClient *gc;
+    guint notify_id;
+    static void gconf_change_handler(GConfClient* client, guint, GConfEntry*, gpointer data);
+
+    static QmTime::TimeFormat parse_format_24(const char *data);
+#endif
+
+    // Timed stuff
+    Maemo::Timed::Interface *timed;
+    void process_timed_info(const Maemo::Timed::WallClock::Info &wc_info, bool system_time, bool need_signal);
+    bool syncronize_timed_info();
+
+    // helpers
+    class TzWrapper;
+    static bool remote_time(const char *tz, time_t t, QDateTime *qdt, struct tm *tm);
+
+    void emit_signal(bool);
+
+signals:
+#if QMTIME_SUPPORT_DEPRECATED
+    void change_signal(MeeGo::QmTimeWhatChanged);
+#endif
+    void change_signal(MeeGo::QmTime::WhatChanged);
+
+private slots:
+    void timed_signal(const Maemo::Timed::WallClock::Info &wc_info, bool system_time_changed) {
+        process_timed_info(wc_info, system_time_changed, true);
+    }
+};
+
+class MeeGo::QmTimePrivate2::TzWrapper {
+    static QMutex mutex;
+    string saved_tz;
+    bool set_timezone;
+    bool valid;
+    static bool set_tz_env(const char *tz);
+public:
+    TzWrapper(const char *tz);
+    ~TzWrapper();
+    bool is_valid() {
+        return valid;
+    }
+};
 
 #endif // QMTIME_P_H

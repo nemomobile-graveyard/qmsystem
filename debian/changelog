@@ -1,3 +1,15 @@
+qmsystem2 (1.0.14) unstable; urgency=low
+
+  [Ilya Dogolazky]
+  * Fixes: NB#198141 - QmTime produces unnecessary D-Bus traffic
+  * Fixes: NB#201997 - QmTime::isOperatorTimeAccessible() returns false, even if NITZ usage is not disabled by customization
+  * Fixes: NB#202025 - QmTime::getRemoteTime sometimes produce random results
+  * Fixes: NB#202034 - QmTime::getRemoteTime is not calling tzset() after restoring empty TZ
+  * Fixes: NB#203406 - there is no way to get default time zone via qmsystem library
+  * Fixes: NB#204558 - QmTime is never signalling "setting only changed" (unless only the 12/24 flag is changed)
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Wed, 23 Feb 2011 14:02:08 +0200
+
 qmsystem2 (1.0.13) unstable; urgency=low
 
   [Matias Muhonen]
