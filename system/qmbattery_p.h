@@ -70,7 +70,10 @@ public:
     bool stopCurrentMeasurement();
 
     int getStat(int) const;
-    int getRemainingIdleTime(QmBattery::RemainingTimeMode mode) const;
+    int getAverageCurrent(int usageMode, QmBattery::RemainingTimeMode psMode,
+			  int defaultCurrent) const;
+    int getRemainingTime(int usageMode, QmBattery::RemainingTimeMode psMode,
+			 int defaultCurrent) const;
 
 private Q_SLOTS:
     void onEmEvent(int);
@@ -81,6 +84,9 @@ private:
     void queryData_() const;
     void emitEventBatmon_();
     void saveStat_();
+
+    int makeUsetimeQuery(const QString& method, int usageMode,
+			 QmBattery::RemainingTimeMode psMode) const;
 
     QmBattery *parent_;
 

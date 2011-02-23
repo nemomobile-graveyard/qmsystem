@@ -251,6 +251,16 @@ public:
     bool stopCurrentMeasurement();
 
     /*!
+     * @brief Get the average current in talk mode.
+     *
+     * @param mode: (PowersaveMode/Normal ) mode for which the current
+     *               time is reported.
+     *
+     * @returns Average current (mA)
+     */
+    int getAverageTalkCurrent(RemainingTimeMode mode) const;
+
+    /*!
      * @brief Get the remaining talk time or -1 if not known.
      *
      * @param mode: (PowersaveMode/Normal ) mode in which the remaining
@@ -259,6 +269,36 @@ public:
      * @returns Talk time in seconds
      */
     int getRemainingTalkTime(RemainingTimeMode mode) const;
+
+    /*!
+     * @brief Get the average current in active use.
+     *
+     * @param mode: (PowersaveMode/Normal ) mode for which the current
+     *               time is reported.
+     *
+     * @returns Average current (mA)
+     */
+    int getAverageActiveCurrent(RemainingTimeMode mode) const;
+
+    /*!
+     * @brief Get the remaining active use time or -1 if not known.
+     *
+     * @param mode: (PowersaveMode/Normal ) mode in which the remaining
+     *               time is to be estimated.
+     *
+     * @returns Active time in seconds
+     */
+    int getRemainingActiveTime(RemainingTimeMode mode) const;
+
+    /*!
+     * @brief Get the average current in idle mode.
+     *
+     * @param mode: (PowersaveMode/Normal ) mode for which the current
+     *               time is reported.
+     *
+     * @returns Average current (mA)
+     */
+    int getAverageIdleCurrent(RemainingTimeMode mode) const;
 
     /*!
      * @brief Get the remaining idle time or -1 if not known.

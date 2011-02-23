@@ -49,29 +49,22 @@ extern "C" {
 #include "bme/em_isi.h"
 }
 
+#include <usetime/dbus.h>
+
 #define BMECLI_TIMEOUT 3000  /* ms */
 #define BMECURRENT_TIMEOUT 5010
 #define STAT_EXPIRATION_TIMEOUT 5 /* seconds */
 
+#define DEFAULT_TALK_CURRENT   300 /* mA */
+#define DEFAULT_ACTIVE_CURRENT 150 /* mA */
+#define DEFAULT_IDLE_CURRENT     6 /* mA */
+
 /**
- * @todo Once usetime-dev is available, include usetime/dbus.h and remove the
-         definitions from here.
- */
-
-/** Usetime D-Bus service */
-#define USETIME_SERVICE "com.nokia.usetime"
-
-/** Usetime D-Bus interface */
-#define USETIME_IF "com.nokia.usetime"
-
-/** Usetime D-Bus path */
-#define USETIME_PATH "/com/nokia/usetime"
-
-/** Device is idle */
-#define USETIME_MODE_IDLE   1
-
-/** Get use time */
-#define USETIME_METHOD_GET_TIME "getTime"
+   @todo Temporary, remove after usetime-dev 0.3.8 is available
+*/
+#ifndef USETIME_MODE_TALK
+#define USETIME_MODE_TALK USETIME_MODE_CALL
+#endif
 
 #define dbg(a) qDebug() << __PRETTY_FUNCTION__ << ": " << a
 
@@ -413,50 +406,73 @@ int QmBatteryPrivate::getStat(int index) const
     return stat_[index];
 }
 
-int
-QmBatteryPrivate::getRemainingIdleTime(QmBattery::RemainingTimeMode mode) const
+int QmBatteryPrivate::getAverageCurrent(int usageMode,
+					QmBattery::RemainingTimeMode psMode,
+					int defaultCurrent) const
 {
-	int result = 0;
-	(void) mode;
+    int result = makeUsetimeQuery(USETIME_METHOD_GET_CURRENT,
+				  usageMode, psMode);
+    if (result < 0)
+	result = defaultCurrent;
+    
+    return result;
+}
 
-	QDBusMessage msg = QDBusMessage::createMethodCall(
-		USETIME_SERVICE, USETIME_PATH, USETIME_IF,
-		USETIME_METHOD_GET_TIME);
+int QmBatteryPrivate::getRemainingTime(int usageMode,
+				       QmBattery::RemainingTimeMode psMode,
+				       int defaultCurrent) const
+{
+    int result = makeUsetimeQuery(USETIME_METHOD_GET_TIME,
+				  usageMode, psMode);
+    if (result < 0) {
+	queryData_();
+	result = stat_[BATTERY_CAPA_NOW] / defaultCurrent;
+    }
+    
+    return result;
+}
 
-	QList<QVariant> args;
-	args << USETIME_MODE_IDLE << 0;
-	msg.setArguments(args);
-
-	QDBusReply<int> tReply = QDBusConnection::systemBus().call(msg);
-	if(tReply.isValid()) {
-		result = tReply.value() * 60;
-	} else {
-		/**
-		 * @note The following error means that the usetime package
-		 *       is not installed or that the usetime daemon is not
-		 *       running.
-		 *
-		 * 4 QDBusError::ServiceUnknown
-		 * "org.freedesktop.DBus.Error.ServiceUnknown"
-		 * "The name com.nokia.usetime was not provided by any
-		 * .service files"
-		 */
-		qDebug() << "No idle time estimate available";
-		if (tReply.error().isValid()) {
-			qDebug() << tReply.error().type()
-				 << tReply.error().name()
-				 << tReply.error().message();
-		}
-
-		/* Fall back to estimation based on constant consuption */
-		queryData_();
-		result = stat_[BATTERY_TIME_IDLE] * 3600;
+int QmBatteryPrivate::makeUsetimeQuery(const QString& method, int usageMode,
+				       QmBattery::RemainingTimeMode psMode)
+    const
+{
+    int result = -1;
+    
+    QDBusMessage msg = QDBusMessage::createMethodCall(
+	USETIME_SERVICE, USETIME_PATH, USETIME_IF, method);
+    
+    QList<QVariant> args;
+    args << usageMode;
+    if (psMode == QmBattery::PowersaveMode)
+	args << 1;
+    else 
+	args << 0;
+    msg.setArguments(args);
+    
+    QDBusReply<int> tReply = QDBusConnection::systemBus().call(msg);
+    if(tReply.isValid()) {
+	result = tReply.value() * 60;
+    } else {
+	/**
+	 * @note The following error means that the usetime package
+	 *       is not installed or that the usetime daemon is not
+	 *       running.
+	 *
+	 * 4 QDBusError::ServiceUnknown
+	 * "org.freedesktop.DBus.Error.ServiceUnknown"
+	 * "The name com.nokia.usetime was not provided by any
+	 * .service files"
+	 */
+	qDebug() << "No use time estimate available"
+		 << method << usageMode << psMode;
+	if (tReply.error().isValid()) {
+	    qDebug() << tReply.error().type()
+		     << tReply.error().name()
+		     << tReply.error().message();
 	}
-
-	qDebug() << "Idle time: " << result / 60 << "minutes ("
-		 << result / 3600 << "hours )";
-
-	return result;
+    }
+    
+    return result;
 }
 
 
@@ -715,20 +731,40 @@ bool QmBattery::stopCurrentMeasurement()
     return pimpl_->stopCurrentMeasurement();
 }
 
+int QmBattery::getAverageTalkCurrent(RemainingTimeMode mode) const
+{
+    return pimpl_->getAverageCurrent(USETIME_MODE_TALK, mode,
+				     DEFAULT_TALK_CURRENT);
+}
+
 int QmBattery::getRemainingTalkTime(QmBattery::RemainingTimeMode mode) const
 {
-    /*
-     * ToDo: Re-implement when real talk time estimate is available. For now,
-     * just assume that talking takes 400 mA.
-     */
+    return pimpl_->getRemainingTime(USETIME_MODE_TALK, mode,
+				    DEFAULT_TALK_CURRENT);
+}
 
-    (void) mode;
-    return (getRemainingCapacitymAh() * 3600) / 400;
+int QmBattery::getAverageActiveCurrent(RemainingTimeMode mode) const
+{
+    return pimpl_->getAverageCurrent(USETIME_MODE_ACTIVE, mode,
+				     DEFAULT_ACTIVE_CURRENT);
+}
+
+int QmBattery::getRemainingActiveTime(RemainingTimeMode mode) const
+{
+    return pimpl_->getRemainingTime(USETIME_MODE_ACTIVE, mode,
+				    DEFAULT_ACTIVE_CURRENT);
+}
+
+int QmBattery::getAverageIdleCurrent(RemainingTimeMode mode) const
+{
+	return pimpl_->getAverageCurrent(USETIME_MODE_IDLE, mode,
+					 DEFAULT_IDLE_CURRENT);
 }
 
 int QmBattery::getRemainingIdleTime(QmBattery::RemainingTimeMode mode) const
 {
-	return pimpl_->getRemainingIdleTime(mode);
+	return pimpl_->getRemainingTime(USETIME_MODE_IDLE, mode,
+					DEFAULT_IDLE_CURRENT);
 }
 
 QmBattery::BatteryCondition QmBattery::getBatteryCondition() const

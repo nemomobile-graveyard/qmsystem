@@ -125,8 +125,18 @@ private slots:
         (void)result;
     }
 
+    void testAverageTalkCurrentNormal() {
+        int result = battery->getAverageTalkCurrent(MeeGo::QmBattery::NormalMode);
+        (void)result;
+    }
+
     void testRemainingTalkTimeNormal() {
         int result = battery->getRemainingTalkTime(MeeGo::QmBattery::NormalMode);
+        (void)result;
+    }
+
+    void testAverageTalkCurrentPowersave() {
+        int result = battery->getAverageTalkCurrent(MeeGo::QmBattery::PowersaveMode);
         (void)result;
     }
 
@@ -135,12 +145,42 @@ private slots:
         (void)result;
     }
 
-    void testRemainingTimeNormal() {
+    void testAverageActiveCurrentNormal() {
+        int result = battery->getAverageActiveCurrent(MeeGo::QmBattery::NormalMode);
+        (void)result;
+    }
+
+    void testRemainingActiveTimeNormal() {
+        int result = battery->getRemainingActiveTime(MeeGo::QmBattery::NormalMode);
+        (void)result;
+    }
+
+    void testAverageActiveCurrentPowersave() {
+        int result = battery->getAverageActiveCurrent(MeeGo::QmBattery::PowersaveMode);
+        (void)result;
+    }
+
+    void testRemainingActiveTimePowersave() {
+        int result = battery->getRemainingActiveTime(MeeGo::QmBattery::PowersaveMode);
+        (void)result;
+    }
+
+    void testAverageIdleCurrentNormal() {
+        int result = battery->getAverageIdleCurrent(MeeGo::QmBattery::NormalMode);
+        (void)result;
+    }
+
+    void testRemainingIdleTimeNormal() {
         int result = battery->getRemainingIdleTime(MeeGo::QmBattery::NormalMode);
         (void)result;
     }
 
-    void testRemainingTimePowersave() {
+    void testAverageIdleCurrentPowersave() {
+        int result = battery->getAverageIdleCurrent(MeeGo::QmBattery::PowersaveMode);
+        (void)result;
+    }
+
+    void testRemainingIdleTimePowersave() {
         int result = battery->getRemainingIdleTime(MeeGo::QmBattery::PowersaveMode);
         (void)result;
     }
