@@ -1,5 +1,8 @@
 qmsystem2 (1.0.14) unstable; urgency=low
 
+  [Matti Halme]
+  * Utilize the use time daemon in talk/active/idle queries.
+
   [Ilya Dogolazky]
   * Fixes: NB#198141 - QmTime produces unnecessary D-Bus traffic
   * Fixes: NB#201997 - QmTime::isOperatorTimeAccessible() returns false, even if NITZ usage is not disabled by customization
@@ -8,7 +11,7 @@ qmsystem2 (1.0.14) unstable; urgency=low
   * Fixes: NB#203406 - there is no way to get default time zone via qmsystem library
   * Fixes: NB#204558 - QmTime is never signalling "setting only changed" (unless only the 12/24 flag is changed)
 
- -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Wed, 23 Feb 2011 14:02:08 +0200
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Thu, 24 Feb 2011 08:18:57 +0200
 
 qmsystem2 (1.0.13) unstable; urgency=low
 
