@@ -3,7 +3,7 @@ Section: libdevel
 Priority: optional
 Maintainer: Matias Muhonen <ext-matias.muhonen@nokia.com>
 Uploaders: Philippe De Swert <philippe.de-swert@nokia.com>
-Build-Depends: debhelper (>=5), libqt4-dev (>= 4.5), libsensord-dev (>= 0.6.33), libiphb-dev (>= 0.1.4), doxygen, mce-dev (>= 1.10.15), libdbus-1-dev, libgconf2-dev, libbmeipc0, libbmeipc-dev (>= 0.9.71), libdsme0.2.0, libdsme0.2.0-dev, libtimed-dev (>= 2.31), libtimed-voland-dev (>= 2.31), usb-moded-dev (>= 0.28), aegis-builder (>= 1.4), libsysinfo-dev (>= 1.0.17), usetime-dev (>= 0.3.7)
+Build-Depends: debhelper (>=5), libqt4-dev (>= 4.5), libsensord-dev (>= 0.6.33), libiphb-dev (>= 0.1.4), doxygen, mce-dev (>= 1.10.15), libdbus-1-dev, libgconf2-dev, libbmeipc0, libbmeipc-dev (>= 0.9.71), libdsme0.2.0, libdsme0.2.0-dev, libtimed-dev (>= 2.31), libtimed-voland-dev (>= 2.31), usb-moded-dev (>= 0.28), aegis-builder (>= 1.4), libsysinfo-dev (>= 1.0.17)
 Standards-Version: 3.7.3
 
 Package: libqmsystem2

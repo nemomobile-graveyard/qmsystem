@@ -49,8 +49,6 @@ extern "C" {
 #include "bme/em_isi.h"
 }
 
-#include <usetime/dbus.h>
-
 #define BMECLI_TIMEOUT 3000  /* ms */
 #define BMECURRENT_TIMEOUT 5010
 #define STAT_EXPIRATION_TIMEOUT 5 /* seconds */
@@ -60,11 +58,21 @@ extern "C" {
 #define DEFAULT_IDLE_CURRENT     6 /* mA */
 
 /**
-   @todo Temporary, remove after usetime-dev 0.3.8 is available
-*/
-#ifndef USETIME_MODE_TALK
-#define USETIME_MODE_TALK USETIME_MODE_CALL
-#endif
+ * The use time D-Bus interface copied from usetime/dbus.h as a workaround to a
+ * circular build time dependency between qmsystem2 and usetime.
+ */
+
+#define USETIME_SERVICE "com.nokia.usetime"
+#define USETIME_IF "com.nokia.usetime"
+#define USETIME_PATH "/com/nokia/usetime"
+
+#define USETIME_MODE_IDLE   1
+#define USETIME_MODE_ACTIVE 2
+#define USETIME_MODE_TALK   3
+
+#define USETIME_METHOD_GET_TIME "getTime"
+#define USETIME_METHOD_GET_CURRENT "getCurrent"
+
 
 #define dbg(a) qDebug() << __PRETTY_FUNCTION__ << ": " << a
 
