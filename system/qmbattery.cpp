@@ -434,10 +434,10 @@ int QmBatteryPrivate::getRemainingTime(int usageMode,
 				  usageMode, psMode);
     if (result < 0) {
 	queryData_();
-	result = stat_[BATTERY_CAPA_NOW] / defaultCurrent;
+	result = 60 * stat_[BATTERY_CAPA_NOW] / defaultCurrent;
     }
     
-    return result;
+    return result * 60; /* result is in minutes, return in seconds */
 }
 
 int QmBatteryPrivate::makeUsetimeQuery(const QString& method, int usageMode,
@@ -459,7 +459,7 @@ int QmBatteryPrivate::makeUsetimeQuery(const QString& method, int usageMode,
     
     QDBusReply<int> tReply = QDBusConnection::systemBus().call(msg);
     if(tReply.isValid()) {
-	result = tReply.value() * 60;
+	result = tReply.value();
     } else {
 	/**
 	 * @note The following error means that the usetime package
