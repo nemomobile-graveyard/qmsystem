@@ -64,8 +64,6 @@ Q_ENUMS(QmTimeWhatChanged);
  */
 class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
 {
-    QmTimePrivate *p;
-    
     Q_OBJECT;
     Q_ENUMS(TimeFormat);
 
@@ -359,6 +357,8 @@ Q_SIGNALS:
 private:
     Q_DISABLE_COPY(QmTime)
     MEEGO_DECLARE_PRIVATE(QmTime)
+
+    QmTimePrivate *p;
 };
 
 } // MeeGo namespace
