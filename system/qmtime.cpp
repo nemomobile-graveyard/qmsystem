@@ -593,12 +593,12 @@ bool MeeGo::QmTime::setTime(const QDateTime &time)
 #if QMTIME_SUPPORT_UNUSED
 bool MeeGo::QmTime::getTZName(QString &s)
 {
-    struct tm tm;
-    QDateTime dt;
-    if (not p->localTime(::time(NULL), dt, &tm))
+    QDBusMessage reply = p->timed->get_wall_clock_info_sync();
+    QDBusReply<Maemo::Timed::WallClock::Info> reply_info = reply;
+    if (not reply_info.isValid()) {
         return false;
-
-    s = tm.tm_zone;
+    }
+    s = reply_info.value().tzAbbreviation();
     return true;
 }
 #endif
