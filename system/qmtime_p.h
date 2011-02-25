@@ -40,6 +40,10 @@ using namespace std;
 
 #include "qmtime.h"
 
+#define QMTIME_SUPPORT_DEPRECATED         1
+#define QMTIME_SUPPORT_UNUSED             1
+#define QMTIME_SUPPORT_TIME_FORMAT        1
+
 #if QMTIME_SUPPORT_TIME_FORMAT
 #define TIME_FORMAT_KEY "/meegotouch/i18n/lc_timeformat24h"
 #endif
@@ -75,21 +79,33 @@ static inline const char *p_slot_timed()
 }
 
 namespace MeeGo {
-    class QmTimePrivate2;
+    class QmTimePrivate;
     class QmTime;
+
+    /** Policy regarding disconnection from time daemon */
+    enum DisconnectionPolicy {
+        DisconnectWhenPossible, /**< Time/settings change notification will be dropped if no QmTime object exists (default) */
+        KeepConnected           /**< The connection will be kept until policy change or process exit */
+    };
+
+    /** Policy regarding disconnection from time and gconf daemons */
+    enum SettingsSynchronizationPolicy {
+        SynchronizeOnWrite, /**< Every call changing time settings will be followed by settings synchronization D-Bus call */
+        WaitForSignal       /**< Settings will be retrieved only after arrival of the D-Bus signal */
+    };
 }
 
-class MeeGo::QmTimePrivate2 : public QObject
+class MeeGo::QmTimePrivate : public QObject
 {
     Q_OBJECT;
     friend class MeeGo::QmTime;
 
-    QmTimePrivate2(QObject *parent);
-    virtual ~QmTimePrivate2();
+    QmTimePrivate(QObject *parent);
+    virtual ~QmTimePrivate();
 
     // objects
-    static QmTimePrivate2 object;
-    static QmTimePrivate2 *get_object();
+    static QmTimePrivate object;
+    static QmTimePrivate *get_object();
     static void unref_object();
 
     int counter;
@@ -100,9 +116,74 @@ class MeeGo::QmTimePrivate2 : public QObject
     void uninitialize_v2();
     void first_run_init();
 
+    /**
+     * Get automatically guessed time zone
+     *
+     * @param tz  a reference to a string variable to store the result
+     *
+     * @note   Currently only automatic time zone guess based on cellular network information is supported, more time zone sources may be added in the future
+     *
+     * @return true if information succesfully retrieved and stored in the variable
+     */
+    bool getAutoTimezone(QString &tz);
+
+    /**
+     * Get time received from automatic time source
+     *
+     * @return time_t value: amount of seconds after unix epoch begin
+     *         (time_t)(-1) if automatic time is not available
+     */
+    time_t getAutoTime();
+
+   /**
+     * Get time difference between two locations at given moment of time
+     *
+     * @param t          The moment at which the difference should be calculated.
+     * @param location1  The time zone representing the first remote location
+     * @param location2  The time zone representing the second remote location
+     *
+     *                   If either first or second location is empty, the current device timezone is used
+     *
+     * @return           Local time difference between the locations in seconds,
+     *                   positive if the location1 is to the east of location2
+     *                   -1 is returned on errors
+     */
+    int getTimeDiff(time_t t, const QString &location1, const QString &location2);
+
+    /**
+     * @brief       Set current system and RTC date and time.
+     *
+     * @credential  timed::TimeControl Resource token required to set the device time.
+     *
+     * @param  time The new system time.
+     *
+     * @return      True if time is successfully set.
+     */
+    bool setTime(time_t time);
+
+    /**
+     * Calculate local time (in current timezone)
+     *
+     * @param   t        time in seconds from the Unix epoch begin
+     *          dt       a reference to variable to save broken down time representation
+     *          p        pointer to save struct tm providing low level details, NULL if not needed
+     *
+     * @return  True if information successfully retrieved
+     */
+    static bool localTime(time_t t, QDateTime &dt, struct tm *p=NULL);
+
+    /**
+     * Get info if the device supports time updates from cellular network operator.
+     *
+     * @param   a reference to a boolean variable to store the result
+     *
+     * @return  True if information successfully retrieved
+     */
+    bool isOperatorTimeAccessible(bool &result);
+
     // Policies
-    QmTime::SettingsSynchronizationPolicy sync_policy;
-    QmTime::DisconnectionPolicy disconn_policy;
+    SettingsSynchronizationPolicy sync_policy;
+    DisconnectionPolicy disconn_policy;
 
     // Cached values
     bool timed_info_valid;
@@ -132,10 +213,7 @@ class MeeGo::QmTimePrivate2 : public QObject
     void emit_signal(bool);
 
 signals:
-#if QMTIME_SUPPORT_DEPRECATED
     void change_signal(MeeGo::QmTimeWhatChanged);
-#endif
-    void change_signal(MeeGo::QmTime::WhatChanged);
 
 private slots:
     void timed_signal(const Maemo::Timed::WallClock::Info &wc_info, bool system_time_changed) {
@@ -143,7 +221,7 @@ private slots:
     }
 };
 
-class MeeGo::QmTimePrivate2::TzWrapper {
+class MeeGo::QmTimePrivate::TzWrapper {
     static QMutex mutex;
     string saved_tz;
     bool set_timezone;
