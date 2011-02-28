@@ -103,20 +103,20 @@ namespace MeeGo {
 
     public:
         /**
-         * Constructor.
+         * Constructor
          * @param parent Parent QObject.
          */
         QmAccelerometer(QObject *parent = 0);
 
         /**
-         * Destructor.
+         * Destructor
          */
         ~QmAccelerometer();
 
     Q_SIGNALS:
         /**
          * Signals the availability of new measurement data from the sensor.
-         * @param data Available measurement data (mG).
+         * @param data Available measurement data (mG)
          */
         void dataAvailable(const MeeGo::QmAccelerometerReading& data);
 

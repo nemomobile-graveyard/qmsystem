@@ -46,13 +46,13 @@ class QmHeartbeatPrivate;
  * @scope Nokia Meego
  *
  * @class QmHeartbeat
- * @brief QmHeartbeat Provides system heartbeat service.
+ * @brief QmHeartbeat provides the system heartbeat service.
  * @details System heartbeat is a service for applications to synchronize their
- * activity to save battery use time. 
+ * activities to save the battery use time. 
  * <br>
  * The main idea is that applications that must do periodic activity – after being
  * in sleep a certain period – do that at the same time: for example 
- * send network “alive” messages at the same time (i.e. turn the wireless radio on 
+ * send network “alive” messages at the same time (for example turn the wireless radio on 
  * at the same time). 
  * <br>
  * The service is not only for network-aware applications: in fact it must be used 
@@ -82,14 +82,14 @@ public:
 public:
     /*!
      * @brief Constructor
-     * @param parent the parent object
+     * @param parent The parent object
      */
     QmHeartbeat(QObject *parent = 0);
     ~QmHeartbeat();
 
 
     /*!
-     * @brief Open the heartbeat service.
+     * @brief Opens the heartbeat service.
      * @param signalNeed True if wakeUp signal is to be used
      * @return True if success
      */
@@ -97,19 +97,19 @@ public:
 
 
     /*!
-     * @brief Close the heartbeat service.
+     * @brief Closes the heartbeat service.
      */
     void close(void);
 
 
     /*!
-     * @brief Get file descriptor for heartbeat (for use with QSocketNotifier)
+     * @brief Gets the file descriptor for heartbeat (for use with QSocketNotifier)
      * @return Descriptor that can be used for QSocketNotifier, -1 if error (check errno)
      */
     int  getFD();
 
     /*!
-     * @brief Wait for the next heartbeat.
+     * @brief Waits for the next heartbeat.
      *
      * @param mintime   Time in seconds that MUST be waited before heartbeat is reacted to.
      *                  Value 0 means 'wake me up when someboy else is woken'. 
@@ -127,7 +127,7 @@ public:
 
 
     /*!
-     * @brief Called if the application woke up by itself
+     * @brief Called if the application woke up by itself.
      * @details This method should be called if the application
      * has woken up by some other method than via system heartbeat
      * to prevent unnecessary wakeup signals.
@@ -138,8 +138,8 @@ public:
 
 Q_SIGNALS:
     /*!
-     * @brief Signals the wake up
-     * @param time the wakeup time
+     * @brief Signals the wake up.
+     * @param time The wakeup time
      */
     void wakeUp(QTime time);
 

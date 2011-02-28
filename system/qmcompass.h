@@ -37,7 +37,7 @@ QT_BEGIN_HEADER
 
 namespace MeeGo {
     /**
-     * Compass measurement.
+     * Compass measurement
      */
     class QmCompassReading : public QmSensorReading
     {
@@ -74,25 +74,25 @@ namespace MeeGo {
 
     public:
         /**
-         * Constructor.
-         * @param parent Parent object.
+         * Constructor
+         * @param parent Parent object
          */
         QmCompass(QObject *parent = 0);
 
         /**
-         * Destructor.
+         * Destructor
          */
         ~QmCompass();
 
         /**
          * Returns the previous measured compass value.
-         * @return Most recently measured compass value.
+         * @return Most recently measured compass value
          */
         QmCompassReading get();
 
         /**
          * Returns the currently used declination correction value.
-         * @return Current declination value.
+         * @return Current declination value
          */
         int declinationValue();
 
@@ -101,14 +101,14 @@ namespace MeeGo {
          * output value and returning <i>true north</i>, or not applying it and 
          * returning <i>magnetic north</i>.
          *
-         * @return True if decliation correction is applied, false otherwise.
+         * @return True if decliation correction is applied, false otherwise
          */
         bool useDeclination();
 
         /**
-         * Set whether declination correction should be applied or not.
+         * Sets whether the declination correction should be applied or not.
          * @param enable If true, declination correction will be applied,
-         *               if false, it will not be applied.
+         *               if false, it will not be applied
          */
         void setUseDeclination(bool enable);
 
@@ -116,7 +116,7 @@ namespace MeeGo {
         /**
          * Signal to notify the listener about change of compass direction.
          * or calibration level.
-         * @param value Current compass measurement.
+         * @param value Current compass measurement
          */
         void dataAvailable(const MeeGo::QmCompassReading value);
 

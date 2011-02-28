@@ -58,19 +58,19 @@ namespace MeeGo {
 
     public:
         /**
-         * Constructor.
-         * @param parent Parent QObject.
+         * Constructor
+         * @param parent Parent QObject
          */
         QmALS(QObject *parent = 0);
 
         /**
-         * Destructor.
+         * Destructor
          */
         ~QmALS();
 
         /**
-         * Get current ambient light intensity value.
-         * @return Current ambient light intensity (lux).
+         * Gets the current ambient light intensity value.
+         * @return Current ambient light intensity (lux)
          */
         QmAlsReading get();
 
@@ -78,7 +78,7 @@ namespace MeeGo {
 
         /**
          * Sent when ambient light intensity has changed.
-         * @param value Observed ambient light intensity (lux).
+         * @param value Observed ambient light intensity (lux)
          */
         void ALSChanged(const MeeGo::QmAlsReading data);
 

@@ -52,7 +52,7 @@ namespace MeeGo {
      *
      * @brief Provides device rotation measurements.
      *
-     * Device rotation is given as degrees of rotation around each
+     * Device rotation is given in degrees of rotation around each
      * device axis.
      *
      * <ul>
@@ -105,20 +105,20 @@ namespace MeeGo {
 
     public:
         /**
-         * Constructor.
+         * Constructor
          * @param parent Parent QObject.
          */
         QmRotation(QObject *parent = 0);
 
         /**
-         * Destructor.
+         * Destructor
          */
         ~QmRotation();
 
         /**
-         * Get the previous measured rotation.
+         * Gets the previous measured rotation.
          * @return Previous measured rotation, or XYZ(0,0,0,0) if no
-         * session is open.
+         * session is open
          */
         QmRotationReading rotation();
 
@@ -126,14 +126,14 @@ namespace MeeGo {
          * Tells whether the z-axis rotation is calculated. The z-axis
          * calculations rely on having magnetometer/gyroscope on the device,
          * and might not thus be available on all devices.
-         * @return bool \c true if z-axis is calculated, \c false otherwise.
+         * @return Bool \c true if z-axis is calculated, \c false otherwise
          */
         bool hasZ();
 
     Q_SIGNALS:
         /**
          * Signals the availability of new measurement data from the sensor.
-         * @param data Available measurement data.
+         * @param data Available measurement data
          */
         void dataAvailable(const MeeGo::QmRotationReading& data);
 

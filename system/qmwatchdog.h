@@ -50,28 +50,28 @@ namespace MeeGo {
         ~QmProcessWatchdog();
 
         /**
-         * Register the current process to the DSME process watchdog service.
+         * Registers the current process to the DSME process watchdog service.
          * After the registration, the ping() signal will be emitted periodically.
          * The application should then call pong() function to avoid being killed.
          *
-         * @return true if successful, false if not.
+         * @return True if successful, false if not
          */
         bool start();
 
         /**
-         * Unregister the current process from the DSME process watchdog service.
+         * Unregisters the current process from the DSME process watchdog service.
          *
-         * @return true if successful, false if not.
+         * @return True if successful, false if not
          */
         bool stop();
 
     public Q_SLOTS:
 
         /**
-         * Send a pong signal to the DSME process watchdog service to indicate that
-         * this process is still alive and kicking.
+         * Sends a pong signal to the DSME process watchdog service to indicate that
+         * this process is still active.
          *
-         * @return true if successful, false is not.
+         * @return True if successful, false is not
          */
         bool pong();
 

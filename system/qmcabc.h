@@ -76,8 +76,8 @@ public:
      * should not depend on a particular CABC mode but can use this method
      * to indicate that a certain CABC mode would be desired.
      *
-     * @param mode CABC  mode.
-     * @return bool TRUE if a valid mode was requested, FALSE otherwise.
+     * @param mode CABC mode
+     * @return bool TRUE if a valid mode was requested, FALSE otherwise
      */
     bool set(Mode mode);
 };

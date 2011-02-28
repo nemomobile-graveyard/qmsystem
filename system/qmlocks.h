@@ -93,8 +93,8 @@ public:
      * the lock state has been retrieved. For a non-blocking query, please
      * see getStateAsync().
      *
-     * @param what Which lock state to request.
-     * @return Current lock state for @c what.
+     * @param what Which lock state to request
+     * @return Current lock state for @c what
      */
     QmLocks::State getState(QmLocks::Lock what) const;
 
@@ -103,33 +103,33 @@ public:
      * initially returns the lock state QmLocks::Unknown. When the lock state
      * has been retrieved, the stateChanged signal is emitted.
      *
-     * @param what Which lock state to request.
-     * @return Current lock state for @c what.
+     * @param what Which lock state to request
+     * @return Current lock state for @c what
      */
     QmLocks::State getStateAsync(QmLocks::Lock what) const;
 
     /**
-     * Set current lock state. Note that this interface does not allow
+     * Sets the current lock state. Note that this interface does not allow
      * to unlock device.
      * @credential mce::TKLockControl Resource token required to set the touchscreen/keypad lock state.
      * @param what Which lock state to set
-     * @param how Set @c to which state.
-     * @return True if the lock state was requested, false otherwise.
+     * @param how Set @c to which state
+     * @return True if the lock state was requested, false otherwise
      */
     bool setState(QmLocks::Lock what, QmLocks::State how);
 
     /**
-     * Set device autolock timeout. Device is automatically locked
+     * Sets the device autolock timeout. Device is automatically locked
      * after the specified amount of inactivity.
      * @credential mce::DeviceLockControl Resource token required to set the device lock timeout.
      * @state Deprecated
      * @param seconds Number of seconds of inactivity after which the device is automatically locked. Value <=0 disables autolock.
-     * @return True on success, false otherwise.
+     * @return True on success, false otherwise
      */
     bool setDeviceAutolockTime(int seconds);
 
     /**
-     * Get device autolock timeout.
+     * Gets the device autolock timeout.
      * @state Deprecated
      * @return Timeout in seconds, value 0 means that autolock is not acticated, -1 is error
      */
@@ -139,7 +139,7 @@ Q_SIGNALS:
     /**
      * Sent when some device lock state has changed.
      * @param what Which lock state was changed
-     * @param how Which state the lock was changed to.
+     * @param how Which state the lock was changed to
      */
     void stateChanged(MeeGo::QmLocks::Lock what, MeeGo::QmLocks::State how);
 

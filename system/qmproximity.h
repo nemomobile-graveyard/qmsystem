@@ -58,19 +58,19 @@ namespace MeeGo {
 
     public:
         /**
-         * Constructor.
+         * Constructor
          * @param parent Parent QObject.
          */
         QmProximity(QObject *parent = 0);
 
         /**
-         * Destructor.
+         * Destructor
          */
         ~QmProximity();
 
         /**
-         * Get current proximity value.
-         * @return Current proximity value.
+         * Gets the current proximity value.
+         * @return Current proximity value
          */
         QmProximityReading get();
 
@@ -78,7 +78,7 @@ namespace MeeGo {
 
         /**
          * Sent when the value of proximity sensor has changed.
-         * @param value Observed proximity value.
+         * @param value Observed proximity value
          */
         void ProximityChanged(const MeeGo::QmProximityReading value);
 

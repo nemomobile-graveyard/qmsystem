@@ -68,31 +68,31 @@ namespace MeeGo {
 
     public:
         /**
-         * Constructor.
-         * @param parent Parent QObject.
+         * Constructor
+         * @param parent Parent QObject
          */
         QmMagnetometer(QObject *parent = 0);
 
         /**
-         * Destructor.
+         * Destructor
          */
         ~QmMagnetometer();
 
         /**
-         * Get the latest measured value for magnetic field in nT (nanotesla).
-         * @return Previous measurement.
+         * Gets the latest measured value for magnetic field in nT (nanotesla).
+         * @return Previous measurement
          */
         QmMagnetometerReading magneticField();
 
         /**
-         * Reset the magnetometer calibration back to 0.
+         * Resets the magnetometer calibration back to 0.
          */
         void reset();
 
     Q_SIGNALS:
         /**
          * Signals the availability of new measurement data from the sensor.
-         * @param data Available measurement data in nT (nanotesla).
+         * @param data Available measurement data in nT (nanotesla)
          */
         void dataAvailable(const MeeGo::QmMagnetometerReading& data);
 

@@ -66,41 +66,41 @@ public:
 public:
     /*!
      * Constructor
-     * @param parent the parent object
+     * @param parent The parent object
      */
     QmDisplayState(QObject *parent = 0);
     ~QmDisplayState();
 
     /*!
-     * @brief Get the current display state
-     * @return Current display state.
+     * @brief Gets the current display state
+     * @return Current display state
      */
     DisplayState get() const;
 
     /*!
-     * @brief Set the current display state
+     * @brief Sets the current display state.
      * @param state Display state new set
      * @return True if a valid display state was requested, false otherwise
      */
     bool set(DisplayState state);
 
     /*!
-     * @brief Request not to blank the display. Must be repeated every 60 seconds to renew request.
+     * @brief Requests not to blank the display. Must be repeated every 60 seconds to renew request.
      * Also prevents suspending.
-     * @return False if a blanking pause could not be requested.
+     * @return False if a blanking pause could not be requested
      */
     bool setBlankingPause(void);
 
     /*!
      * @brief Cancels an earlier setBlankingPause() call.
-     * @return False if a blanking pause cancellation could not be requested.
+     * @return False if a blanking pause cancellation could not be requested
      */
     bool cancelBlankingPause(void);
 
     /*!
      * @brief Gets the maximum brightness value that can be set.
-     * @return the maximum brightness value. -1 is returned in case
-     * of an error during retrieving value.
+     * @return The maximum brightness value. -1 is returned in case
+     * of an error during retrieving value
      */
     int getMaxDisplayBrightnessValue();
 
@@ -141,27 +141,27 @@ public:
 
     /*!
      * @brief Sets the display blanking timeout.
-     * @param timeout Timeout to set.
+     * @param timeout Timeout to set
      */
     void setDisplayBlankTimeout(int timeout);
 
     /*!
      * @brief Sets the display dimming timeout.
-     * @param timeout Timeout to set. 
+     * @param timeout Timeout to set
      */
     void setDisplayDimTimeout(int timeout);
 
     /*!
      * @brief Sets if the screen should be blanked during charging.
-     * @param blanking #true if screen should be blanked during charging,
-     * #false otherwise.
+     * @param blanking True if screen should be blanked during charging,
+     * #false otherwise
      */
     void setBlankingWhenCharging(bool blanking);
 
 Q_SIGNALS:
     /*!
      * @brief Sent when display state has changed.
-     * @param state Current display state.
+     * @param state Current display state
      */
     void displayStateChanged(MeeGo::QmDisplayState::DisplayState state);
 
