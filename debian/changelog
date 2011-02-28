@@ -1,3 +1,13 @@
+qmsystem2 (1.0.15) unstable; urgency=low
+
+  [Matti Halme]
+  * QmBattery: Fixed a minutes/seconds conversion bug.
+
+  [Matias Muhonen]
+  * Fixes: NB#230568 - Wrong documentation about how to use in qmake 
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Mon, 28 Feb 2011 09:09:44 +0200
+
 qmsystem2 (1.0.14) unstable; urgency=low
 
   [Matti Halme]

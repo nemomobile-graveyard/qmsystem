@@ -53,7 +53,7 @@ QmThermal: provides information on device thermal states.
 QmTime: provides interface for interacting with system clock.
 
 To get library compiler and linker parameters, use the following:<br/>
-QMake: \code CONFIG+=QmSystem \endcode <br/>
-Pkg-Config: \code pkg-config --libs --cflags QmSystem \endcode <br/> 
+QMake: \code CONFIG+=qmsystem2 \endcode <br/>
+Pkg-Config: \code pkg-config --libs --cflags qmsystem2 \endcode <br/> 
 
 */
