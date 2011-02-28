@@ -68,14 +68,18 @@ public:
 public:
     /*!
      * @brief Constructor
-     * @param parent the possible parent object
+     * @param parent The possible parent object
      */
     QmThermal(QObject *parent = 0);
+	
+	/*!
+     * @brief Destructor
+     */	
     ~QmThermal();
 
     /*!
-     * @brief Get the current thermal state.
-     * @return Current thermal state.
+     * @brief Gets the current thermal state.
+     * @return Current thermal state
      */
     ThermalState get() const;
 

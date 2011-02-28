@@ -56,7 +56,7 @@ Q_ENUMS(QmTimeWhatChanged);
 /**
  * @scope Nokia Meego
  *
- * @brief Provides interface for interacting with system clock.
+ * @brief Provides an interface for interacting with system clock.
  *
  * All functions of QDateTime are accessible and should be used whenever
  * applicable. Setting the time should always be done through QmTime to ensure
@@ -81,25 +81,25 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
     };
 
     /**
-     * Get current time format
+     * Gets the current time format
      *
      * @return      <tt>QmTime::format24h</tt> or  <tt>QmTime::format12h</tt> depending on current device settings
      */
     QmTime::TimeFormat getTimeFormat();
 
     /**
-     * Set current time format (12h/24h) setting of the device
+     * Sets the current time format (12h/24h) setting of the device
      *
      * @credential timed::TimeControl Resource token required to set the device time format.
      *
-     * @param      New format setting
+     * @param format     New format setting
      *
      * @return     True if successfully set
      */
     bool setTimeFormat(QmTime::TimeFormat format);
 
     /**
-     * Get the current time supplied by cellular network operator (which is not nesessarily the current system time) relatively to GMT timezone
+     * Gets the current time supplied by cellular network operator (which is not nesessarily the current system time) relatively to GMT timezone
      * and the current timezone guessed on the basis of information supplied by the cellular network operator.
      *
      * @param time Reference to the structure to store the current network time. If the network time is not known,
@@ -107,23 +107,23 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      *
      * @param tz   Reference to QString where to store network timezone. A null string is stored, if the timezone could not be guessed.
      *
-     * @return     True is always returned.
+     * @return     True is always returned
      */
     bool getNetTime(QDateTime& time, QString& tz);
 
     /**
-     * @brief       Set current system and RTC date and time.
+     * @brief       Sets the current system and RTC date and time.
      *
      * @credential  timed::TimeControl Resource token required to set the device time.
      *
      * @param  time The new system time. The timeSpec() property of this structure has to be set to Qt::UTC
      *
-     * @return      True if time is successfully set.
+     * @return      True if time is successfully set
      */
     bool setTime(const QDateTime& time);
 
     /**
-     * Set current time zone.
+     * Sets the current time zone.
      * @credential timed::TimeControl Resource token required to set the device time zone.
      *
      * @param tz Time zone variable.
@@ -144,37 +144,37 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      *           The zone description in one of the above formats can be prepended by a colon ':' sign.
      *           The colon will be silently ignored.
      *
-     * @return True if zone was succesfully set, or false if not.
+     * @return True if zone was succesfully set, or false if not
      */
     bool setTimezone(const QString tz);
 
     /**
-     * Get current time zone.
+     * Gets the current time zone.
      *
-     * @param   a reference to a string variable to store the result
+     * @param   A reference to a string variable to store the result
      *
      *          Depending on the current auto_dst setting will return either the geographical Olson database entry
      *          or the string describing a fixed GMT offset zone as explained in the documentation of setTimezone()
      *          method above
      *
-     * @return  True is always returned.
+     * @return  True is always returned
      */
     bool getTimezone(QString& s);
 
     /**
-     * Get current time zone abbrevation
+     * Gets the current time zone abbrevation
      * (see http://www.timeanddate.com/library/abbreviations/timezones/ for some examples)
      *
-     * @param   a reference to a string variable to store the result
+     * @param   A reference to a string variable to store the result
      *
-     * @return  True is always returned.
+     * @return  True is always returned
      */
     bool getTZName(QString& s);
 
     /**
-     * Calculate time at given remote location at given moment
+     * Calculates the time at given remote location at given moment.
      *
-     * @param moment     The moment at which the time should be calculated.
+     * @param moment     The moment at which the time should be calculated
      * @param location   The time zone representing the remote location
      *
      *                   Every string satisfying the conditions for the
@@ -202,14 +202,14 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      *                   The remoteTime structure will be filled with the broken down representation of
      *                   the given time relatively of given timezone. The timeSpec() property will be set to Qt::LocalTime.
      *
-     * @return           true if the result is sucessfuly calculated, return false and leave remoteTime structure unchanged else.
+     * @return           True if the result is sucessfuly calculated, return false and leave remoteTime structure unchanged else.
      */
     bool getRemoteTime(const QDateTime &moment, const QString &location, QDateTime &remoteTime);
 
 
     /**
      * This function is obsolete and should not be used,
-     * the behaviour is unredictable.
+     * the behaviour is unpredictable.
      *
      * @note think about using of the method getTimeDiff()
      *       with the last parameter "Fixed/UTC"
@@ -218,7 +218,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
     int getUTCOffset(const QString &);
 
     /**
-     * Query if daylight saving time is in use at given time and location
+     * Query if daylight saving time is in use at given time and location.
      *
      * @param moment     The moment at which the query should be performed
      * @param location   The time zone representing the remote location
@@ -226,14 +226,14 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
      *                   See the getRemoteTime() method for explanation of parameters
      *                   If location is empty, the current device timezone is used
      *
-     * @return     Nonzero if daylight savings time is in effect, zero if not, -1 if error
+     * @return     Non-zero if daylight savings time is in effect, zero if not, -1 if error
      */
     int getDSTUsage(const QDateTime &moment, const QString &location);
 
     /**
-     * Get time difference between two locations at given moment of time
+     * Gets the time difference between two locations at given moment of time
      *
-     * @param moment     The moment at which the difference should be calculated.
+     * @param moment     The moment at which the difference should be calculated
      * @param location1  The time zone representing the first remote location
      * @param location2  The time zone representing the second remote location
      *
@@ -246,20 +246,20 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
     int getTimeDiff(const QDateTime &moment, const QString &location1, const QString &location2);
 
     /**
-     * Set the state of automatic system time setting based on the network time information supplied by operator.
+     * Sets the state of automatic system time setting based on the network time information supplied by operator.
      *
      * @credential timed::TimeControl Resource token required to set the network time autosync mode.
      *
      * @note    This method doesn't affect automatic setting of time zones
      *
-     * @param   enable true to enable, false to disable
+     * @param   enable True to enable, false to disable
      *
      * @return      True if successfully set
      */
     enum AutoSystemTimeStatus { AutoSystemTimeOn = 1, AutoSystemTimeOff = 0, AutoSystemTimeUnknown = -1 };
 
     /**
-     * Get the state of automatic system time setting
+     * Gets the state of automatic system time setting.
      *
      * @note   Currently only automatic time setting based on network operator NITZ signal is supported, more time sources may be added in the future
      *
@@ -268,7 +268,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
     enum AutoSystemTimeStatus autoSystemTime();
 
     /**
-     * Set the state of automatic system time setting
+     * Sets the state of automatic system time setting.
      *
      * @credential timed::TimeControl Resource token required to set the network time autosync mode.
      *
@@ -285,7 +285,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
     enum AutoTimeZoneStatus { AutoTimeZoneOn = 1, AutoTimeZoneOff = 0, AutoTimeZoneUnknown = -1 };
 
     /**
-     * Get the state of automatic time zone guessing
+     * Gets the state of automatic time zone guessing.
      *
      * @note   Currently only automatic time zone setting based on cellular network information is supported, more time zone sources may be added in the future
      *
@@ -294,7 +294,7 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
     enum AutoTimeZoneStatus autoTimeZone();
 
     /**
-     * Set the state of automatic time zone guessing
+     * Sets the state of automatic time zone guessing.
      *
      * @credential timed::TimeControl Resource token required to set the network time autosync mode.
      *
@@ -320,9 +320,9 @@ class MEEGO_SYSTEM_EXPORT QmTime : public QObject, public QDateTime
     int getAutosync();
 
     /**
-     * Get info if the device supports network time updates.
+     * Gets info if the device supports network time updates.
      *
-     * @return  Nonzero if accessible, 0 if not, -1 if error
+     * @return  Non-zero if accessible, 0 if not, -1 if error
      */
     int isOperatorTimeAccessible(void);
 

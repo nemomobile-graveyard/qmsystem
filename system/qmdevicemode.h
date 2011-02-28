@@ -76,53 +76,53 @@ public:
 
     /*!
      * @brief Constructor
-     * @param parent the parent object
+     * @param parent The parent object
      */
     QmDeviceMode(QObject *parent = 0);
     ~QmDeviceMode();
 
     /*!
-     * @brief Get the current operation mode.
-     * @return the current operation mode.
+     * @brief Gets the current operation mode.
+     * @return The current operation mode
      */
     DeviceMode getMode() const;
 
     /*!
-     * @brief Get current power save mode.
-     * @return the Current power save mode.
+     * @brief Gets the current power save mode.
+     * @return the Current power save mode
      */
     PSMState getPSMState() const;
 
     /*!
-     * @brief Set device operation mode.
+     * @brief Sets the device operation mode.
      * @credential mce::DeviceModeControl Resource token required to set the device (normal/flight) mode.
-     * @param state Operation mode to set.
-     * @return True if a valid mode was requested, false otherwise.
+     * @param state Operation mode to set
+     * @return True if a valid mode was requested, false otherwise
      */
     bool setMode(DeviceMode mode);
 
     /*!
-     * @brief Set device power save state.
+     * @brief Sets the device power save state.
      * @credential mce::DeviceModeControl Resource token required to set the powersave state.
-     * @param state Power state mode to set.
-     * @return True on success, false otherwise.
+     * @param state Power state mode to set
+     * @return True on success, false otherwise
      */
     bool setPSMState(PSMState state);
 
 
 
     /*!
-     * @brief Set device battery-level based power save mode.
+     * @brief Sets the device battery-level based power save mode.
      * @credential mce::DeviceModeControl Resource token required to set the powersave automode.
      * @param percentages The battery charging level (0-100) in percentages after powersave mode is automatically enabled. Value 0 means never.
-     * @return True on success, false otherwise.
+     * @return True on success, false otherwise
      */
     bool setPSMBatteryMode(int percentages);
 
 
 
     /*!
-     * @brief Get device battery-level based power save mode.
+     * @brief Gets the device battery-level based power save mode.
      * @return The battery charging level, -1 is error, 0 is 'never', 1-100 is the charging level (percentages)
      */
     int getPSMBatteryMode();
@@ -130,13 +130,13 @@ public:
 Q_SIGNALS:
     /*!
      * @brief Sent when device operation mode has changed.
-     * @param mode Current mode.
+     * @param mode Current operation mode
      */
     void deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode mode);
 
     /*!
      * @brief Sent when device power save mode has changed.
-     * @param state Current power save mode.
+     * @param state Current power save mode
      */
     void devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState state);
 

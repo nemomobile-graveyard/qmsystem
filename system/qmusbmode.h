@@ -83,7 +83,7 @@ public:
 
     /*!
      * @brief Gets the current USB mode.
-     * @return Returns the current USB mode.
+     * @return Returns the current USB mode
      */
     QmUSBMode::Mode getMode();
 
@@ -91,25 +91,25 @@ public:
      * @brief Sets the USB mode. Note that calling setMode is non-blocking, so the method returns immediately.
      * If the USB mode change succeeded, the modeChanged signal is emitted.
      * @param mode The USB mode to be set. The OviSuite, MassStorage and ChargingOnly modes can be requested.
-     * @return Returns true if a valid mode was requested, false otherwise.
+     * @return True if a valid mode was requested, false otherwise
      */
     bool setMode(QmUSBMode::Mode mode);
 
     /*!
      * @brief Sets the default USB mode.
-     * @param mode the new default USB mode. The OviSuite, MassStorage, ChargingOnly and Ask modes can be set.
-     * @return Returns true if successful, false otherwise.
+     * @param mode The new default USB mode. The OviSuite, MassStorage, ChargingOnly and Ask modes can be set
+     * @return True if successful, false otherwise
      */
     bool setDefaultMode(QmUSBMode::Mode mode);
 
     /*!
      * @brief Gets the default USB mode.
-     * @return Returns the default USB mode.
+     * @return The default USB mode
      */
     QmUSBMode::Mode getDefaultMode();
 
     /*!
-     * @brief Mount path.
+     * @brief Mount path
      */
     enum MountPath {
         /*!
@@ -126,7 +126,7 @@ public:
     };
 
     /*!
-     * @brief Mount options.
+     * @brief Mount options
      */
     enum MountOption {
         ReadOnlyMount  =  0x0000001, //!< Read only.
@@ -136,7 +136,7 @@ public:
 
     /*!
      * @brief Gets the status of a mount.
-     * @return Returns the mount status as MountOptionFlags.
+     * @return The mount status as MountOptionFlags
      */
     QmUSBMode::MountOptionFlags mountStatus(QmUSBMode::MountPath mountPath);
 
@@ -150,7 +150,7 @@ Q_SIGNALS:
      * \li No default USB mode is set and a USB cable is connected (QmUSBMode::ModeRequest)
      * \li The USB mode was changed (QmUSBMode::MassStorage, QmUSBMode::ChargingOnly, QmUSBMode::OviSuite)
      * \li An error occurred changing the USB Mode (QmUSBMode::Undefined)
-     * @param mode the current mode.
+     * @param mode The current mode.
      */
     void modeChanged(MeeGo::QmUSBMode::Mode mode);
 
@@ -158,7 +158,7 @@ Q_SIGNALS:
      * @brief This signal is emitted before a file system is being unmounted.
      * Applications can use the signal as an indication that a certain mount path
     *  will be unavailable soon.
-     * @param mountPath the mount which is going to be unmounted.
+     * @param mountPath The mount which is going to be unmounted
      */
     void fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath mountPath);
 

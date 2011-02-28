@@ -101,30 +101,30 @@ namespace MeeGo {
         };
 
         /**
-         * Constructor.
+         * Constructor
          * @param parent Parent QObject.
          */
         QmOrientation(QObject *parent = 0);
 
         /**
-         * Destructor.
+         * Destructor
          */
         ~QmOrientation();
 
         /**
-         * Get the current device orientation.
-         * @return Current device orientation.
+         * Gets the current device orientation.
+         * @return Current device orientation
          */
         QmOrientationReading orientation();
 
         /**
-         * Get the currently used threshold value. Value is in mG. See #setThreshold()
-         * @return Current threshold value.
+         * Gets the currently used threshold value. Value is in mG. See #setThreshold()
+         * @return Current threshold value
          */
         int threshold();
 
         /**
-         * Set the threshold value for the algorithm. Threshold value controls the
+         * Sets the threshold value for the algorithm. Threshold value controls the
          * sensitivity of orientation change. Value is given in mG. Orientation is
          * considered to have changed whenever measured acceleration towards new
          * orientation is stronger than acceleration towards previous orientation
@@ -134,21 +134,21 @@ namespace MeeGo {
          * more stability.
          *
          * Current default is 50 mG.
-         * @param value Threshold value to set.
+         * @param value Threshold value to set
          */
         void setThreshold(int value);
 
     Q_SIGNALS:
         /**
-         * Sent when device orientation has changed.
-         * @param orientation Current device orientation.
+         * Sent when the device orientation has changed.
+         * @param orientation Current device orientation
          */
         void orientationChanged(const MeeGo::QmOrientationReading orientation);
 
     };
 
     /**
-     * Orientation measurement.
+     * Orientation measurement
      */
     class QmOrientationReading : public QmSensorReading
     {

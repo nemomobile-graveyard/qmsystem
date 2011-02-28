@@ -44,7 +44,7 @@ class QmActivityPrivate;
  *
  * @scope Nokia Meego
  *
- * @brief QmActivity provides information about user activity
+ * @brief QmActivity provides information about user activity.
  * @details QmActivity offers a getter method as well as a changed signal
  * for the user activity state. The state is fetched from the mce daemon
  */
@@ -65,7 +65,7 @@ public:
 public:
     /*!
      * @brief Constructor
-     * @param parent the possible parent object
+     * @param parent The possible parent object
      */
     QmActivity(QObject *parent = 0);
 
@@ -75,15 +75,16 @@ public:
     ~QmActivity();
 
     /*!
-     * @brief Get the current activity state.
-     * @return the current activity state.
+     * @brief Gets the current activity state.
+     * @return The current activity state
      */
     Activity get() const;
 
 Q_SIGNALS:
     /*!
      * @brief Sent when activity state has changed.
-     * @param activity the new activity state.
+     * @param activity The new activity state
+     * @param activity The new activity state
      */
     void activityChanged(MeeGo::QmActivity::Activity activity);
 

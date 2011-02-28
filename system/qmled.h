@@ -52,34 +52,34 @@ public:
     ~QmLED();
 
     /**
-     * Activate pattern in device LED.
+     * Activates the pattern in device LED.
      * @credential mce::LEDControl Resource token required to activate the pattern.
-     * @param pattern Pattern to activate.
-     * @return False if LED functionality is not available or cannot be set.
+     * @param pattern Pattern to activate
+     * @return False if LED functionality is not available or cannot be set
      * @todo Add description of strings for patterns.
      */
     bool activate(const QString &pattern);
 
     /**
-     * Deactivate pattern in device LED.
+     * Deactivates the pattern in device LED.
      * @credential mce::LEDControl Resource token required to deactivate the pattern.
-     * @param pattern Pattern to deactivate.
-     * @return False if LED functionality is not available or cannot be set.
+     * @param pattern Pattern to deactivate
+     * @return False if LED functionality is not available or cannot be set
      * @todo Add description of string for patterns.
      */
     bool deactivate(const QString &pattern);
 
     /**
-     * Enable device LED.
+     * Enables the device LED.
      * @credential mce::LEDControl Resource token required to enable LED.
-     * @return False if LED functionality is not available or cannot be set.
+     * @return False if LED functionality is not available or cannot be set
      */
     bool enable(void);
 
     /**
-     * Disable device LED.
+     * Disables the device LED.
      * @credential mce::LEDControl Resource token required to disable LED.
-     * @return False if LED functionality is not available or cannot be set.
+     * @return False if LED functionality is not available or cannot be set
      */
     bool disable(void);
 

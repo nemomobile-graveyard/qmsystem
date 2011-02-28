@@ -121,39 +121,39 @@ namespace MeeGo {
         virtual ~QmSensor();
 
         /**
-         * Get type of current session.
+         * Gets the type of current session.
          *
-         * @return Type of current session.
+         * @return Type of current session
          */
         SessionType sessionType();
 
         /**
-         * Verify that current session is at least of level \c type.
+         * Verifies that current session is at least of level \c type.
          *
-         * @return \c true if same or higher, \c false if lower.
+         * @return \c True if same or higher, \c false if lower
          */
         bool verifySessionLevel(QmSensor::SessionType type);
 
         /**
          * Starts the measurement process.
          *
-         * Return \c true on successfull start or already running,
-         *        \c false on error.
+         * @return \c True on successfull start or already running,
+         *        \c false on error
          */
         bool start();
 
         /**
          * Stops the measurement process.
          *
-         * Return \c true on successfull stop or already stopped,
-         *        \c false on error.
+         * @return \c True on successfull stop or already stopped,
+         *        \c false on error
          */
         bool stop();
 
         /**
          * Returns whether the sensor is in running state.
          *
-         * @return \c True for running state, \c false for stopped state.
+         * @return \c True for running state, \c false for stopped state
          */
         bool isRunning();
 
@@ -163,7 +163,7 @@ namespace MeeGo {
          * error and automatically fall back to attempting to gain a session
          * of next type. Order is <code>SessionTypeControl -> SessionTypeListen -> SessionTypeNone</code>.
          *
-         * @param type What kind of session to request.
+         * @param type The type of session to request
          * @return Type of the session that was received. If differs from
          *              requested type, an error has been set.
          */
@@ -176,19 +176,19 @@ namespace MeeGo {
         void closeSession();
 
         /**
-         * Get explanatory message for previous error. The returned string
+         * Gets an explanatory message for previous error. The returned string
          * always corresponds to the previous error that has occurred. Thus,
          * it should be checked immediately after some function has returned
          * a value indicating an error.
          *
-         * @return QString containing human readable error description.
+         * @return QString containing human readable error description
          */
         QString lastError() const;
 
 
         /**
          * Returns the current poll interval request made by this client.
-         * @return Current poll interval request.
+         * @return Current poll interval request
          */
         int interval();
 
@@ -197,30 +197,30 @@ namespace MeeGo {
          *
          * @todo Provide description what this means.
          *
-         * @param value Interval value to set.
+         * @param value Interval value to set
          */
         void setInterval(int value);
 
         /**
          * Returns the current request of this client for standby override.
          * See #setStandbyOverride for details.
-         * @return Current standby override request.
+         * @return Current standby override request
          */
         bool standbyOverride();
 
         /**
-         * Set a request to override sensor standby mode on screen blank event.
+         * Sets a request to override sensor standby mode on screen blank event.
          * During normal operation, screen blanking will cause all sensors
          * to stop. Client can override this behavior by setting this property
          * to true.
-         * @param value Activate or deactive standby override.
+         * @param value Activate or deactive standby override
          */
         void setStandbyOverride(bool value);
 
     Q_SIGNALS:
         /**
          * Emitted when an error occurs. See #lastError().
-         * @param error Human readable string describing the error.
+         * @param error Human readable string describing the error
          */
         void errorSignal(QString error);
 

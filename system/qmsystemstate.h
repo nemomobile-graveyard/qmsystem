@@ -109,41 +109,41 @@ public:
 public:
     /*!
      * @brief Constructor
-     * @param parent the possible paren object
+     * @param parent The possible parent object
      */
     QmSystemState(QObject *parent = 0);
     ~QmSystemState();
 
     /*!
-     * @brief Request to system to move into state @c nextState.
+     * @brief Requests to system to move into state @c nextState.
      * @credential dsme::DeviceStateControl Resource token required to set the device state (shutdown/reboot/powerup).
-     * @param New state.
-     * @return True on success, false otherwise.
+     * @param nexstate New state
+     * @return True on success, false otherwise
      */
     bool set(NextState nextState);
 
     /*!
-     * @brief Get the current run state.
-     * @return current run state
+     * @brief Gets the current run state.
+     * @return The current run state
      */
     RunState getRunState();
 
     /*!
-     * @brief Get the current boot reason.
-     * @return current boot reason
+     * @brief Gets the current boot reason.
+     * @return The current boot reason
      */
     BootReason getBootReason();
 
     /*!
-     * @brief Get the accumulated value of the power on counter, in seconds, which represents the total time the device has been powered on.
-     * @return the total time in seconds the device has been powered on.
+     * @brief Gets the accumulated value of the power on counter in seconds, which represents the total time the device has been powered on.
+     * @return The total time in seconds the device has been powered on
      */
     unsigned int getPowerOnTimeInSeconds();
 
 Q_SIGNALS:
     /*!
      * @brief Sent when device state indication has been received.
-     * @param what Received state indication type.
+     * @param what Received state indication type
      */
     void systemStateChanged(MeeGo::QmSystemState::StateIndication what);
 

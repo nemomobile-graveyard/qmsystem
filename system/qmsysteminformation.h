@@ -52,7 +52,7 @@ public:
 
     /*!
      * @brief Gets the value of a key from the kernel command line.
-     * @return Returns the kernel command line value as a QString.
+     * @return Returns the kernel command line value as a QString
      */
     static QString kernelCommandLineValueForKey(const QString &key);
 

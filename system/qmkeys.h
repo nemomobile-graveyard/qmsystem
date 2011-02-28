@@ -132,7 +132,7 @@ public:
 public:
   /*!
    * @brief Constructor
-   * @param parent the possible parent object
+   * @param parent The possible parent object
    */
   QmKeys(QObject *parent = 0);
 
@@ -149,14 +149,14 @@ public:
   /*!
    * @brief Deprecated, use getKeyState() instead
    * @deprecated Deprecated, use getKeyState() instead
-   * @return Current keyboard slider position.
+   * @return Current keyboard slider position
    */
   QmKeys::KeyboardSliderPosition getSliderPosition();
 
   /*!
    * @brief Deprecated, use getKeyState() instead
    * @deprecated Deprecated, use getKeyState() instead
-   * @return Current lens cover position.
+   * @return Current lens cover position
    */
   QmKeys::LensCoverPosition getLensCoverPosition();
 
@@ -170,21 +170,21 @@ public:
   /*!
    * @brief Deprecated, use getKeyState() instead
    * @deprecated Deprecated, use getKeyState() instead
-   * @return is volume up key down
+   * @return Is the volume up key down
    */
   bool isVolumeUpDown();
 
   /*!
    * @brief Deprecated, use getKeyState() instead
    * @deprecated Deprecated, use getKeyState() instead
-   * @return is the volume down key down
+   * @return Is the volume down key down
    */
   bool isVolumeDownDown();
 
   /*!
-   * @brief Get the current state of the given key.
-   * @param key whose state is being queried.
-   * @return The state of the given key.
+   * @brief Gets the current state of the given key.
+   * @param key which state is being queried
+   * @return The state of the given key
    */
   State getKeyState(Key);
 
@@ -193,42 +193,42 @@ Q_SIGNALS:
   /*!
    * @brief Deprecated, use keyEvent() instead.
    * @deprecated Deprecated, use keyEvent() instead.
-   * @param where New slider position.
+   * @param where New slider position
    */
   void keyboardSliderMoved(QmKeys::KeyboardSliderPosition where);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
    * @deprecated Deprecated, use keyEvent() instead.
-   * @param where New cover position.
+   * @param where New cover position
    */
   void lensCoverMoved(QmKeys::LensCoverPosition where);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
    * @deprecated Deprecated, use keyEvent() instead.
-   * @param where New camera luncher position.
+   * @param where New camera luncher position
    */
   void cameraLauncherMoved(QmKeys::CameraKeyPosition);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
    * @deprecated Deprecated, use keyEvent() instead.
-   * @param is the volume up key down
+   * @param Is the volume up key down
    */
   void volumeUpMoved(bool);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
    * @deprecated Deprecated, use keyEvent() instead.
-   * @param is the volume down key down
+   * @param Is the volume down key down
    */
   void volumeDownMoved(bool);
 
   /*!
    * @brief Sent when a key has changed state.
    * @param key the key in question
-   * @param state the new state
+   * @param state The new state
    */
   void keyEvent(MeeGo::QmKeys::Key key, MeeGo::QmKeys::State state);
 

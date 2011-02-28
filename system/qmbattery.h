@@ -137,57 +137,57 @@ public:
     virtual ~QmBattery();
 
     /*!
-     * @brief Get the battery nominal (maximum) capasity.
+     * @brief Gets the battery nominal (maximum) capasity.
      *
-     * @returns  The battery nominal (maximum) capasity (mAh)
+     * @return  The battery nominal (maximum) capasity (mAh)
      */
     int getNominalCapacity() const;
     
     /*!
-     * @brief Get the battery state.
+     * @brief Gets the battery state.
      *
-     * @returns  The battery state as QmBattery::BatteryState
+     * @return  The battery state as QmBattery::BatteryState
      */
     BatteryState getBatteryState() const;
 
     /*!
-     * @brief Get remaining battery capacity as mAh
+     * @brief Gets remaining battery capacity as mAh
      *
-     * @returns  Remaining battery capacity as mAh
+     * @return  Remaining battery capacity as mAh
      */
     int getRemainingCapacitymAh() const;
     
     /*!
-     * @brief Get remaining battery capacity as a percentage.
+     * @brief Gets the remaining battery capacity as a percentage.
      *
-     * @returns  Battery level in percents [0 - 100]
+     * @return  Battery level in percents [0 - 100]
      */
     int getRemainingCapacityPct() const;
     
     /*!
-     * @brief Get remaining battery capacity as number of bars or 0 if battery state
+     * @brief Gets the remaining battery capacity as number of bars or 0 if battery state
      * is low.
      *
-     * @returns  Battery level as number of bars [0 - getMaxbars()]
+     * @return  Battery level as number of bars [0 - getMaxbars()]
      */
     int getRemainingCapacityBars() const;
     
     /*!
      * @brief Get the maximum number of battery bars.
      *
-     * @returns  The maximum value returned by getRemainingCapacityBars()
+     * @return  The maximum value returned by getRemainingCapacityBars()
      */
     int getMaxBars() const;
     
     /*!
-     * @brief Get battery voltage
+     * @brief Gets the battery voltage.
      *
-     * @returns  The battery voltage (mV)
+     * @return  The battery voltage (mV)
      */
     int getVoltage() const;
 
     /*!
-     * @brief Get the amount of current flowing out from the battery
+     * @brief Gets the amount of current flowing out from the battery.
      * @details Get the amount of current flowing out from the battery (a short term
      * averge). Positive current means discharging and negative current means
      * charging.
@@ -197,7 +197,7 @@ public:
     int getBatteryCurrent() const;
 
     /*!
-     * @brief Get the cumulative amount of battery current flowing out from the
+     * @brief Gets the cumulative amount of battery current flowing out from the
      * battery (the coulomb counter).
      *
      * @details The reference point of the cumulative battery current is undefined and
@@ -206,33 +206,33 @@ public:
      * discharged. If the returned value is smaller than previously returned
      * value, the battery has been charged.
      *
-     * @returns cumulative battery current (mAs)
+     * @return Cumulative battery current (mAs)
      */
     int getCumulativeBatteryCurrent() const;
 
     /*!
-     * @brief Get currently connected charger type (or None).
+     * @brief Gets the currently connected charger type (or none).
      *
-     * @returns  Charger type as QmBattery::ChargerType
+     * @return  Charger type as QmBattery::ChargerType
      */
     ChargerType getChargerType() const;
 
     /*!
-     * @brief Get the charging state (e.g. on / off / failed)
+     * @brief Gets the charging state (e.g. on / off / failed).
      *
-     * @returns  The charging state as QmBattery::ChargingState
+     * @return  The charging state as QmBattery::ChargingState
      */
     ChargingState getChargingState() const;
 
     /*!
-     * @brief Get the remaining charging time.
+     * @brief Gets the remaining charging time.
      *
-     * @returns The charging time in seconds if charging or -1 if not charging
+     * @return The charging time in seconds if charging or -1 if not charging
      */
     int  getRemainingChargingTime() const;
 
     /*!
-     * @brief Start battery current measurement.
+     * @brief Starts the battery current measurement.
      *
      * @param rate  The rate of sending the signal (batteryCurrent)
      *              Use enums (RATE_250ms, RATE_1000ms, RATE_5000ms)
@@ -243,7 +243,7 @@ public:
     bool startCurrentMeasurement(Period rate);
 
     /*!
-     * @brief Stop battery current measurement.
+     * @brief Stops the battery current measurement.
      *
      * @retval  TRUE   success
      * @retval  FALSE  failure
@@ -261,12 +261,12 @@ public:
     int getAverageTalkCurrent(RemainingTimeMode mode) const;
 
     /*!
-     * @brief Get the remaining talk time or -1 if not known.
+     * @brief Gets the remaining talk time or -1 if not known.
      *
      * @param mode: (PowersaveMode/Normal ) mode in which the remaining
-     *               time is to be estimated.
+     *               time is to be estimated
      *
-     * @returns Talk time in seconds
+     * @return Talk time in seconds
      */
     int getRemainingTalkTime(RemainingTimeMode mode) const;
 
@@ -301,19 +301,19 @@ public:
     int getAverageIdleCurrent(RemainingTimeMode mode) const;
 
     /*!
-     * @brief Get the remaining idle time or -1 if not known.
+     * @brief Gets the remaining idle time or -1 if not known.
      *
      * @param mode: (PowersaveMode/Normal ) mode in which the remaining
      *               time is to be estimated.
      *
-     * @returns Idle time in seconds
+     * @return Idle time in seconds
      */
     int getRemainingIdleTime(RemainingTimeMode mode) const;
 
     /*!
-     * @brief Get the battery condition
+     * @brief Gets the battery condition.
      *
-     * @returns  Battery condition as QmBattery::BatteryCondition
+     * @return  Battery condition as QmBattery::BatteryCondition
      */
     BatteryCondition getBatteryCondition() const;
 
@@ -340,29 +340,29 @@ Q_SIGNALS:
     /*!
      * @brief Sent when battery state has changed.
      *
-     * @param batteryState  new battery state
+     * @param batteryState  New battery state
      */
     void batteryStateChanged(MeeGo::QmBattery::BatteryState batteryState);
 
     /*!
-     * @brief Sent when the remaining capacity percentage or bar count changes
+     * @brief Sent when the remaining capacity percentage or bar count changes.
      *
-     * @param  percentage the new remaining capacity a percentage
-     * @param  bars       the new remaining capacity as number of bars
+     * @param  percentage The new remaining capacity a percentage
+     * @param  bars       The new remaining capacity as number of bars
      */
     void batteryRemainingCapacityChanged(int percentage, int bars);
 
     /*!
      * @brief Sent when battery charging state has changed.
      *
-     * @param chargingState  the new charging state
+     * @param chargingState  The new charging state
      */
     void chargingStateChanged(MeeGo::QmBattery::ChargingState chargingState);
     
     /*!
      * @brief Sent when a charger event has occurred (charger plugged / unplugged).
      *
-     * @param chargerType  the new connected charger type (or None)
+     * @param chargerType  The new connected charger type (or None)
      */
     void chargerEvent(MeeGo::QmBattery::ChargerType chargerType);
 
@@ -370,7 +370,7 @@ Q_SIGNALS:
      * @brief Sent at desired interval when battery current measurement is enabled
      * (see startCurrentMeasurement)
      *
-     * @param current in mA
+     * @param current Current in mA
      */
     void batteryCurrent(int current);
 

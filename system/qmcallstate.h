@@ -80,31 +80,31 @@ public:
     ~QmCallState();
 
     /**
-     * Get current call state.
-     * @return Current call state.
+     * Gets the current call state.
+     * @return Current call state
      */
     QmCallState::State getState() const;
 
     /**
-     * Get current call type.
-     * @return Current call type.
+     * Gets the current call type.
+     * @return Current call type
      */
     QmCallState::Type getType() const;
 
     /**
-     * Set current call state and type.
+     * Sets the current call state and type.
      * @credential mce::CallStateControl Resource token required to set the call state.
-     * @param state State to set.
-     * @param type  Type to set.
-     * @return True if a valid mode was requested, false otherwise.
+     * @param state State to set
+     * @param type  Type to set
+     * @return True if a valid mode was requested, false otherwise
      */
     bool setState(QmCallState::State state, QmCallState::Type type);
 
 Q_SIGNALS:
     /**
      * Sent when call state has changed.
-     * @param state Current call state.
-     * @param type  Current call type.
+     * @param state Current call state
+     * @param type  Current call type
      */
     void stateChanged(MeeGo::QmCallState::State state, MeeGo::QmCallState::Type type);
 

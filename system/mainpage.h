@@ -40,17 +40,17 @@ To access the sensors (such as accelerometer, compass, magnetometer, orientation
 
 QmSystem includes the following main classes:
 
-QmActivity: provides information about device activity.
-QmBattery: provides information on device battery status.
-QmCABC: provides methods to set and get Content Adaptive Display Control settings.
-QmDeviceMode: provides information and actions on device operation mode and power save mode.
-QmDisplayState: provides information and actions on device display state.
-QmHeartbeat: provides system heartbeat service.
-QmKeys: provides access to hardware key states.
-QmLocks: provides information and actions on device locks.
-QmSystemState: provides information and actions on device state.
-QmThermal: provides information on device thermal states.
-QmTime: provides interface for interacting with system clock.
+    - QmActivity: provides information about device activity.
+    - QmBattery: provides information on device battery status.
+    - QmCABC: provides methods to set and get Content Adaptive Display Control settings.
+    - QmDeviceMode: provides information and actions on device operation mode and power save mode.
+    - QmDisplayState: provides information and actions on device display state.
+    - QmHeartbeat: provides system heartbeat service.
+    - QmKeys: provides access to hardware key states.
+    - QmLocks: provides information and actions on device locks.
+    - QmSystemState: provides information and actions on device state.
+    - QmThermal: provides information on device thermal states.
+    - QmTime: provides interface for interacting with system clock.
 
 To get library compiler and linker parameters, use the following:<br/>
 QMake: \code CONFIG+=qmsystem2 \endcode <br/>

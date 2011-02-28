@@ -45,7 +45,7 @@ namespace MeeGo {
      *
      * @brief Provides device tapping events.
      *
-     * Provides device tapping events. Taps can either be single or doubletaps.
+     * Provides the device tapping events. Taps can either be single or double taps.
      * See #TapData::Direction and #TapData::Type for description of different
      * tap events.
      *
@@ -103,27 +103,27 @@ namespace MeeGo {
         };
 
         /**
-         * Constructor.
-         * @param parent Parent QObject.
+         * Constructor
+         * @param parent Parent QObject
          */
         QmTap(QObject *parent = 0);
         /**
-         * Destructor.
+         * Destructor
          */
         ~QmTap();
 
     Q_SIGNALS:
         /**
          * Sent when a tapping event has occurred.
-         * @param direction Direction of the tap.
-         * @param type Type of the tap.
+         * @param direction Direction of the tap
+         * @param type Type of the tap
          */
         void tapped(const MeeGo::QmTapReading);
 
     };
 
     /**
-     * Device tap event.
+     * Device tap event
      */
     class QmTapReading : public QmSensorReading
     {
