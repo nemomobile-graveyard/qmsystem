@@ -2,9 +2,10 @@ qmsystem2 (1.0.15) unstable; urgency=low
 
   [Matti Halme]
   * QmBattery: Fixed a minutes/seconds conversion bug.
+  * Fixes: NB#231716 - QmSystem2 uses incorrect build dependency.
 
   [Matias Muhonen]
-  * Fixes: NB#230568 - Wrong documentation about how to use in qmake 
+  * Wrong documentation about how to use in qmake 
 
   [Sirpa Tahkamo]
   * Edited documentation for consistency
