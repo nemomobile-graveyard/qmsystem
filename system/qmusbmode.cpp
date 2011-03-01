@@ -207,9 +207,12 @@ QmUSBMode::MountOptionFlags QmUSBMode::mountStatus(QmUSBMode::MountPath mountPat
 
     if (mountOpts.contains("rw")) {
         mountOptions |= QmUSBMode::ReadWriteMount;
+        goto out;
     }
-    if (mountOpts.contains("ro") || mountOpts.contains("rodir")) {
+
+    if (mountOpts.contains("ro")) {
         mountOptions |= QmUSBMode::ReadOnlyMount;
+        goto out;
     }
 
 out:
