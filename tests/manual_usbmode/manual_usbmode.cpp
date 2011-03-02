@@ -175,6 +175,13 @@ private slots:
         testFunc(QmUSBMode::OviSuite, QmUSBMode::Undefined);
     }
 
+    void testMountOptions() {
+        printf("Please unplug the USB cable. You have 10 seconds...\n");
+        QTest::qWait(10*1000);
+        QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
+        QVERIFY(mountOptions & QmUSBMode::ReadWriteMount);
+    }
+
     void cleanupTestCase() {
         delete qmmode;
     }
