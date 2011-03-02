@@ -50,20 +50,9 @@ private:
     QmUSBMode::Mode currentMode;
     bool signalReceived;
 
-#if 0
-    void setGetMode(QmUSBMode::Mode newMode) {
-        qDebug() << "Set mode to: " << newMode;
-        QVERIFY(mode->setMode(newMode));
-        QTest::qWait(1000);
-        QCOMPARE(currentMode, newMode);
-        QCOMPARE(currentMode, mode->getMode());
-    }
-#endif
-
     void setGetDefaultMode(QmUSBMode::Mode newMode) {
         QVERIFY(mode->setDefaultMode(newMode));
         QCOMPARE(newMode, mode->getDefaultMode());
-
     }
 
 private slots:
@@ -75,20 +64,20 @@ private slots:
         QVERIFY(connect(mode, SIGNAL(error(const QString)),
                         this, SLOT(error(const QString))));
     }
-#if 0
-    void testSetGetModes() {
-        setGetMode(QmUSBMode::ChargingOnly);
-        setGetMode(QmUSBMode::MassStorage);
-        setGetMode(QmUSBMode::ChargingOnly);
-        setGetMode(QmUSBMode::OviSuite);
-    }
-#endif
 
     void testSetGetDefaultModes() {
         setGetDefaultMode(QmUSBMode::MassStorage);
         setGetDefaultMode(QmUSBMode::ChargingOnly);
         setGetDefaultMode(QmUSBMode::OviSuite);
         setGetDefaultMode(QmUSBMode::Ask);
+    }
+
+    void testMountStatus() {
+        QmUSBMode::MountOptionFlags mountOptions = mode->mountStatus(QmUSBMode::DocumentDirectoryMount);
+        bool readWriteMount = (mountOptions & QmUSBMode::ReadWriteMount);
+        bool readOnlyMount = (mountOptions & QmUSBMode::ReadOnlyMount);
+        // mydocs should be always mounted, so we should either get a read-only or a read-write mount
+        QVERIFY(readWriteMount || readOnlyMount);
     }
 
     void cleanupTestCase() {
