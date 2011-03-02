@@ -70,7 +70,6 @@ extern "C" {
 #define USETIME_MODE_ACTIVE 2
 #define USETIME_MODE_TALK   3
 
-#define USETIME_METHOD_GET_TIME "getTime"
 #define USETIME_METHOD_GET_CURRENT "getCurrent"
 
 
@@ -430,14 +429,23 @@ int QmBatteryPrivate::getRemainingTime(int usageMode,
 				       QmBattery::RemainingTimeMode psMode,
 				       int defaultCurrent) const
 {
-    int result = makeUsetimeQuery(USETIME_METHOD_GET_TIME,
-				  usageMode, psMode);
-    if (result < 0) {
-	queryData_();
-	result = 60 * stat_[BATTERY_CAPA_NOW] / defaultCurrent;
+    int current = getAverageCurrent(usageMode, psMode, defaultCurrent);
+
+    union emsg_usetime_info msg;
+    memset(&msg, 0, sizeof(msg));
+    msg.request.type = EM_BATTERY_USETIME_REQ;
+    msg.request.current = current;
+    if (!ipc_->query(&msg, sizeof(msg.request),
+		     &msg, sizeof(msg.reply))) {
+	qWarning() << "Can't query use time:" << strerror(errno);
+	return -1;
     }
+
+    qDebug() << __FUNCTION__ << usageMode << psMode
+	     << "current (mA):" << current
+	     << "remaining time (s):" << msg.reply.time;
     
-    return result * 60; /* result is in minutes, return in seconds */
+    return msg.reply.time;
 }
 
 int QmBatteryPrivate::makeUsetimeQuery(const QString& method, int usageMode,
