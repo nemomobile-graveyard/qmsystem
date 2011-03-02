@@ -26,6 +26,7 @@
 #include <qmusbmode.h>
 #include <QTest>
 #include <QDebug>
+#include <QProcess>
 
 using namespace MeeGo;
 
@@ -73,11 +74,19 @@ private slots:
     }
 
     void testMountStatus() {
-        QmUSBMode::MountOptionFlags mountOptions = mode->mountStatus(QmUSBMode::DocumentDirectoryMount);
-        bool readWriteMount = (mountOptions & QmUSBMode::ReadWriteMount);
-        bool readOnlyMount = (mountOptions & QmUSBMode::ReadOnlyMount);
-        // mydocs should be always mounted, so we should either get a read-only or a read-write mount
-        QVERIFY(readWriteMount || readOnlyMount);
+        QProcess mount;
+        mount.start("grep MyDocs /proc/mounts");
+        if (!mount.waitForFinished()) {
+            return;
+        }
+        QByteArray output = mount.readAllStandardOutput();
+        if (output.contains("MyDocs")) {
+            // mydocs mounted, so we should either get a read-only or a read-write mount
+            QmUSBMode::MountOptionFlags mountOptions = mode->mountStatus(QmUSBMode::DocumentDirectoryMount);
+            bool readWriteMount = (mountOptions & QmUSBMode::ReadWriteMount);
+            bool readOnlyMount = (mountOptions & QmUSBMode::ReadOnlyMount);
+            QVERIFY(readWriteMount || readOnlyMount);
+        }
     }
 
     void cleanupTestCase() {
