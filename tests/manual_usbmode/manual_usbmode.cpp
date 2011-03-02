@@ -176,8 +176,8 @@ private slots:
     }
 
     void testMountOptions() {
-        printf("Please unplug the USB cable. You have 10 seconds...\n");
-        QTest::qWait(10*1000);
+        printf("Please unplug the USB cable. Waiting 60 seconds for the /home/user/MyDocs mount to change to writable...\n");
+        QTest::qWait(60*1000);
         QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
         QVERIFY(mountOptions & QmUSBMode::ReadWriteMount);
     }
