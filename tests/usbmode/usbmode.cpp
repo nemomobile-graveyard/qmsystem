@@ -85,7 +85,13 @@ private slots:
             QmUSBMode::MountOptionFlags mountOptions = mode->mountStatus(QmUSBMode::DocumentDirectoryMount);
             bool readWriteMount = (mountOptions & QmUSBMode::ReadWriteMount);
             bool readOnlyMount = (mountOptions & QmUSBMode::ReadOnlyMount);
-            QVERIFY(readWriteMount || readOnlyMount);
+
+            if (output.contains(" rw,") || output.contains(",rw ") || output.contains(",rw,")) {
+                QVERIFY(readWriteMount && !readOnlyMount);
+            }
+            if (output.contains(" ro,") || output.contains(",ro ") || output.contains(",ro,")) {
+                QVERIFY(readOnlyMount && !readWriteMount);
+            }
         }
     }
 
