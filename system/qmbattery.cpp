@@ -123,6 +123,7 @@ public:
 
 };
 
+#define BMEIPC_MAX_TRIES 2
 
 class EmIpc : public EmHandle<EmIpc>
 {
@@ -131,36 +132,27 @@ public:
 
     EmIpc() : EmHandle<EmIpc>(), sd_(-1) {}
 
-    bool stat(bmestat_t *stat)
+    bool query(const void *msg1, int len1, void *msg2 = NULL, int len2 = -1)
     {
         if (!is_opened()) {
 	    qCritical() << "EM: not open";
             return false;
 	}
 
-        if (::bmeipc_stat(sd_, stat) < 0) {
+	int tries = 0;
+	while (true) {
+	    tries++;
+	    if (::bmeipc_query(sd_, msg1, len1, msg2, len2) >= 0)
+		return true;
+	    if (tries >= BMEIPC_MAX_TRIES)  {
+		qCritical() << "EM: Query failed: " << strerror(errno);
+		return false;
+	    }
+	    qWarning() << "EM:" << strerror(errno) << "(trying to reopen)";
 	    close();
-	    if (!open()) {
+	    if (!open())
 		return false;
-	    }
-	    if (::bmeipc_stat(sd_, stat) < 0) {
-		qCritical() << "EM: failed to request state: "
-			    << strerror(errno);
-		return false;
-	    }
         }
-        return true;
-    }
-
-    inline bool query(const void *msg1, int len1
-                      , void *msg2 = NULL, int len2 = -1)
-    {
-        if (!is_opened()) {
-	    qCritical() << "EM: not open";
-            return false;
-	}
-
-        return (::bmeipc_query(sd_, msg1, len1, msg2, len2) >= 0);
     }
 
     bool is_opened() { return sd_ >= 0; }
@@ -393,10 +385,16 @@ void QmBatteryPrivate::queryData_() const
     QDateTime now(QDateTime::currentDateTime());
 
     if (!is_data_actual_ || now >= cache_expire_) {
-        if (!(ipc_->open() && ipc_->stat(&stat_))) {
-            return;
-        }
-        is_data_actual_ = true;
+        if (!ipc_->open())
+	    return;
+	
+	bmeipc_msg_t request;
+	request.type = BME_SYSMSG_GETSTAT;
+	request.subtype = 0;
+	if (!ipc_->query(&request, sizeof(request), &stat_, sizeof(stat_)))
+	    return;
+	    
+	is_data_actual_ = true;
         cache_expire_ = now.addSecs(STAT_EXPIRATION_TIMEOUT);
     }
 }
