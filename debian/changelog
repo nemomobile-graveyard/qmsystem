@@ -5,17 +5,15 @@ qmsystem2 (1.0.16) unstable; urgency=low
 
   [Matias Muhonen]
   * Fixes: NB#231816 - QmUSBMode::mountStatus(DocumentDirectoryMount) always returns ReadOnlyMount
+  * Fixes: NB#230568 - Wrong documentation about how to use in qmake
 
- -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Tue, 1 Mar 2011 12:31:45 +0200
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Thu, 3 Mar 2011 12:15:57 +0200
 
 qmsystem2 (1.0.15) unstable; urgency=low
 
   [Matti Halme]
   * QmBattery: Fixed a minutes/seconds conversion bug.
   * Fixes: NB#231716 - QmSystem2 uses incorrect build dependency.
-
-  [Matias Muhonen]
-  * Wrong documentation about how to use in qmake 
 
   [Sirpa Tahkamo]
   * Edited documentation for consistency
