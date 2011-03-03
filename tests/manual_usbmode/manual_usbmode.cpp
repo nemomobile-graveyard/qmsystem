@@ -1,5 +1,6 @@
 #include <QTime>
 #include <QObject>
+#include <QProcess>
 #include <qmusbmode.h>
 #include <QTest>
 #include <QStack>
@@ -22,8 +23,7 @@ public slots:
             QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
             qDebug() << "\n\nReadOnlyMount " << mountOptions.testFlag(QmUSBMode::ReadOnlyMount);
             qDebug() << "\n\nReadWriteMount " << mountOptions.testFlag(QmUSBMode::ReadWriteMount);
-            QVERIFY(!mountOptions.testFlag(QmUSBMode::ReadOnlyMount));
-            QVERIFY(!mountOptions.testFlag(QmUSBMode::ReadWriteMount));
+            verifyMountStatus();
             QVERIFY(unmountReceived);
 
         }
@@ -32,7 +32,7 @@ public slots:
             QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
             qDebug() << "\n\nReadOnlyMount " << mountOptions.testFlag(QmUSBMode::ReadOnlyMount);
             qDebug() << "\n\nReadWriteMount " << mountOptions.testFlag(QmUSBMode::ReadWriteMount);
-            QVERIFY(mountOptions.testFlag(QmUSBMode::ReadOnlyMount) || mountOptions.testFlag(QmUSBMode::ReadWriteMount));
+            verifyMountStatus();
         }
 
         signalReceived = true;
@@ -56,6 +56,34 @@ private:
     bool signalReceived;
     bool unmountReceived;
     ModeStack modeStack;
+
+    void verifyMountStatus(bool mustBeWritableMount = false) {
+        bool readWriteMount = false, readOnlyMount = false;
+        QProcess mount;
+        mount.start("grep MyDocs /proc/mounts");
+        if (!mount.waitForFinished()) {
+            return;
+        }
+        QByteArray output = mount.readAllStandardOutput();
+        if (output.contains("MyDocs")) {
+            // mydocs mounted, so we should either get a read-only or a read-write mount
+            QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
+            readWriteMount = (mountOptions & QmUSBMode::ReadWriteMount);
+            readOnlyMount = (mountOptions & QmUSBMode::ReadOnlyMount);
+
+            if (output.contains(" rw,") || output.contains(",rw ") || output.contains(",rw,")) {
+                QVERIFY(readWriteMount);
+                QVERIFY(!readOnlyMount);
+            }
+            if (output.contains(" ro,") || output.contains(",ro ") || output.contains(",ro,")) {
+                QVERIFY(readOnlyMount);
+                QVERIFY(!readWriteMount);
+            }
+        }
+        if (mustBeWritableMount) {
+            QVERIFY(readWriteMount);
+        }
+    }
 
     QString mode2str(QmUSBMode::Mode mode) {
         switch (mode) {
@@ -92,7 +120,7 @@ private:
                 currentMode == QmUSBMode::Undefined);
 
         QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
-        QVERIFY((mountOptions & QmUSBMode::ReadOnlyMount) || (mountOptions & QmUSBMode::ReadWriteMount));
+        verifyMountStatus();
 
         signalReceived = false;
         unmountReceived = false;
@@ -179,7 +207,7 @@ private slots:
         printf("Please unplug the USB cable. Waiting 60 seconds for the /home/user/MyDocs mount to change to writable...\n");
         QTest::qWait(60*1000);
         QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
-        QVERIFY(mountOptions & QmUSBMode::ReadWriteMount);
+        verifyMountStatus(true);
     }
 
     void cleanupTestCase() {
