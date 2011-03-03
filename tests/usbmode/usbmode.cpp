@@ -87,10 +87,12 @@ private slots:
             bool readOnlyMount = (mountOptions & QmUSBMode::ReadOnlyMount);
 
             if (output.contains(" rw,") || output.contains(",rw ") || output.contains(",rw,")) {
-                QVERIFY(readWriteMount && !readOnlyMount);
+                QVERIFY(readWriteMount);
+                QVERIFY(!readOnlyMount);
             }
             if (output.contains(" ro,") || output.contains(",ro ") || output.contains(",ro,")) {
-                QVERIFY(readOnlyMount && !readWriteMount);
+                QVERIFY(readOnlyMount);
+                QVERIFY(!readWriteMount);
             }
         }
     }
