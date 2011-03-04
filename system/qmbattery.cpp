@@ -130,7 +130,7 @@ class EmIpc : public EmHandle<EmIpc>
     friend class EmHandle<EmIpc>;
 public:
 
-    EmIpc() : EmHandle<EmIpc>(), sd_(-1) {}
+    EmIpc() : EmHandle<EmIpc>(), sd_(-1), restart_count_(0) {}
 
     bool query(const void *msg1, int len1, void *msg2 = NULL, int len2 = -1)
     {
@@ -144,6 +144,8 @@ public:
 	    tries++;
 	    if (::bmeipc_query(sd_, msg1, len1, msg2, len2) >= 0)
 		return true;
+	    if (errno == EIO)
+		restart_count_++;
 	    if (tries >= BMEIPC_MAX_TRIES)  {
 		qCritical() << "EM: Query failed: " << strerror(errno);
 		return false;
@@ -156,6 +158,7 @@ public:
     }
 
     bool is_opened() { return sd_ >= 0; }
+    int restart_count() { return restart_count_; }
 
 private:
 
@@ -172,7 +175,7 @@ private:
 
 
     int sd_;
-
+    int restart_count_;
 };
 
 
@@ -354,6 +357,8 @@ QmBatteryPrivate::QmBatteryPrivate()
 	: parent_(0),
       is_data_actual_(false),
       cache_expire_(QDateTime::currentDateTime()),
+      cc_offset_(0),
+      prev_cc_restart_count_(-1),
       ipc_(new EmIpc()),
       events_(new EmEvents())
 {
@@ -380,13 +385,15 @@ bool QmBatteryPrivate::init(QmBattery *parent)
     return true;
 }
 
-void QmBatteryPrivate::queryData_() const
+void QmBatteryPrivate::queryStat_() const
 {
     QDateTime now(QDateTime::currentDateTime());
 
     if (!is_data_actual_ || now >= cache_expire_) {
         if (!ipc_->open())
 	    return;
+
+	int prev_cc = stat_[COULOMB_COUNTER];
 	
 	bmeipc_msg_t request;
 	request.type = BME_SYSMSG_GETSTAT;
@@ -396,19 +403,39 @@ void QmBatteryPrivate::queryData_() const
 	    
 	is_data_actual_ = true;
         cache_expire_ = now.addSecs(STAT_EXPIRATION_TIMEOUT);
+
+	if (prev_cc_restart_count_ != ipc_->restart_count()) {
+	    /* 
+	     * BME has re-started. Adjust the coulomb counter offset to hide
+	     * counter reset.
+	     *
+	     * @note: All the coulombs since the previous call have been lost,
+	     *        but let's consider that acceptable.
+	     */
+	    cc_offset_ += (prev_cc - stat_[COULOMB_COUNTER]);
+	    qDebug() << "CC reset, prev_cc:" << prev_cc
+		     << "new_cc" << stat_[COULOMB_COUNTER]
+		     << "new offset:" << cc_offset_;
+	    prev_cc_restart_count_ = ipc_->restart_count();
+	}
     }
 }
 
 void QmBatteryPrivate::saveStat_()
 {
-    queryData_();
+    queryStat_();
     memcpy(&saved_stat_, &stat_, sizeof(saved_stat_));
 }
 
 int QmBatteryPrivate::getStat(int index) const
 {
-    queryData_();
+    queryStat_();
     return stat_[index];
+}
+
+int QmBatteryPrivate::getCumulativeBatteryCurrent()
+{
+    return getStat(COULOMB_COUNTER) + cc_offset_;
 }
 
 int QmBatteryPrivate::getAverageCurrent(int usageMode,
@@ -549,7 +576,7 @@ void QmBatteryPrivate::onMeasurement(int /*socket*/)
 
 void QmBatteryPrivate::emitEventBatmon_()
 {
-    queryData_();
+    queryStat_();
 
     bool is_level_changed 
         = (saved_stat_[BATTERY_LEVEL_PCT] != stat_[BATTERY_LEVEL_PCT]
@@ -692,7 +719,7 @@ int QmBattery::getBatteryCurrent() const
 
 int QmBattery::getCumulativeBatteryCurrent() const
 {
-    return pimpl_->getStat(COULOMB_COUNTER);
+    return pimpl_->getCumulativeBatteryCurrent();
 }
 
 QmBattery::ChargerType QmBattery::getChargerType() const

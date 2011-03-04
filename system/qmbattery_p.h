@@ -70,6 +70,7 @@ public:
     bool stopCurrentMeasurement();
 
     int getStat(int) const;
+    int getCumulativeBatteryCurrent();
     int getAverageCurrent(int usageMode, QmBattery::RemainingTimeMode psMode,
 			  int defaultCurrent) const;
     int getRemainingTime(int usageMode, QmBattery::RemainingTimeMode psMode,
@@ -81,7 +82,7 @@ private Q_SLOTS:
     void waitForUSB500mA();
 
 private:
-    void queryData_() const;
+    void queryStat_() const;
     void emitEventBatmon_();
     void saveStat_();
 
@@ -94,6 +95,8 @@ private:
     mutable bool is_data_actual_;
     mutable QDateTime cache_expire_;
 
+    mutable int cc_offset_;
+    mutable int prev_cc_restart_count_;
     bmestat_t saved_stat_;
 
     QScopedPointer<EmIpc> ipc_;
