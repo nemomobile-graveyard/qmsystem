@@ -481,6 +481,10 @@ void MeeGo::QmTimePrivate::gconf_change_handler(GConfClient* , guint, GConfEntry
     }
 
     GConfValue *gconf_value = gconf_entry_get_value(entry);
+    if (!gconf_value) {
+        return;
+    }
+
     const char *value = gconf_value_get_string(gconf_value);
     QmTime::TimeFormat new_value = parse_format_24(value);
 

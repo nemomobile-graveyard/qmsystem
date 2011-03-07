@@ -1,3 +1,10 @@
+qmsystem2 (1.1.0) unstable; urgency=low
+
+  [Matias Muhonen]
+  * Fix a crash in QmTime
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Mon, 7 Mar 2011 09:39:17 +0200
+
 qmsystem2 (1.0.16) unstable; urgency=low
 
   [Yang Yang]
