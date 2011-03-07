@@ -10,10 +10,6 @@ qmsystem2 (1.0.16) unstable; urgency=low
   [Yang Yang]
   * Add test mount options to manual-usbmode-test
 
-  [Matias Muhonen]
-  * Fixes: NB#231816 - QmUSBMode::mountStatus(DocumentDirectoryMount) always returns ReadOnlyMount
-  * Fixes: NB#230568 - Wrong documentation about how to use in qmake
-
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Thu, 3 Mar 2011 12:15:57 +0200
 
 qmsystem2 (1.0.15) unstable; urgency=low
