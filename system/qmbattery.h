@@ -200,11 +200,12 @@ public:
      * @brief Gets the cumulative amount of battery current flowing out from the
      * battery (the coulomb counter).
      *
-     * @details The reference point of the cumulative battery current is undefined and
-     * only differences of the returned values are meningful. If the returned
-     * value is bigger than the previously returned value, the battery has
-     * discharged. If the returned value is smaller than previously returned
-     * value, the battery has been charged.
+     * @details The reference point of the cumulative battery current is
+     * undefined and only differences of the values returned by the same
+     * QmBattery instance are meningful. If the returned value is bigger than
+     * the previously returned value, the battery has discharged. If the
+     * returned value is smaller than previously returned value, the battery
+     * has been charged.
      *
      * @return Cumulative battery current (mAs)
      */
