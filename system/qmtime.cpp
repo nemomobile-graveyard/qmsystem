@@ -120,10 +120,13 @@ bool MeeGo::QmTimePrivate::remote_time(const char *tz, time_t t, QDateTime *qdat
 
 bool MeeGo::QmTime::getTimezone(QString &s)
 {
-    if (p->timed_info_valid)
-        s = p->info.humanReadableTz();
-
-    return p->timed_info_valid;
+    QDBusMessage reply = p->timed->get_wall_clock_info_sync();
+    QDBusReply<Maemo::Timed::WallClock::Info> reply_info = reply;
+    if (not reply_info.isValid()) {
+        return false;
+    }
+    s = reply_info.value().humanReadableTz();
+    return true;
 }
 
 bool MeeGo::QmTime::setTimezone(const QString tz)
