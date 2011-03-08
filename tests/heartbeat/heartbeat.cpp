@@ -49,7 +49,7 @@ class TestClass : public QObject
     Q_OBJECT
 
 private:
-    MeeGo::QmHeartbeat *heartbeat;
+    MeeGo::QmHeartbeat *heartbeat, *heartbeat2;
     SignalDump signalDump;
 
 private slots:
@@ -58,14 +58,23 @@ private slots:
         QVERIFY(heartbeat);
 
         bool result = heartbeat->open(MeeGo::QmHeartbeat::SignalNeeded);
-        QVERIFY(result == true);
+        QVERIFY(result);
 
         QVERIFY(connect(heartbeat, SIGNAL(wakeUp(QTime)),
                 &signalDump, SLOT(wakeUp(QTime))));
+
+        heartbeat2 = new MeeGo::QmHeartbeat();
+        QVERIFY(heartbeat2);
+
+        bool result2 = heartbeat2->open(MeeGo::QmHeartbeat::NoSignalNeeded);
+        QVERIFY(result2);
     }
 
     void testGetFD(){
         int result = heartbeat->getFD();
+        QVERIFY(result != -1);
+
+        int result2 = heartbeat2->getFD();
         QVERIFY(result != -1);
     }
 
@@ -73,7 +82,7 @@ private slots:
         qDebug() << "Test syncronous wait...";
         int sleeptime = 4;
         qDebug() << "Wait " <<  sleeptime << " seconds" ;
-        QTime result = heartbeat->wait(0, sleeptime , MeeGo::QmHeartbeat::WaitHeartbeat);
+        QTime result = heartbeat2->wait(0, sleeptime , MeeGo::QmHeartbeat::WaitHeartbeat);
         QVERIFY(result.second() >= sleeptime);
         QVERIFY(result.second() <= sleeptime + 1);
         qDebug() << "Slept " << result.second() << "seconds" ;
@@ -112,28 +121,28 @@ private slots:
     }
 
     void testNoSignalNeeded() {
-        heartbeat->close();
-        QVERIFY(heartbeat->open(MeeGo::QmHeartbeat::NoSignalNeeded));
         got_signal=0;
         int sleep_s = 4;
 
-        QTime result = heartbeat->wait(0, sleep_s, MeeGo::QmHeartbeat::WaitHeartbeat);
+        QTime result = heartbeat2->wait(0, sleep_s, MeeGo::QmHeartbeat::WaitHeartbeat);
         QVERIFY(result.second() >= sleep_s && result.second() <= sleep_s+1);
         QVERIFY(got_signal == 0);
-        heartbeat->IWokeUp();
+        heartbeat2->IWokeUp();
 
         sleep_s=7;
-        result = heartbeat->wait(0, 7, MeeGo::QmHeartbeat::DoNotWaitHeartbeat);
+        result = heartbeat2->wait(0, 7, MeeGo::QmHeartbeat::DoNotWaitHeartbeat);
         QVERIFY(result.second() >= 0 &&  result.second() <= 1);
         QTest::qWait(8000);
-        heartbeat->IWokeUp();
+        heartbeat2->IWokeUp();
         QVERIFY(got_signal == 0);
     }
 
    void cleanupTestCase() {
         heartbeat->close();
+        heartbeat2->close();
 
         delete heartbeat, heartbeat = 0;
+        delete heartbeat2, heartbeat2 = 0;
     }
 };
 
