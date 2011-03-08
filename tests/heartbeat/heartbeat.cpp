@@ -55,14 +55,6 @@ private:
 private slots:
     void initTestCase() {
         heartbeat = new MeeGo::QmHeartbeat();
-        MeeGo::QmHeartbeat *heartbeat2 = new MeeGo::QmHeartbeat();
-        int i;
-        for (i = 0; i < 1000; i++) {
-            int *p = (int *)malloc(1000000);
-            *p = i;
-            
-        }
-        delete  heartbeat2;
         QVERIFY(heartbeat);
     }
 
