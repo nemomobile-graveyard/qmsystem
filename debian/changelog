@@ -2,6 +2,7 @@ qmsystem2 (1.1.0) unstable; urgency=low
 
   [Matias Muhonen]
   * Fix a crash in QmTime (Fixes: NB#230333)
+  * Fix the heartbeat test
 
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Mon, 7 Mar 2011 09:39:17 +0200
 
