@@ -68,9 +68,10 @@ static int  debugmode = 0;
 QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv),
     server(0),
     connections(0),
-    gpioFile(-1), keypadFile(-1), eciFile(-1), powerButtonFile(-1), btFile(-1), btfname(0),
+    gpioFile(-1), keypadFile(-1), eciFile(-1), powerButtonFile(-1), btFile(-1),
     gpioNotifier(0), keypadNotifier(0), eciNotifier(0), powerButtonNotifier(0), btNotifier(0), inputNotifier(0),
     inotifyWd(-1), inotifyFd(-1),
+    btfname(0),
     users(0)
 {
     openlog("qmkeyd", LOG_NDELAY|LOG_PID, LOG_DAEMON);

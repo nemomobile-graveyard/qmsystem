@@ -297,7 +297,7 @@ QVector< QPair< QString , QString > > QmUSBModePrivate::mountEntries() {
 QString QmUSBModePrivate::mountOptions(QVector< QPair< QString , QString > > mountEntries, const QString &fileName) {
     QString mountOptions;
     const size_t max = mountEntries.size();
-    for (int i=0; i < max; i++) {
+    for (size_t i=0; i < max; i++) {
         QPair<QString, QString> entry = mountEntries.at(i);
         /* Check if the mnt_dir matches the mount we are looking */
         if (entry.first == fileName) {

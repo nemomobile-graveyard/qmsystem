@@ -52,7 +52,7 @@ private:
 
     bool waitForPings(unsigned pings, unsigned timeout_ms)
     {
-        for (int i = 0; i < timeout_ms; i += 1000) {
+        for (unsigned int i = 0; i < timeout_ms; i += 1000) {
             QTest::qWait(1000);
             if (pingCount >= pings) {
                 return true;
@@ -105,7 +105,7 @@ private slots:
         pongOnGivenPing = 3;
         QVERIFY(watchdog->start());
         qDebug() << "start: " << QTime::currentTime();
-        bool pingsOk = waitForPings(3, 4*24*1000);
+        waitForPings(3, 4*24*1000);
         watchdog->stop();
     }
 

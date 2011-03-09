@@ -98,7 +98,7 @@ private slots:
     }
 
     void testGetMaxDisplayBrightnessValue() {
-        int result = displaystate->getMaxDisplayBrightnessValue();
+        displaystate->getMaxDisplayBrightnessValue();
     }
 
     void testDisplayBrightnessValue() {

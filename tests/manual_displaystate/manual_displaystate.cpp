@@ -43,6 +43,9 @@ private slots:
         case QmDisplayState::Off:
             retval = "Off";
             break;
+        case QmDisplayState::Unknown:
+            retval = "Unknown";
+            break;
         }
         return retval;
     }

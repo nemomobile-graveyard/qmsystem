@@ -75,7 +75,7 @@ private slots:
         QVERIFY(result != -1);
 
         int result2 = heartbeat2->getFD();
-        QVERIFY(result != -1);
+        QVERIFY(result2 != -1);
     }
 
     void testSyncronousWait() {

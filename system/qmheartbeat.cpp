@@ -105,6 +105,8 @@ void QmHeartbeatPrivate::close() {
 }
 
 void QmHeartbeatPrivate::socketReady(int sock) {
+    Q_UNUSED(sock);
+
     int st = iphb_discard_wakeups(iphbdHandler);
 
     if (st == -1)
