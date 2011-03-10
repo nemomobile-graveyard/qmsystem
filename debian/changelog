@@ -1,3 +1,10 @@
+qmsystem2 (1.1.1) unstable; urgency=low
+
+  [Shenghua Liu]
+  * Improve QmSensor API documentation
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Thu, 10 Mar 2011 14:21:28 +0200
+
 qmsystem2 (1.1.0) unstable; urgency=low
 
   [Matias Muhonen]
