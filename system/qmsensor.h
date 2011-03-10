@@ -65,7 +65,7 @@ namespace MeeGo {
      * @brief Abstract base class for Sensord APIs.
      *
      * QmSensor provides common functions for all sensors served by sensord.
-     * To use the sensors, client must initiate communication to the server
+     * To use sensors, client must initiate communication to a server
      * by requesting a session. Then, the client can use start() and stop()
      * to control the dataflow.
      *
@@ -74,9 +74,9 @@ namespace MeeGo {
      * worth to note that measurements in server side are done when any
      * client is requesting data from the sensor. The previous measurement
      * will thus always match the last made measurement, regardless of
-     * current client run state. Likewise, if no client is in running state,
-     * no measurements are done and the previous measured value may be
-     * undefined or old.
+     * current client's running state. Likewise, if no client is in running state,
+     * no measurement is done and the previous measured value may be
+     * undefined or outdated.
      *
      * Sample use of sensor class ALSSensor:
      * @code
@@ -178,7 +178,7 @@ namespace MeeGo {
         /**
          * Gets an explanatory message for previous error. The returned string
          * always corresponds to the previous error that has occurred. Thus,
-         * it should be checked immediately after some function has returned
+         * it should be checked immediately after a function has returned
          * a value indicating an error.
          *
          * @return QString containing human readable error description
@@ -195,9 +195,9 @@ namespace MeeGo {
         /**
          * Sets a polling interval request for sensord.
          *
-         * @todo Provide description what this means.
+         * @param value Interval value to set in milliseconds
          *
-         * @param value Interval value to set
+         *
          */
         void setInterval(int value);
 

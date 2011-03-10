@@ -65,7 +65,7 @@ namespace MeeGo {
      * be pointing front from the viewer, and x-axis to the side. Devices with
      * rotating displays may have different behavior with regards to this rule.
      *
-     * The  unit of  the values are mG, for example 1000 means 1 G.
+     * The unit of the values is mG, for example 1000 means 1 G.
      *
      * @verbatim
 

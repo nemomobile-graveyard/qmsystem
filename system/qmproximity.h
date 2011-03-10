@@ -49,7 +49,7 @@ namespace MeeGo {
      * open a session (and call start() for data). Details can be found
      * from documentation of #QmSensor.
      *
-     * @todo Describe the meaning of measured values.
+     *
      */
     class MEEGO_SYSTEM_EXPORT QmProximity : public QmSensor
     {
@@ -78,7 +78,8 @@ namespace MeeGo {
 
         /**
          * Sent when the value of proximity sensor has changed.
-         * @param value Observed proximity value
+         * @param value Observed proximity value. \c 0: sensor not covered, \c 1: sensor covered
+         *
          */
         void ProximityChanged(const MeeGo::QmProximityReading value);
 

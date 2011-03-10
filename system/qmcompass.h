@@ -57,10 +57,10 @@ namespace MeeGo {
      * Logical compass sensor uses magnetometer and accelerometer to measure
      * current north angle.
      *
-     * To get meaningfull direction from the compass, it must be calibrated.
+     * To get meaningful direction from the compass, it must be calibrated.
      * Calibration level varies from 0 to 3. Only measurements at level 3
      * are accurate. Calibration is done by rotating the device around
-     * each axis simultaneously. Rotating ones wrist for 2-3 rounds with
+     * each axis simultaneously. Rotating one's wrist for 2-3 rounds with
      * the device in hand usually is enough. Fast changes in the magnetic
      * environment may cause the calibration level to drop.
      * 
@@ -117,7 +117,7 @@ namespace MeeGo {
 
     Q_SIGNALS:
         /**
-         * Signal to notify the listener about change of compass direction.
+         * Signal to notify the listener about change of compass direction,
          * or calibration level.
          * @param value Current compass measurement
          */
