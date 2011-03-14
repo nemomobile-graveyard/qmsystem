@@ -9,6 +9,7 @@
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Timo Rongas <ext-timo.rongas@nokia.com>
    @author Yang Yang <ext-yang.25.yang@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    This file is part of SystemSW QtAPI.
 
@@ -27,7 +28,6 @@
  */
 
 #include <glib.h>
-#include <time.h>
 
 #include <QDBusReply>
 #include <QDebug>
@@ -49,629 +49,724 @@
 
 MeeGo::QmTime::QmTime(QObject *parent) : QObject(parent)
 {
-    p = QmTimePrivate::get_object();
+  p = QmTimePrivate2::get_object() ;
 
-    connect(p, p_signal(), this, signal());
-#if QMTIME_SUPPORT_DEPRECATED
-    connect(p, p_signal_o(), this, signal_o());
+  connect(p, p_signal(), this, signal()) ;
+#if F_SUPPORT_DEPRECATED
+  connect(p, p_signal_o(), this, signal_o()) ;
 #endif
 }
 
 MeeGo::QmTime::~QmTime()
 {
-    QmTimePrivate::unref_object();
+  QmTimePrivate2::unref_object() ;
 }
 
-QMutex MeeGo::QmTimePrivate::TzWrapper::mutex;
+QMutex MeeGo::QmTimePrivate2::TzWrapper::mutex ;
 
-MeeGo::QmTimePrivate::TzWrapper::TzWrapper(const char *tz)
+MeeGo::QmTimePrivate2::TzWrapper::TzWrapper(const char *tz) // NULL means "don't change", empty string means "unset"
 {
-    // NULL means "don't change", empty string means "unset"
-    mutex.lock();
-    valid = true;
-    set_timezone = tz!=NULL;
-    if (set_timezone) {
-        saved_tz = getenv("TZ") ?: ""; // if set and empty, then will be unset at exit
-        if (not set_tz_env(tz))
-            set_timezone = valid = false;
-    }
+  mutex.lock() ;
+  valid = true ;
+  set_timezone = tz!=NULL ;
+  if (set_timezone)
+  {
+    saved_tz = getenv("TZ") ?: "" ; // if set and empty, then will be unset at exit
+    if (not set_tz_env(tz))
+      set_timezone = valid = false ;
+  }
 }
 
-MeeGo::QmTimePrivate::TzWrapper::~TzWrapper()
+MeeGo::QmTimePrivate2::TzWrapper::~TzWrapper()
 {
-    if (set_timezone) {
-        if (not set_tz_env(saved_tz.c_str()))
-            log_critical("can't restore TZ environment '%s'", saved_tz.c_str());
-    }
-    mutex.unlock();
+  if (set_timezone)
+  {
+    if (not set_tz_env(saved_tz.c_str()))
+      log_critical("can't restore TZ environment '%s'", saved_tz.c_str()) ;
+  }
+  mutex.unlock() ;
 }
 
-bool MeeGo::QmTimePrivate::TzWrapper::set_tz_env(const char *tz)
+bool MeeGo::QmTimePrivate2::TzWrapper::set_tz_env(const char *tz)
 {
-    bool res;
-    if (*tz=='\0') // empty string -> unset
-        res = unsetenv("TZ")==0;
-    else
-        res = setenv("TZ", tz, true)==0;
-    tzset();
-    return res;
+  bool res ;
+  if (*tz=='\0') // empty string -> unset
+    res = unsetenv("TZ")==0 ;
+  else
+    res = setenv("TZ", tz, true)==0 ;
+  tzset() ;
+  return res ;
 }
 
-bool MeeGo::QmTimePrivate::remote_time(const char *tz, time_t t, QDateTime *qdatetime, struct tm *tm)
+bool MeeGo::QmTimePrivate2::remote_time(const char *tz, time_t t, QDateTime *qdatetime, struct tm *tm)
 {
-    MeeGo::QmTimePrivate::TzWrapper tmp_tz(tz);
-    if (not tmp_tz.is_valid()) {
-        log_error("can't set TZ environment '%s'", tz ?: "[null]");
-        return false;
-    }
-    struct tm local_tm, *p_tm = tm ?: &local_tm;
-    bool res = localtime_r(&t, p_tm) == p_tm;
-    if (not res)
-        return false;
+  MeeGo::QmTimePrivate2::TzWrapper tmp_tz(tz) ;
+  if (not tmp_tz.is_valid())
+  {
+    log_error("can't set TZ environment '%s'", tz ?: "[null]") ;
+    return false ;
+  }
+  struct tm local_tm, *p_tm = tm ?: &local_tm ;
+  bool res = localtime_r(&t, p_tm) == p_tm ;
+  if (not res)
+    return false ;
 
-    if (qdatetime!=NULL) {
-        QDate qdate(p_tm->tm_year+1900, p_tm->tm_mon+1, p_tm->tm_mday);
-        QTime qtime(p_tm->tm_hour, p_tm->tm_min, p_tm->tm_sec);
-        *qdatetime = QDateTime(qdate, qtime, Qt::LocalTime);
-    }
+  if (qdatetime!=NULL)
+  {
+    QDate qdate(p_tm->tm_year+1900, p_tm->tm_mon+1, p_tm->tm_mday) ;
+    QTime qtime(p_tm->tm_hour, p_tm->tm_min, p_tm->tm_sec) ;
+    *qdatetime = QDateTime(qdate, qtime, Qt::LocalTime) ;
+  }
 
-    return true;
+  return true ;
 }
 
 bool MeeGo::QmTime::getTimezone(QString &s)
 {
-    QDBusMessage reply = p->timed->get_wall_clock_info_sync();
-    QDBusReply<Maemo::Timed::WallClock::Info> reply_info = reply;
-    if (not reply_info.isValid()) {
-        return false;
-    }
-    s = reply_info.value().humanReadableTz();
-    return true;
+  if (p->timed_info_valid)
+    s = p->info.humanReadableTz() ;
+
+  return p->timed_info_valid ;
 }
 
 bool MeeGo::QmTime::setTimezone(const QString tz)
 {
-    // Let's explicitly check it: timed will accept an empty string here,
-    //   which means: the time zone will be switched to the
-    //   last used manual time zone
-    // But it seems QmTime user should not submit an empty string
-    if (tz.isEmpty())
-        return false;
+  // Let's explicitly check it: timed will accept an empty string here,
+  //   which means: the time zone will be switched to the
+  //   last used manual time zone
+  // But it seems QmTime user should not submit an empty string
+  if (tz.isEmpty())
+    return false ;
 
-    Maemo::Timed::WallClock::Settings s;
-    s.setTimezoneManual(tz);
+  Maemo::Timed::WallClock::Settings s;
+  s.setTimezoneManual(tz);
 
-    if (not s.check())
-        return false;
+  if (not s.check())
+    return false;
 
-    QDBusMessage reply = p->timed->wall_clock_settings_sync(s);
-    QDBusReply<bool> reply_bool = reply;
+  QDBusMessage reply = p->timed->wall_clock_settings_sync(s) ;
+  QDBusReply<bool> reply_bool = reply ;
 
-    if (not reply_bool.isValid() or not reply_bool.value()) {
-        log_error("can't set timezone, error message: '%s'", reply.errorMessage().toStdString().c_str());
-        return false;
-    }
+  if (not reply_bool.isValid() or not reply_bool.value())
+  {
+    log_error("can't set timezone, error message: '%s'", reply.errorMessage().toStdString().c_str()) ;
+    return false ;
+  }
 
-    log_notice("timezome set to '%s'", tz.toStdString().c_str());
+  log_notice("timezome set to '%s'", tz.toStdString().c_str()) ;
 
-    if (p->sync_policy==SynchronizeOnWrite) {
-        log_notice("syncronizing time settings");
-        return p->syncronize_timed_info();
-    }
+  if (p->sync_policy==SynchronizeOnWrite)
+  {
+    log_notice("syncronizing time settings") ;
+    return p->syncronize_timed_info() ;
+  }
 
-    return true;
+  return true ;
 }
 
-#if QMTIME_SUPPORT_TIME_FORMAT
+#if F_TIME_FORMAT
 MeeGo::QmTime::TimeFormat MeeGo::QmTime::getTimeFormat()
 {
-    log_error("function %s is deprecated, don't use it!", __PRETTY_FUNCTION__);
-    return (MeeGo::QmTime::TimeFormat) 0;
+  log_error("function %s is deprecated, don't use it!", __PRETTY_FUNCTION__) ;
+  return (MeeGo::QmTime::TimeFormat) 0 ;
 }
 #endif
 
-#if QMTIME_SUPPORT_TIME_FORMAT
+#if F_TIME_FORMAT
 bool MeeGo::QmTime::setTimeFormat(MeeGo::QmTime::TimeFormat format)
 {
-    (void)format;
-    log_error("function %s is deprecated, don't use it!", __PRETTY_FUNCTION__);
-    return false;
+#if 0
+  if (format!=Format12 and format!=Format24)
+    return false ;
+
+  if (p->format == format)
+    return true ;
+
+  p->format = format ;
+
+  const char *value = format==Format12 ? "12" : "24" ;
+
+  bool res = gconf_client_set_string(p->gc, TIME_FORMAT_KEY, value, NULL) ;
+
+  if (res)
+  {
+    log_notice("time format successfully set to '%s', emitting signal", value) ;
+    p->emit_signal(false) ;
+    return true ;
+  }
+  else
+  {
+    log_error("can't set key '%s' to '%s'", TIME_FORMAT_KEY, value) ;
+    return false ;
+  }
+#else
+  (void)format ;
+  log_error("function %s is deprecated, don't use it!", __PRETTY_FUNCTION__) ;
+  return false ;
+#endif
 }
 #endif
 
-int MeeGo::QmTimePrivate::getTimeDiff(time_t t, const QString &tz1, const QString &tz2)
+
+int MeeGo::QmTime::getTimeDiff(time_t t, const QString &tz1, const QString &tz2)
 {
-    string s1 = tz1.toStdString(), s2 = tz2.toStdString();
+  string s1 = tz1.toStdString(), s2 = tz2.toStdString() ;
 
-    struct tm tm1, tm2;
-    bool res1 = remote_time(s1.c_str(), t, NULL, &tm1);
+  struct tm tm1, tm2;
+  bool res1 = p->remote_time(s1.c_str(), t, NULL, &tm1) ;
 
-    if (not res1) {
-        log_error("can't calculate gmt offset for time zone '%s'", s1.c_str());
-        return -1;
-    }
+  if (not res1)
+  {
+    log_error("can't calculate gmt offset for time zone '%s'", s1.c_str()) ;
+    return -1 ;
+  }
 
-    bool res2 = remote_time(s2.c_str(), t, NULL, &tm2);
+  bool res2 = p->remote_time(s2.c_str(), t, NULL, &tm2) ;
 
-    if (not res2) {
-        log_error("can't calculate gmt offset for time zone '%s'", s2.c_str());
-        return -1;
-    }
+  if (not res2)
+  {
+    log_error("can't calculate gmt offset for time zone '%s'", s2.c_str()) ;
+    return -1 ;
+  }
 
-    long diff = tm1.tm_gmtoff- tm2.tm_gmtoff;
+  long diff = tm1.tm_gmtoff- tm2.tm_gmtoff ;
 
-    return diff;
+  return diff ;
 }
 
 enum MeeGo::QmTime::AutoSystemTimeStatus MeeGo::QmTime::autoSystemTime()
 {
-    if (not p->timed_info_valid)
-        return AutoSystemTimeUnknown;
-    else
-        return p->info.flagTimeNitz() ? AutoSystemTimeOn : AutoSystemTimeOff;
+  if (not p->timed_info_valid)
+    return AutoSystemTimeUnknown ;
+  else
+    return p->info.flagTimeNitz() ? AutoSystemTimeOn : AutoSystemTimeOff ;
 }
 
 bool MeeGo::QmTime::setAutoSystemTime(enum MeeGo::QmTime::AutoSystemTimeStatus new_status)
 {
-    Maemo::Timed::WallClock::Settings s;
+  Maemo::Timed::WallClock::Settings s ;
 
-    if (new_status==AutoSystemTimeOn)
-        s.setTimeNitz();
-    else if (new_status==AutoSystemTimeOff)
-        s.setTimeManual();
-    else
-        return false;
+  if (new_status==AutoSystemTimeOn)
+    s.setTimeNitz() ;
+  else if (new_status==AutoSystemTimeOff)
+    s.setTimeManual() ;
+  else
+    return false ;
 
-    QDBusMessage reply = p->timed->wall_clock_settings_sync(s);
-    QDBusReply<bool> reply_bool = reply;
+  QDBusMessage reply = p->timed->wall_clock_settings_sync(s) ;
+  QDBusReply<bool> reply_bool = reply ;
 
-    if (not reply_bool.isValid() or not reply_bool.value()) {
-        log_error("can't set auto time status, error message: '%s'", reply.errorMessage().toStdString().c_str());
-        return false;
-    }
+  if (not reply_bool.isValid() or not reply_bool.value())
+  {
+    log_error("can't set auto time status, error message: '%s'", reply.errorMessage().toStdString().c_str()) ;
+    return false ;
+  }
 
-    log_notice("auto time status set to '%s'", new_status==AutoSystemTimeOn ? "on" : "off");
+  log_notice("auto time status set to '%s'", new_status==AutoSystemTimeOn ? "on" : "off") ;
 
-    if (p->sync_policy==SynchronizeOnWrite) {
-        log_notice("syncronizing time settings");
-        return p->syncronize_timed_info();
-    } else
-        return true;
+  if (p->sync_policy==SynchronizeOnWrite)
+  {
+    log_notice("syncronizing time settings") ;
+    return p->syncronize_timed_info() ;
+  }
+  else
+    return true ;
 }
 
 enum MeeGo::QmTime::AutoTimeZoneStatus MeeGo::QmTime::autoTimeZone()
 {
-    if (not p->timed_info_valid)
-        return AutoTimeZoneUnknown;
-    else
-        return p->info.flagLocalCellular() ? AutoTimeZoneOn : AutoTimeZoneOff;
+  if (not p->timed_info_valid)
+    return AutoTimeZoneUnknown ;
+  else
+    return p->info.flagLocalCellular() ? AutoTimeZoneOn : AutoTimeZoneOff ;
 }
 
 bool MeeGo::QmTime::setAutoTimeZone(enum MeeGo::QmTime::AutoTimeZoneStatus new_status)
 {
-    Maemo::Timed::WallClock::Settings s;
+  Maemo::Timed::WallClock::Settings s ;
 
-    if (new_status==AutoTimeZoneOn)
-        s.setTimezoneCellular();
-    else if (new_status==AutoTimeZoneOff)
-        s.setTimezoneManual("");
-    else
-        return false;
+  if (new_status==AutoTimeZoneOn)
+    s.setTimezoneCellular() ;
+  else if (new_status==AutoTimeZoneOff)
+    s.setTimezoneManual("") ;
+  else
+    return false ;
 
-    QDBusMessage reply = p->timed->wall_clock_settings_sync(s);
-    QDBusReply<bool> reply_bool = reply;
+  QDBusMessage reply = p->timed->wall_clock_settings_sync(s) ;
+  QDBusReply<bool> reply_bool = reply ;
 
-    if (not reply_bool.isValid() or not reply_bool.value()) {
-        log_error("can't set auto time zone status, error message: '%s'", reply.errorMessage().toStdString().c_str());
-        return false;
-    }
+  if (not reply_bool.isValid() or not reply_bool.value())
+  {
+    log_error("can't set auto time zone status, error message: '%s'", reply.errorMessage().toStdString().c_str()) ;
+    return false ;
+  }
 
-    log_notice("auto time zone status set to '%s'", new_status==AutoTimeZoneOn ? "on" : "off");
+  log_notice("auto time zone status set to '%s'", new_status==AutoTimeZoneOn ? "on" : "off") ;
 
-    if (p->sync_policy==SynchronizeOnWrite) {
-        log_notice("syncronizing time settings");
-        return p->syncronize_timed_info();
-    } else
-        return true;
+  if (p->sync_policy==SynchronizeOnWrite)
+  {
+    log_notice("syncronizing time settings") ;
+    return p->syncronize_timed_info() ;
+  }
+  else
+    return true ;
 }
 
-bool MeeGo::QmTimePrivate::isOperatorTimeAccessible(bool &result)
+bool MeeGo::QmTime::isOperatorTimeAccessible(bool &result)
 {
-    if (timed_info_valid)
-        result = info.nitzSupported();
+  if (p->timed_info_valid)
+    result = p->info.nitzSupported() ;
 
-    return timed_info_valid;
+  return p->timed_info_valid ;
 }
 
 bool MeeGo::QmTime::deviceDefaultTimezone(QString &default_timezone)
 {
-    if (p->timed_info_valid)
-        default_timezone = p->info.defaultTimezone();
+  if (p->timed_info_valid)
+    default_timezone = p->info.defaultTimezone() ;
 
-    return p->timed_info_valid;
+  return p->timed_info_valid ;
 }
 
-MeeGo::QmTimePrivate MeeGo::QmTimePrivate::object(NULL);
+MeeGo::QmTimePrivate2 MeeGo::QmTimePrivate2::object(NULL) ;
 
-MeeGo::QmTimePrivate *MeeGo::QmTimePrivate::get_object()
+MeeGo::QmTimePrivate2 *MeeGo::QmTimePrivate2::get_object()
 {
-    ++ object.counter;
-    if (not object.initialized)
-        object.initialize();
-    return &object;
+  ++ object.counter ;
+  if (not object.initialized)
+    object.initialize() ;
+  return &object ;
 }
 
-void MeeGo::QmTimePrivate::unref_object()
+void MeeGo::QmTimePrivate2::unref_object()
 {
-    if (--object.counter==0 and object.disconn_policy==MeeGo::DisconnectWhenPossible)
-        object.uninitialize();
+  if (--object.counter==0 and object.disconn_policy==MeeGo::QmTime::DisconnectWhenPossible)
+    object.uninitialize() ;
 }
 
-MeeGo::QmTimePrivate::QmTimePrivate(QObject *parent) : QObject(parent)
+MeeGo::QmTimePrivate2::QmTimePrivate2(QObject *parent) : QObject(parent)
 {
-    sync_policy = MeeGo::WaitForSignal;
-    sync_policy = MeeGo::SynchronizeOnWrite; // this line to be removed later
-    disconn_policy = MeeGo::KeepConnected;
-    counter = 0;
-    initialized = false;
-    timed_info_valid = false;
-#if QMTIME_SUPPORT_TIME_FORMAT
-    gc = NULL;
+  sync_policy = MeeGo::QmTime::WaitForSignal ;
+  sync_policy = MeeGo::QmTime::SynchronizeOnWrite ; // this line to be removed later
+  disconn_policy = MeeGo::QmTime::KeepConnected ;
+  counter = 0 ;
+  initialized = false ;
+  timed_info_valid = false ;
+#if F_TIME_FORMAT
+  gc = NULL ;
 #endif
-    timed = NULL;
+  timed = NULL ;
 }
 
-#if QMTIME_SUPPORT_TIME_FORMAT
-void MeeGo::QmTimePrivate::first_run_init()
+#if F_TIME_FORMAT
+void MeeGo::QmTimePrivate2::first_run_init()
 {
-    static bool first_run = true;
-    if (first_run) {
-        g_type_init();
-        first_run = false;
-    }
+  static bool first_run = true ;
+  if (first_run)
+  {
+    g_type_init() ;
+    first_run = false ;
+  }
 }
-#endif
-
-void MeeGo::QmTimePrivate::initialize()
-{
-#if QMTIME_SUPPORT_TIME_FORMAT
-    first_run_init();
 #endif
 
-    // we don't know anything yet
-    timed_info_valid = false;
-#if QMTIME_SUPPORT_TIME_FORMAT
-    format = QmTime::formatUnknown;
-
-    // to be notified by gconf
-    gc = gconf_client_get_default();
-    gconf_client_add_dir(gc, TIME_FORMAT_KEY, GCONF_CLIENT_PRELOAD_ONELEVEL, NULL);
-    notify_id = gconf_client_notify_add(gc, TIME_FORMAT_KEY, QmTimePrivate::gconf_change_handler, this, NULL, NULL);
-
-    // is seems, we have to do it syncronously :-(
-    char *str = gconf_client_get_string(gc, TIME_FORMAT_KEY, NULL);
-
-    if (str==NULL)
-        log_error("gconf_client_get_string('%s') failed", TIME_FORMAT_KEY);
-    else {
-        log_debug("got format value: '%s'", str);
-        format = parse_format_24(str);
-        g_free(str);
-    }
+void MeeGo::QmTimePrivate2::initialize()
+{
+#if F_TIME_FORMAT
+  first_run_init() ;
 #endif
 
-    // to be notified by timed
-    timed = new Maemo::Timed::Interface;
-    bool connected = timed->settings_changed_connect(this, p_slot_timed());
+  // we don't know anything yet
+  timed_info_valid = false ;
+#if F_TIME_FORMAT
+  format = QmTime::formatUnknown ;
 
-    if (not connected)
-        log_error("connection to timed signal failed, message: '%s'", Maemo::Timed::bus().lastError().message().toStdString().c_str());
-    else
-        log_notice("connected to timed signal");
+  // to be notified by gconf
+  gc = gconf_client_get_default() ;
+  gconf_client_add_dir(gc, TIME_FORMAT_KEY, GCONF_CLIENT_PRELOAD_ONELEVEL, NULL) ;
+  notify_id = gconf_client_notify_add(gc, TIME_FORMAT_KEY, QmTimePrivate2::gconf_change_handler, this, NULL, NULL) ;
 
-    syncronize_timed_info();
+  // is seems, we have to do it syncronously :-(
+  char *str = gconf_client_get_string(gc, TIME_FORMAT_KEY, NULL) ;
 
-    initialized = true;
-}
-
-bool MeeGo::QmTimePrivate::syncronize_timed_info()
-{
-    QDBusMessage reply = timed->get_wall_clock_info_sync();
-    QDBusReply<Maemo::Timed::WallClock::Info> reply_info = reply;
-    if (not reply_info.isValid()) {
-        log_error("synconizing timed info failed: error '%s'", reply.errorMessage().toStdString().c_str());
-        return false;
-    } else { // we have a valid reply
-        log_notice("syncronizing timed info: a valid reply received");
-        process_timed_info(reply_info.value(), false, false);
-        return true;
-    }
-}
-
-void MeeGo::QmTimePrivate::uninitialize_v2()
-{
-    initialized = false;
-    if (false) {
-        bool disconnected = timed->settings_changed_disconnect(this, p_slot_timed());
-
-        if (not disconnected)
-            log_error("disconnection from timed signal failed, message: '%s'", Maemo::Timed::bus().lastError().message().toStdString().c_str());
-        else
-            log_notice("disconnected from timed signal");
-    }
-
-    delete timed;
-    timed = NULL;
-
-#if QMTIME_SUPPORT_TIME_FORMAT
-    gconf_client_notify_remove(gc, notify_id);
-    gconf_client_remove_dir(gc, TIME_FORMAT_KEY, NULL);
-    g_object_unref(gc);
+  if (str==NULL)
+    log_error("gconf_client_get_string('%s') failed", TIME_FORMAT_KEY) ;
+  else
+  {
+    log_debug("got format value: '%s'", str) ;
+    format = parse_format_24(str) ;
+    g_free(str) ;
+  }
 #endif
 
-    timed_info_valid = false;
-#if QMTIME_SUPPORT_TIME_FORMAT
-    format = QmTime::formatUnknown;
-#endif
+  // to be notified by timed
+  timed = new Maemo::Timed::Interface ;
+  bool connected = timed->settings_changed_connect(this, p_slot_timed()) ;
+
+  if (not connected)
+    log_error("connection to timed signal failed, message: '%s'", Maemo::Timed::bus().lastError().message().toStdString().c_str()) ;
+  else
+    log_notice("connected to timed signal") ;
+
+  syncronize_timed_info() ;
+
+  initialized = true ;
 }
 
-void MeeGo::QmTimePrivate::uninitialize()
+bool MeeGo::QmTimePrivate2::syncronize_timed_info()
 {
-    initialized = false;
-    bool disconnected = timed->settings_changed_disconnect(this, p_slot_timed());
+  QDBusMessage reply = timed->get_wall_clock_info_sync() ;
+  QDBusReply<Maemo::Timed::WallClock::Info> reply_info = reply ;
+  if (not reply_info.isValid())
+  {
+    log_error("synconizing timed info failed: error '%s'", reply.errorMessage().toStdString().c_str()) ;
+    return false ;
+  }
+  else // we have a valid reply
+  {
+    log_notice("syncronizing timed info: a valid reply received") ;
+    process_timed_info(reply_info.value(), false, false) ;
+    return true ;
+  }
+}
+
+#if 0
+void MeeGo::QmTimePrivate2::query_timed_info()
+{
+  QDBusPendingCall call = timed->get_wall_clock_info_async() ;
+  QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this) ;
+  QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(query_finished(QDBusPendingCallWatcher*))) ;
+}
+
+void MeeGo::QmTimePrivate2::query_finished(QDBusPendingCallWatcher *watcher)
+{
+  QDBusPendingReply<Maemo::Timed::WallClock::Info> reply = *watcher ;
+  if (reply.isError())
+    log_error("querying timed info: error '%s'", reply.error().message().toStdString().c_str()) ;
+  else if (not reply.isValid())
+    log_error("querying timed info: invalid reply") ;
+  else // we have a valid reply
+  {
+    log_notice("querying timed info: a valid reply received") ;
+    process_timed_info(reply.value(), false, true) ;
+  }
+  delete watcher ;
+}
+#endif
+
+void MeeGo::QmTimePrivate2::uninitialize_v2()
+{
+  initialized = false ;
+  if (false)
+  {
+    bool disconnected = timed->settings_changed_disconnect(this, p_slot_timed()) ;
 
     if (not disconnected)
-        log_error("disconnection from timed signal failed, message: '%s'", Maemo::Timed::bus().lastError().message().toStdString().c_str());
+      log_error("disconnection from timed signal failed, message: '%s'", Maemo::Timed::bus().lastError().message().toStdString().c_str()) ;
     else
-        log_notice("disconnected from timed signal");
+      log_notice("disconnected from timed signal") ;
+  }
 
-    delete timed;
-    timed = NULL;
+  delete timed ;
+  timed = NULL ;
 
-#if QMTIME_SUPPORT_TIME_FORMAT
-    gconf_client_notify_remove(gc, notify_id);
-    gconf_client_remove_dir(gc, TIME_FORMAT_KEY, NULL);
-    g_object_unref(gc);
+#if F_TIME_FORMAT
+  gconf_client_notify_remove(gc, notify_id) ;
+  gconf_client_remove_dir(gc, TIME_FORMAT_KEY, NULL) ;
+  g_object_unref(gc);
 #endif
 
-    timed_info_valid = false;
-#if QMTIME_SUPPORT_TIME_FORMAT
-    format = QmTime::formatUnknown;
+  timed_info_valid = false ;
+#if F_TIME_FORMAT
+  format = QmTime::formatUnknown ;
 #endif
 }
 
-bool MeeGo::QmTimePrivate::localTime(time_t t, QDateTime &qdatetime, struct tm *tm)
+void MeeGo::QmTimePrivate2::uninitialize()
 {
-    return MeeGo::QmTimePrivate::remote_time(NULL, t, &qdatetime, tm);
+  initialized = false ;
+  bool disconnected = timed->settings_changed_disconnect(this, p_slot_timed()) ;
+
+  if (not disconnected)
+    log_error("disconnection from timed signal failed, message: '%s'", Maemo::Timed::bus().lastError().message().toStdString().c_str()) ;
+  else
+    log_notice("disconnected from timed signal") ;
+
+  delete timed ;
+  timed = NULL ;
+
+#if F_TIME_FORMAT
+  gconf_client_notify_remove(gc, notify_id) ;
+  gconf_client_remove_dir(gc, TIME_FORMAT_KEY, NULL) ;
+  g_object_unref(gc);
+#endif
+
+  timed_info_valid = false ;
+#if F_TIME_FORMAT
+  format = QmTime::formatUnknown ;
+#endif
 }
+
+bool MeeGo::QmTime::localTime(time_t t, QDateTime &qdatetime, struct tm *tm)
+{
+  return MeeGo::QmTimePrivate2::remote_time(NULL, t, &qdatetime, tm) ;
+}
+
 
 bool MeeGo::QmTime::remoteTime(QString const &tz, time_t t, QDateTime &qdatetime, struct tm *tm)
 {
-    bool empty = tz.isEmpty();
-    const char *p = "";
-    if (not empty) {
-        string timezone = (string)":" + tz.toStdString();
-        p = timezone.c_str();
-        while(*p!='\0' and p[1]==':') // Make sure we have exactly one ':'
-            ++ p;
-    }
-    return MeeGo::QmTimePrivate::remote_time(p, t, &qdatetime, tm);
+  bool empty = tz.isEmpty() ;
+  const char *p = "" ;
+  if (not empty)
+  {
+    string timezone = (string)":" + tz.toStdString() ;
+    p = timezone.c_str() ;
+    while(*p!='\0' and p[1]==':') // Make sure we have exactly one ':'
+      ++ p ;
+  }
+  return MeeGo::QmTimePrivate2::remote_time(p, t, &qdatetime, tm) ;
 }
 
-MeeGo::QmTimePrivate::~QmTimePrivate()
+#if 0
+void MeeGo::QmTimePrivate2::register_object(const MeeGo::QmTime *)
 {
-    if (counter>0)
-        log_warning("memory leak detected: %d QmTime object(s) not deleted", counter);
-    if (initialized)
-        uninitialize_v2();
+  if (not initialized)
+    initialize() ;
+  ++ object_counter ;
 }
 
-#if QMTIME_SUPPORT_TIME_FORMAT
-void MeeGo::QmTimePrivate::gconf_change_handler(GConfClient* , guint, GConfEntry* entry, gpointer user_data)
+MeeGo::QmTimePrivate2::unregister_object(const MeeGo::QmTime *)
 {
-    QmTimePrivate *obj = QmTimePrivate::get_object(); // could be NULL? not really
+  if (--object_counter==0)
+  {
+    if (initialization_policy==QmTime::DisconnectWhenPossible and initialized)
+      uninitialize() ;
+  }
+}
 
-    /* This function is called by gconf machinery if our 12/24 key is changing */
-    if ((void*)user_data != (void*)obj or not obj) {
-        log_error("unexpected user_data in gconf_change_handler(), ignoring it");
-        return;
-    }
-
-    const char *key = gconf_entry_get_key(entry);
-    if (key==NULL or strcmp(key, TIME_FORMAT_KEY)!=0) {
-        log_error("unexpected entry key '%s' in gconf_change_handler(), ignoring it", key ?: "[null]");
-        return;
-    }
-
-    GConfValue *gconf_value = gconf_entry_get_value(entry);
-    if (!gconf_value) {
-        return;
-    }
-
-    const char *value = gconf_value_get_string(gconf_value);
-    QmTime::TimeFormat new_value = parse_format_24(value);
-
-    if (new_value != obj->format) {
-        obj->format = new_value;
-        obj->emit_signal(false);
-    }
+MeeGo::QmTimePrivate2::QmTimePrivate2(QObject *parent) : QObject(parent)
+{
+  initialized = false ;
+  object_counter = 0 ;
 }
 #endif
 
-#if QMTIME_SUPPORT_TIME_FORMAT
-MeeGo::QmTime::TimeFormat MeeGo::QmTimePrivate::parse_format_24(const char *data)
+MeeGo::QmTimePrivate2::~QmTimePrivate2()
 {
-    if (not data)
-        return MeeGo::QmTime::formatUnknown;
-    else if (strcmp(data, "12")==0)
-        return MeeGo::QmTime::format12h;
-    else if (strcmp(data, "24")==0)
-        return MeeGo::QmTime::format24h;
-    else
-        return MeeGo::QmTime::formatUnknown;
+  if (counter>0)
+    log_warning("memory leak detected: %d QmTime object(s) not deleted", counter) ;
+  if (initialized)
+    uninitialize_v2() ;
+}
+
+#if F_TIME_FORMAT
+void MeeGo::QmTimePrivate2::gconf_change_handler(GConfClient* , guint, GConfEntry* entry, gpointer user_data)
+{
+  QmTimePrivate2 *obj = QmTimePrivate2::get_object() ; // could be NULL? not really
+
+  /* This function is called by gconf machinery if our 12/24 key is changing */
+  if ((void*)user_data != (void*)obj or not obj)
+  {
+    log_error("unexpected user_data in gconf_change_handler(), ignoring it") ;
+    return ;
+  }
+
+  const char *key = gconf_entry_get_key(entry) ;
+  if (key==NULL or strcmp(key, TIME_FORMAT_KEY)!=0)
+  {
+    log_error("unexpected entry key '%s' in gconf_change_handler(), ignoring it", key ?: "[null]") ;
+    return ;
+  }
+
+  GConfValue *gconf_value = gconf_entry_get_value(entry) ;
+  const char *value = gconf_value_get_string(gconf_value) ;
+  QmTime::TimeFormat new_value = parse_format_24(value) ;
+
+  if (new_value != obj->format)
+  {
+    obj->format = new_value ;
+    obj->emit_signal(false) ;
+  }
 }
 #endif
 
-void MeeGo::QmTimePrivate::process_timed_info(const Maemo::Timed::WallClock::Info &info, bool system_time_changed, bool need_signal)
+#if F_TIME_FORMAT
+MeeGo::QmTime::TimeFormat MeeGo::QmTimePrivate2::parse_format_24(const char *data)
 {
-    timed_info_valid = true;
-    this->info = info;
-    if (need_signal)
-        emit_signal(system_time_changed);
+  if (not data)
+    return MeeGo::QmTime::formatUnknown ;
+  else if (strcmp(data, "12")==0)
+    return MeeGo::QmTime::format12h ;
+  else if (strcmp(data, "24")==0)
+    return MeeGo::QmTime::format24h ;
+  else
+    return MeeGo::QmTime::formatUnknown ;
+}
+#endif
+
+void MeeGo::QmTimePrivate2::process_timed_info(const Maemo::Timed::WallClock::Info &info, bool system_time_changed, bool need_signal)
+{
+  timed_info_valid = true ;
+  this->info = info ;
+  if (need_signal)
+    emit_signal(system_time_changed) ;
 }
 
-void MeeGo::QmTimePrivate::emit_signal(bool systime)
+void MeeGo::QmTimePrivate2::emit_signal(bool systime)
 {
-    emit change_signal(systime ? MeeGo::QmTimeTimeChanged : MeeGo::QmTimeOnlySettingsChanged);
+  emit change_signal(systime ? MeeGo::QmTime::TimeChanged : MeeGo::QmTime::OnlySettingsChanged) ;
+  emit change_signal(systime ? MeeGo::QmTimeTimeChanged : MeeGo::QmTimeOnlySettingsChanged) ;
+}
+time_t MeeGo::QmTime::getAutoTime()
+{
+  if (not p->timed_info_valid)
+    return (time_t)(-1) ;
+
+  if (not p->info.utcAvailable(Maemo::Timed::WallClock::UtcNitz))
+    return (time_t)(-1) ;
+
+  return p->info.utc(Maemo::Timed::WallClock::UtcNitz) ;
 }
 
-time_t MeeGo::QmTimePrivate::getAutoTime()
+bool MeeGo::QmTime::getAutoTimezone(QString &tz)
 {
-    if (not timed_info_valid)
-        return (time_t)(-1);
+  if (not p->timed_info_valid)
+    return false ;
 
-    if (not info.utcAvailable(Maemo::Timed::WallClock::UtcNitz))
-        return (time_t)(-1);
+  if (not p->info.timezoneAvailable(Maemo::Timed::WallClock::TimezoneCellular))
+    return false ;
 
-    return info.utc(Maemo::Timed::WallClock::UtcNitz);
+  tz = p->info.timezone(Maemo::Timed::WallClock::TimezoneCellular) ;
+
+  return true ;
 }
 
-bool MeeGo::QmTimePrivate::getAutoTimezone(QString &tz)
-{
-    if (not timed_info_valid)
-        return false;
-
-    if (not info.timezoneAvailable(Maemo::Timed::WallClock::TimezoneCellular))
-        return false;
-
-    tz = info.timezone(Maemo::Timed::WallClock::TimezoneCellular);
-
-    return true;
-}
-
-#if QMTIME_SUPPORT_UNUSED
+#if F_SUPPORT_UNUSED
 bool MeeGo::QmTime::getNetTime(QDateTime &time, QString &tz)
 {
-    time_t t = p->getAutoTime();
-    if (t==(time_t)(-1))
-        return false;
+  time_t t = getAutoTime() ;
+  if (t==(time_t)(-1))
+    return false ;
 
-    bool res = p->getAutoTimezone(tz);
-    if (not res)
-        return false;
+  bool res = getAutoTimezone(tz) ;
+  if (not res)
+    return false ;
 
-    time.setTime_t(t);
+  time.setTime_t(t) ;
 
-    return true;
+  return true ;
 }
 #endif
 
-bool MeeGo::QmTimePrivate::setTime(time_t t)
+bool MeeGo::QmTime::setTime(time_t t)
 {
-    Maemo::Timed::WallClock::Settings s;
-    s.setTimeManual(t);
+  Maemo::Timed::WallClock::Settings s ;
+  s.setTimeManual(t) ;
 
-    if (not s.check())
-        return false;
+  if (not s.check())
+    return false ;
 
-    QDBusMessage reply = timed->wall_clock_settings_sync(s);
-    QDBusReply<bool> reply_bool = reply;
+  QDBusMessage reply = p->timed->wall_clock_settings_sync(s) ;
+  QDBusReply<bool> reply_bool = reply ;
 
-    if (not reply_bool.isValid() or not reply_bool.value()) {
-        log_error("can't set system time, error message: '%s'", reply.errorMessage().toStdString().c_str());
-        return false;
-    }
+  if (not reply_bool.isValid() or not reply_bool.value())
+  {
+    log_error("can't set system time, error message: '%s'", reply.errorMessage().toStdString().c_str()) ;
+    return false ;
+  }
 
-    log_notice("system time set to '%ld'", t);
+  log_notice("system time set to '%ld'", t) ;
 
-    if (sync_policy==SynchronizeOnWrite) {
-        log_notice("syncronizing time settings");
-        return syncronize_timed_info();
-    }
+  if (p->sync_policy==SynchronizeOnWrite)
+  {
+    log_notice("syncronizing time settings") ;
+    return p->syncronize_timed_info() ;
+  }
 
-    return true;
+  return true ;
+
 }
 
 bool MeeGo::QmTime::setTime(const QDateTime &time)
 {
-    return p->setTime(time.toTime_t());
+  return setTime(time.toTime_t()) ;
 }
 
-#if QMTIME_SUPPORT_UNUSED
+#if F_SUPPORT_UNUSED
 bool MeeGo::QmTime::getTZName(QString &s)
 {
-    QDBusMessage reply = p->timed->get_wall_clock_info_sync();
-    QDBusReply<Maemo::Timed::WallClock::Info> reply_info = reply;
-    if (not reply_info.isValid()) {
-        return false;
-    }
-    s = reply_info.value().tzAbbreviation();
-    return true;
+  struct tm tm ;
+  QDateTime dt ;
+  if (not localTime(time(NULL), dt, &tm))
+    return false ;
+
+  s = tm.tm_zone ;
+  return true ;
 }
 #endif
 
-#if QMTIME_SUPPORT_UNUSED
+#if F_SUPPORT_UNUSED
 bool MeeGo::QmTime::getRemoteTime(const QDateTime &time, const QString &tz, QDateTime &res)
 {
-    time_t t = time.toTime_t();
-    return remoteTime(tz, t, res);
+  time_t t = time.toTime_t() ;
+  return remoteTime(tz, t, res) ;
 }
 #endif
 
-#if QMTIME_SUPPORT_UNUSED
+#if F_SUPPORT_UNUSED
 int MeeGo::QmTime::getUTCOffset(const QString &tz)
 {
-    QDateTime unused;
-    struct tm tm;
-    if (remoteTime(tz, ::time(NULL), unused, &tm))
-        return tm.tm_gmtoff;
+  QDateTime unused ;
+  struct tm tm ;
+  if (remoteTime(tz, time(NULL), unused, &tm))
+    return tm.tm_gmtoff ;
 
-    return 0; // But why???
+  return 0 ; // But why???
 }
 #endif
 
-#if QMTIME_SUPPORT_UNUSED
+#if F_SUPPORT_UNUSED
 int MeeGo::QmTime::getDSTUsage(const QDateTime &time, const QString &tz)
 {
-    QDateTime unused;
-    struct tm tm;
-    if (remoteTime(tz, time.toTime_t(), unused, &tm))
-        return tm.tm_isdst;
+  QDateTime unused ;
+  struct tm tm ;
+  if (remoteTime(tz, time.toTime_t(), unused, &tm))
+    return tm.tm_isdst ;
 
-    return 0; // But why???
+  return 0 ; // But why???
 }
 #endif
 
-#if QMTIME_SUPPORT_UNUSED
+#if F_SUPPORT_UNUSED
 int MeeGo::QmTime::getTimeDiff(const QDateTime &time, const QString &tz1, const QString &tz2)
 {
-    return p->getTimeDiff(time.toTime_t(), tz1, tz2);
+  return getTimeDiff(time.toTime_t(), tz1, tz2) ;
 }
 #endif
 
-#if QMTIME_SUPPORT_UNUSED
+#if F_SUPPORT_UNUSED
 // Autosync: the guys are expecting that both time and timezone are from cellular network.
 bool MeeGo::QmTime::setAutosync(bool enable)
 {
-    log_info("This method is deprecated, DO NOT USE IT!");
-    return setAutoSystemTime(enable ? AutoSystemTimeOn : AutoSystemTimeOff)
-           and setAutoTimeZone(enable ? AutoTimeZoneOn : AutoTimeZoneOff);
+  log_info("This method is deprecated, DO NOT USE IT!") ;
+  return setAutoSystemTime(enable ? AutoSystemTimeOn : AutoSystemTimeOff)
+    and setAutoTimeZone(enable ? AutoTimeZoneOn : AutoTimeZoneOff) ;
 }
 #endif
 
-#if QMTIME_SUPPORT_UNUSED
+#if F_SUPPORT_UNUSED
 int MeeGo::QmTime::getAutosync()
 {
-    log_info("This method is deprecated, DO NOT USE IT!");
-    return autoSystemTime() and autoTimeZone();
+  log_info("This method is deprecated, DO NOT USE IT!") ;
+  return autoSystemTime() and autoTimeZone() ;
 }
 #endif
 
-#if QMTIME_SUPPORT_UNUSED
+#if F_SUPPORT_UNUSED
 int MeeGo::QmTime::isOperatorTimeAccessible()
 {
-    log_info("This method is deprecated, DO NOT USE IT!");
-    bool status;
-    return p->isOperatorTimeAccessible(status) ? status : -1;
+  log_info("This method is deprecated, DO NOT USE IT!") ;
+  bool status ;
+  return isOperatorTimeAccessible(status) ? status : -1 ;
 }
 #endif
