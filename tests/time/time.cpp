@@ -160,8 +160,8 @@ private slots:
         QVERIFY(signalDump.signalReceived);
         QVERIFY(signalDump.whatChanged == QmTimeTimeChanged);
 #if F_SUPPORT_UNUSED
-        QVERIFY(time->getTZName(s));
-        QCOMPARE(s, QString("EET"));
+        //QVERIFY(time->getTZName(s));
+        //QCOMPARE(s, QString("EET"));
 #else
         struct tm tm ;
         QDateTime dt ;
@@ -402,9 +402,10 @@ private slots:
             QString tz2;
             QVERIFY2(time->getTimezone(tz2), tzs[i].tz.toAscii().data());
             QCOMPARE(tzs[i].zone.isEmpty() ? tzs[i].tz : tzs[i].zone, tz2);
+            qDebug()<<tz2;
 
 #if F_SUPPORT_UNUSED
-            QVERIFY2(time->getTZName(tz2), tzs[1].tz.toAscii().data());
+            //QVERIFY2(time->getTZName(tz2), tzs[i].tz.toAscii().data());
 #else
             QVERIFY(get_zone_abbreviation_now(time, tz2) == tzs[i].tzname);
 #endif

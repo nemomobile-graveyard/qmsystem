@@ -1,3 +1,10 @@
+qmsystem2 (1.1.2) unstable; urgency=low
+
+  [Yang Yang]
+  * Remove getTZName() from time-test, which is deprecated
+
+ -- Yang Yang <ext-yang.25.yang@nokia.com>  Tue, 15 Mar 2011 13:50:19 +0200
+
 qmsystem2 (1.1.1) unstable; urgency=low
 
   [Shenghua Liu]
@@ -285,30 +292,29 @@ qmsystem2 (0.0.4) unstable; urgency=low
   * Fixes: NB#201690 - qmsystem-api-fast-tests take 12 mins for execution
   * Add QmKeys::UnknownKey
   * Added a method for querying battery condition
-	
+
  -- Matti Halme <matti.halme@nokia.com>  Tue, 02 Nov 2010 10:56:12 +0200
 
 qmsystem2 (0.0.3) unstable; urgency=low
 
   * Fixes: NB#201532 - /usr/lib/pkgconfig/qmsystem2.pc lists incorrect includepath
-	
+
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Mon, 1 Nov 2010 12:50:19 +0300
 
 qmsystem2 (0.0.2) unstable; urgency=low
 
   * Fixes: NB#198843 - offline mode button state is not preserved after reboot.
   * Fixes: NB#199370 - Copyright tag not defined in qmsystem
-	
+
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Fri, 29 Oct 2010 10:50:19 +0300
 
 qmsystem2 (0.0.1) unstable; urgency=low
 
   * Namespace change
   * suffix "2" used
-	
+
  -- Raimo Vuonnala <raimo.vuonnala@nokia.com>  Fri, 11 Oct 2010 12:14:54 +0300
-	
-	
+
 qmsystem (0.2.12) unstable; urgency=low
 
   * Add QmKeys::RightCtrl
