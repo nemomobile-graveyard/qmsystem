@@ -57,6 +57,9 @@ class QmHeartbeatPrivate;
  * <br>
  * The service is not only for network-aware applications: in fact it must be used 
  * by any applications that need to periodic wake-ups.
+ * <br>
+ * Note: the Qt Mobility System Information API provides the class <A HREF="http://doc.qt.nokia.com/qt-mobility-snapshot/qsystemalignedtimer.html">QSystemAlignedTimer</a>
+*  with similar functionality.
  */
 class QmHeartbeat : public QObject
 {
