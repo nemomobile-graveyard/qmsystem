@@ -3,6 +3,9 @@ qmsystem2 (1.1.2) unstable; urgency=low
   [Yang Yang]
   * Remove getTZName() from time-test, which is deprecated
 
+  [Matias Muhonen]
+  * Improve the documentation of the main page (Fixes: NB#235447)
+
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Tue, 15 Mar 2011 13:50:19 +0200
 
 qmsystem2 (1.1.1) unstable; urgency=low
