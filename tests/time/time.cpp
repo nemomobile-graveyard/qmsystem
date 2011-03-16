@@ -51,10 +51,10 @@ public:
     SignalDump(QObject *parent = NULL) : QObject(parent), signalReceived(false) {}
 
     bool signalReceived;
-    QmTimeWhatChanged whatChanged;
+    QmTime::WhatChanged whatChanged;
 
 public slots:
-    void timeOrSettingsChanged(MeeGo::QmTimeWhatChanged whatChanged) {
+    void timeOrSettingsChanged(MeeGo::QmTime::WhatChanged whatChanged) {
         qDebug() << "timeOrSettingsChanged:"<<whatChanged;
         signalReceived = true;
         this->whatChanged = whatChanged;
@@ -108,7 +108,7 @@ private slots:
 #if F_TIME_FORMAT
         oldTimeFormat = time->getTimeFormat();
 #endif
-        QVERIFY(connect(time, SIGNAL(timeOrSettingsChanged(MeeGo::QmTimeWhatChanged)), &signalDump, SLOT(timeOrSettingsChanged(MeeGo::QmTimeWhatChanged))));
+        QVERIFY(connect(time, SIGNAL(timeOrSettingsChanged(MeeGo::QmTime::WhatChanged)), &signalDump, SLOT(timeOrSettingsChanged(MeeGo::QmTime::WhatChanged))));
     }
 
     void testGetNetTime() {
@@ -123,11 +123,11 @@ private slots:
         QDateTime dateTime = QDateTime::fromString("M1d1y9800:01:02",
                                              "'M'M'd'd'y'yyhh:mm:ss");
         signalDump.signalReceived = false;
-        bool ret = time->setTime(dateTime);
+        bool ret = time->setTime(dateTime.toTime_t());
         QVERIFY(ret);
         waitTwice(500);
         QVERIFY(signalDump.signalReceived);
-        QVERIFY(signalDump.whatChanged == QmTimeTimeChanged);
+        QVERIFY(signalDump.whatChanged == QmTime::TimeChanged);
 
         QVERIFY(dateTime.secsTo(QDateTime::currentDateTime()) <= 3);
     }
@@ -145,7 +145,7 @@ private slots:
         waitTwice(500);
         QVERIFY(signalDump.signalReceived);
         // By a time zone change system time is NOT changing
-        QVERIFY(signalDump.whatChanged == QmTimeOnlySettingsChanged);
+        QVERIFY(signalDump.whatChanged == QmTime::OnlySettingsChanged);
 
         QString s;
         QVERIFY(time->getTimezone(s));
@@ -154,11 +154,11 @@ private slots:
         QDateTime dateTime = QDateTime::fromString("M1d1y9800:01:02",
                                              "'M'M'd'd'y'yyhh:mm:ss");
         signalDump.signalReceived = false;
-        bool ret = time->setTime(dateTime);
+        bool ret = time->setTime(dateTime.toTime_t());
         QVERIFY(ret) ;
         waitTwice(500);
         QVERIFY(signalDump.signalReceived);
-        QVERIFY(signalDump.whatChanged == QmTimeTimeChanged);
+        QVERIFY(signalDump.whatChanged == QmTime::TimeChanged);
 #if F_SUPPORT_UNUSED
         //QVERIFY(time->getTZName(s));
         //QCOMPARE(s, QString("EET"));
@@ -208,7 +208,7 @@ private slots:
 
         QVERIFY(time->setTimezone("UTC"));
         QDateTime dateTime(QDate(2000, 1, 1));
-        QVERIFY(time->setTime(dateTime));
+        QVERIFY(time->setTime(dateTime.toTime_t()));
 
 #if F_SUPPORT_UNUSED
         QCOMPARE(time->getUTCOffset(":Europe/Helsinki"), 2*60*60);
@@ -224,7 +224,7 @@ private slots:
 #endif
 
         dateTime.setDate(QDate(2000, 6, 6));
-        QVERIFY(time->setTime(dateTime));
+        QVERIFY(time->setTime(dateTime.toTime_t()));
 
 #if F_SUPPORT_UNUSED
         QCOMPARE(time->getUTCOffset(":Europe/Helsinki"), 3*60*60);
@@ -348,7 +348,7 @@ private slots:
      */
     void testSetTime120010() {
         QDateTime current = QDateTime::currentDateTime();
-        QVERIFY(time->setTime(current.addSecs(5)));
+        QVERIFY(time->setTime(current.addSecs(5).toTime_t()));
         //waitTwice(500);
         QDateTime current2 = QDateTime::currentDateTime();
         int secsTo = current.secsTo(current2);
@@ -372,7 +372,7 @@ private slots:
     void testSetTimezone120020() {
         QVERIFY(time->setTimezone("UTC"));
         QDateTime dateTime(QDate(2000, 1, 1));
-        QVERIFY(time->setTime(dateTime));
+        QVERIFY(time->setTime(dateTime.toTime_t()));
 
         // testTZStruct: { QString tz; QString tzname; int secsTo; QString zone; }
         struct testTZStruct tzs[] = { //{"GMT-2GMT-3,0,365", "GMT", 3*60*60},
@@ -443,7 +443,7 @@ private slots:
         tm.tm_wday = 2;         /* day of week [0,6] (Sunday = 0) */
         tm.tm_isdst = 1;        /* daylight savings flag */
         QDateTime dateTime = QDateTime::fromTime_t(mktime(&tm));
-        QVERIFY(time->setTime(dateTime));
+        QVERIFY(time->setTime(dateTime.toTime_t()));
 
         QDateTime utc = QDateTime::currentDateTime().toUTC();
         QCOMPARE(utc.time().hour(), 11);
@@ -475,7 +475,7 @@ private slots:
         tm.tm_wday = 2;         /* day of week [0,6] (Sunday = 0) */
         tm.tm_isdst = 1;        /* daylight savings flag */
         QDateTime dateTime = QDateTime::fromTime_t(mktime(&tm));
-        QVERIFY(time->setTime(dateTime));
+        QVERIFY(time->setTime(dateTime.toTime_t()));
 
         QDateTime remoteTime;
 #if F_SUPPORT_UNUSED
@@ -630,7 +630,7 @@ private slots:
         QCOMPARE(time->getTimeDiff(QDateTime::currentDateTime(), "GMT+3", "MT+3"), -6*3600);
         */
 
-        QVERIFY(time->setTime(QDateTime::fromTime_t(1221472803)));
+        QVERIFY(time->setTime(QDateTime::fromTime_t(1221472803).toTime_t()));
 
         /*
         QString setTimezone = "EST+5EDT,M4.1.0/2,M10.5.0/2";
@@ -654,7 +654,7 @@ private slots:
 #include "zone.inc"
 
         QDateTime currentDateTime = QDateTime::currentDateTime();
-        QVERIFY(time->setTime(currentDateTime.addSecs(2)));
+        QVERIFY(time->setTime(currentDateTime.addSecs(2).toTime_t()));
 
         QVERIFY(currentDateTime.secsTo(QDateTime::currentDateTime()) < 6);
 
@@ -694,11 +694,11 @@ private slots:
 
         currentDateTime = QDateTime::currentDateTime();
         qDebug() << "currentDateTime: " << currentDateTime;
-        QVERIFY(time->setTime(currentDateTime.addSecs(3)));
+        QVERIFY(time->setTime(currentDateTime.addSecs(3).toTime_t()));
         int secsTo = currentDateTime.secsTo(QDateTime::currentDateTime());
         qDebug() << "secsTo: " << secsTo;
         QVERIFY(secsTo < 6 && secsTo >= 2);
-        QVERIFY(time->setTime(currentDateTime.addSecs(2)));
+        QVERIFY(time->setTime(currentDateTime.addSecs(2).toTime_t()));
         QVERIFY(currentDateTime.secsTo(QDateTime::currentDateTime()) < 10);
 
         for (int i = 0; i < zonecnt; i++) {
@@ -707,7 +707,7 @@ private slots:
     }
 
     void cleanupTestCase() {
-        QVERIFY(time->setTime(oldTime));
+        QVERIFY(time->setTime(oldTime.toTime_t()));
         QVERIFY(time->setTimezone(oldTz));
         //QVERIFY(time->setTimeFormat(oldTimeFormat));
         delete time;
