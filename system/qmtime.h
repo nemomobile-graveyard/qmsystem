@@ -45,9 +45,9 @@ namespace MeeGo { class QmTime ; }
 namespace MeeGo { class QmTimePrivate2 ; }
 
 /* these macros are temporary, that's why no proper "MEEGO_QMTIME_" prefix */
-#define F_SUPPORT_DEPRECATED 1
-#define F_SUPPORT_UNUSED     1
-#define F_TIME_FORMAT        1
+#define F_SUPPORT_DEPRECATED 0
+#define F_SUPPORT_UNUSED     0
+#define F_TIME_FORMAT        0
 
 
 #if F_SUPPORT_DEPRECATED
