@@ -615,7 +615,9 @@ void MeeGo::QmTimePrivate2::process_timed_info(const Maemo::Timed::WallClock::In
 void MeeGo::QmTimePrivate2::emit_signal(bool systime)
 {
   emit change_signal(systime ? MeeGo::QmTime::TimeChanged : MeeGo::QmTime::OnlySettingsChanged) ;
+#if F_SUPPORT_DEPRECATED
   emit change_signal(systime ? MeeGo::QmTimeTimeChanged : MeeGo::QmTimeOnlySettingsChanged) ;
+#endif
 }
 time_t MeeGo::QmTime::getAutoTime()
 {
@@ -687,10 +689,12 @@ bool MeeGo::QmTime::setTime(time_t t)
 
 }
 
+#if F_SUPPORT_DEPRECATED
 bool MeeGo::QmTime::setTime(const QDateTime &time)
 {
   return setTime(time.toTime_t()) ;
 }
+#endif
 
 #if F_SUPPORT_UNUSED
 bool MeeGo::QmTime::getTZName(QString &s)
