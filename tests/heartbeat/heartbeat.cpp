@@ -82,9 +82,11 @@ private slots:
         qDebug() << "Test syncronous wait...";
         int sleeptime = 4;
         qDebug() << "Wait " <<  sleeptime << " seconds" ;
-        QTime result = heartbeat2->wait(0, sleeptime , MeeGo::QmHeartbeat::WaitHeartbeat);
+        // Sleep 4-8 seconds, so probably the wakeup time is on average ~6 seconds
+        QTime result = heartbeat2->wait(sleeptime, sleeptime*2, MeeGo::QmHeartbeat::WaitHeartbeat);
+
         QVERIFY(result.second() >= sleeptime);
-        QVERIFY(result.second() <= sleeptime + 1);
+        QVERIFY(result.second() <= sleeptime * 2);
         qDebug() << "Slept " << result.second() << "seconds" ;
         QVERIFY(got_signal == 0);
     }
