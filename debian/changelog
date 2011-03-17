@@ -5,6 +5,7 @@ qmsystem2 (1.1.2) unstable; urgency=low
 
   [Matias Muhonen]
   * Improve the documentation of the main page (Fixes: NB#235447)
+  * Parse mounts from /proc/mounts (Fixes: NB#231816)
 
  -- Yang Yang <ext-yang.25.yang@nokia.com>  Tue, 15 Mar 2011 13:50:19 +0200
 

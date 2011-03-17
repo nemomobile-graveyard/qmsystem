@@ -73,7 +73,6 @@ private slots:
         setGetDefaultMode(QmUSBMode::Ask);
     }
 
-#if 0
     void testMountStatus() {
         QProcess mount;
         mount.start("grep MyDocs /proc/mounts");
@@ -97,7 +96,6 @@ private slots:
             }
         }
     }
-#endif
 
     void cleanupTestCase() {
         delete mode;

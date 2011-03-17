@@ -32,6 +32,7 @@
 
 #include <QStringList>
 #include <mntent.h>
+#include <stdio.h>
 
 #if HAVE_USB_MODED_DEV
     #include <usb_moded-dbus.h>
@@ -283,14 +284,27 @@ QmUSBMode::Mode QmUSBModePrivate::stringToMode(const QString &str) {
 
 QVector< QPair< QString , QString > > QmUSBModePrivate::mountEntries() {
     QVector< QPair< QString , QString > > entries;
-    FILE *f = setmntent(_PATH_MOUNTED, "r");
     mntent m;
     char buf[1024];
+    FILE *f = 0;
+
+    if (!(f = setmntent("/proc/mounts", "r"))) {
+        perror("setmntent /proc/mounts");
+        if (!(f = setmntent("/etc/mtab", "r"))) {
+            perror("setmntent /etc/mtab");
+            goto out;
+        }
+    }
+
     while (getmntent_r(f, &m, buf, sizeof(buf)) != 0) {
         entries << qMakePair(QString::fromAscii(m.mnt_dir),
                              QString::fromAscii(m.mnt_opts));
     }
-    endmntent(f);
+
+out:
+    if (f) {
+        endmntent(f);
+    }
     return entries;
 }
 
