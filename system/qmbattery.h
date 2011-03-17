@@ -57,21 +57,37 @@ class QmBatteryPrivate;
 class MEEGO_SYSTEM_EXPORT QmBattery : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(Level)                        /* Depreceated, use BatteryState */
+
+    /*!
+     * @deprecated Deprecated, use BatteryState.
+     */
+    Q_ENUMS(Level)
     Q_ENUMS(BatteryState)
     Q_ENUMS(RemainingTimeMode)
-    Q_ENUMS(State)                        /* Depreceated, use ChargingState */
+    /*!
+     * @deprecated Deprecated, use ChargingState.
+     */
+    Q_ENUMS(State)
     Q_ENUMS(ChargingState)
     Q_ENUMS(Period)
     Q_ENUMS(ChargerType)
-    Q_PROPERTY(State state READ getState) /* Depreceated, use ChargingState */
+    /*!
+     * @deprecated Deprecated, use ChargingState.
+     */
+    Q_PROPERTY(State state READ getState)
     Q_PROPERTY(ChargingState state READ getChargingState)
-    Q_PROPERTY(Level level READ getLevel) /* Depreceated, use BatteryState */
+    /*!
+     * @deprecated Deprecated, use BatteryState.
+     */
+    Q_PROPERTY(Level level READ getLevel)
     Q_PROPERTY(ChargerType type READ getChargerType)
 
 public:
 
-    //! Battery charge level states, depreceated (use BatteryState)
+    /*!
+     * @enum Level
+     * @deprecated Deprecated, use BatteryState.
+     */
     enum Level
     {
         LevelFull = 0,
@@ -79,6 +95,7 @@ public:
         LevelCritical
     };
 
+    //! Battery charge level states
     enum BatteryState
     {
         StateEmpty = 0,  //!< Battery empty (system being shut down)
@@ -96,7 +113,10 @@ public:
         StateChargingFailed   //!< Charging error, e.g. unsupported charger
     };
 
-    typedef ChargingState State;                           /* Depreceated */
+    /*!
+     * @deprecated Deprecated.
+     */
+    typedef ChargingState State;
 
     //! The mode in which the remaining time is to be calculated
     enum RemainingTimeMode
@@ -131,8 +151,6 @@ public:
         ConditionUnknown = 0xff //!< Battery condition is not known
     };
 
-public:
-
     QmBattery(QObject *parent = 0);
     virtual ~QmBattery();
 
@@ -142,7 +160,7 @@ public:
      * @return  The battery nominal (maximum) capasity (mAh)
      */
     int getNominalCapacity() const;
-    
+
     /*!
      * @brief Gets the battery state.
      *
@@ -156,14 +174,14 @@ public:
      * @return  Remaining battery capacity as mAh
      */
     int getRemainingCapacitymAh() const;
-    
+
     /*!
      * @brief Gets the remaining battery capacity as a percentage.
      *
      * @return  Battery level in percents [0 - 100]
      */
     int getRemainingCapacityPct() const;
-    
+
     /*!
      * @brief Gets the remaining battery capacity as number of bars or 0 if battery state
      * is low.
@@ -171,14 +189,14 @@ public:
      * @return  Battery level as number of bars [0 - getMaxbars()]
      */
     int getRemainingCapacityBars() const;
-    
+
     /*!
      * @brief Get the maximum number of battery bars.
      *
      * @return  The maximum value returned by getRemainingCapacityBars()
      */
     int getMaxBars() const;
-    
+
     /*!
      * @brief Gets the battery voltage.
      *
@@ -314,25 +332,22 @@ public:
     /*!
      * @brief Gets the battery condition.
      *
-     * @return  Battery condition as QmBattery::BatteryCondition
+     * @return Battery condition as QmBattery::BatteryCondition
      */
     BatteryCondition getBatteryCondition() const;
 
     /*!
-     * @brief Deprecated, use getRemainingCapacityPct
-     * @deprecated Deprecated, use getRemainingCapacityPct
+     * @deprecated Deprecated, use getRemainingCapacityPct()
      */
     int getBatteryEnergyLevel() const;
 
     /*!
-     * @brief Deprecated, use getBatteryState
-     * @deprecated Deprecated, use getBatteryState
+     * @deprecated Deprecated, use getBatteryState()
      */
     Level getLevel() const;
 
     /*!
-     * @brief Deprecated, use getChargingState
-     * @deprecated Deprecated, use getChargingState
+     * @deprecated Deprecated, use getChargingState()
      */
     State getState() const;
 
@@ -359,7 +374,7 @@ Q_SIGNALS:
      * @param chargingState  The new charging state
      */
     void chargingStateChanged(MeeGo::QmBattery::ChargingState chargingState);
-    
+
     /*!
      * @brief Sent when a charger event has occurred (charger plugged / unplugged).
      *
@@ -376,20 +391,17 @@ Q_SIGNALS:
     void batteryCurrent(int current);
 
     /*!
-     * @brief Deprecated, use batteryRemainingCapacityChanged
-     * @state Deprecated
+     * @deprecated Deprecated, use batteryRemainingCapacityChanged(int, int)
      */
     void batteryEnergyLevelChanged(int percentage);
 
     /*!
-     * @brief Deprecated, use chargingStateChanged
-     * @state Deprecated
+     * @deprecated Deprecated, use chargingStateChanged(MeeGo::QmBattery::ChargingState)
      */
     void batteryStatusChanged(MeeGo::QmBattery::State);
 
     /*!
-     * @brief Deprecated, use batteryStateChanged
-     * @state Deprecated
+     * @deprecated Deprecated, use batteryStateChanged(MeeGo::QmBattery::BatteryState)
      */
     void batteryLevelChanged(MeeGo::QmBattery::Level level);
 
