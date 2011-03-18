@@ -55,7 +55,7 @@ private slots:
     }
 
     void testManual() {
-
+       
         printf("\n");
         printf("This test should be run in a normally lighted room or better\n");
         printf("This test will ask you to block the light sensor with your hand.\n");
@@ -72,7 +72,7 @@ private slots:
         QVERIFY(normalAls > 0);
         printf("The normal light level is: %d\n\n", normalAls);
 
-        /* Then get the zero light level */
+        /* Then get the zero light level. */
         printf("Please cover the light sensor fully. You have 10 seconds...\n");
         QTest::qWait(10000);
         printf("Fully covered als: %d\n", als);
@@ -91,7 +91,36 @@ private slots:
         QTest::qWait(10000);
         printf("The new normal light level is: %d\n", als);
         QVERIFY(als >= normalAls - TOLERANCE && als <= normalAls + TOLERANCE);
+       
 
+        /* Test the decreases when move the device from stronger light source to darker place. */
+        printf("\nPlease do not cover the light sensor, move the device sensor near the strongest light source in your test place.\n");
+        printf("You have 10 seconds...\n");
+        QTest::qWait(10000);
+        printf("The light level in bright place is: %d\n", als);
+
+        printf("\nPlease move device to the dark place smoothly\n");
+        printf("You have 10 seconds...\n");
+        QTest::qWait(2000);
+
+        for (int i = 0; i < 20; i++) {
+            QTest::qWait(500);
+            printf("The light level: %d\n", als);
+        }
+
+        printf("The light level in dark place is: %d\n", als);
+
+        /* Test the decreases when move the device from stronger light source to darker place. */
+        printf("\nPlease do not cover the light sensor, move back the device from dark to bright smoothly.\n");
+        printf("You have 10 seconds...\n");
+        printf("The light level in dark place is: %d\n", als);
+        QTest::qWait(2000);
+
+        for (int i = 0; i < 20; i++) {
+            QTest::qWait(500);
+            printf("The light level: %d\n", als);
+        }
+        printf("The light level in bright place is: %d\n", als);
     }
 
     void cleanupTestCase() {
