@@ -41,10 +41,6 @@ using namespace std ;
 
 #include "qmtime.h"
 
-#if F_TIME_FORMAT
-#define TIME_FORMAT_KEY "/meegotouch/i18n/lc_timeformat24h"
-#endif
-
 // Signal names
 static inline const char *p_signal() { return SIGNAL(change_signal(MeeGo::QmTime::WhatChanged)) ; }
 static inline const char *signal() { return SIGNAL(timeOrSettingsChanged(MeeGo::QmTime::WhatChanged)) ; }
@@ -88,18 +84,6 @@ class MeeGo::QmTimePrivate2 : public QObject
   // Cached values
   bool timed_info_valid ;
   Maemo::Timed::WallClock::Info info ;
-#if F_TIME_FORMAT
-  MeeGo::QmTime::TimeFormat format ;
-#endif
-
-#if F_TIME_FORMAT
-  // Gconf stuff
-  GConfClient *gc;
-  guint notify_id;
-  static void gconf_change_handler(GConfClient* client, guint, GConfEntry*, gpointer data) ;
-
-  static QmTime::TimeFormat parse_format_24(const char *data) ;
-#endif
 
   // Timed stuff
   Maemo::Timed::Interface *timed ;
