@@ -164,50 +164,6 @@ bool MeeGo::QmTime::setTimezone(const QString tz)
   return true ;
 }
 
-#if F_TIME_FORMAT
-MeeGo::QmTime::TimeFormat MeeGo::QmTime::getTimeFormat()
-{
-  log_error("function %s is deprecated, don't use it!", __PRETTY_FUNCTION__) ;
-  return (MeeGo::QmTime::TimeFormat) 0 ;
-}
-#endif
-
-#if F_TIME_FORMAT
-bool MeeGo::QmTime::setTimeFormat(MeeGo::QmTime::TimeFormat format)
-{
-#if 0
-  if (format!=Format12 and format!=Format24)
-    return false ;
-
-  if (p->format == format)
-    return true ;
-
-  p->format = format ;
-
-  const char *value = format==Format12 ? "12" : "24" ;
-
-  bool res = gconf_client_set_string(p->gc, TIME_FORMAT_KEY, value, NULL) ;
-
-  if (res)
-  {
-    log_notice("time format successfully set to '%s', emitting signal", value) ;
-    p->emit_signal(false) ;
-    return true ;
-  }
-  else
-  {
-    log_error("can't set key '%s' to '%s'", TIME_FORMAT_KEY, value) ;
-    return false ;
-  }
-#else
-  (void)format ;
-  log_error("function %s is deprecated, don't use it!", __PRETTY_FUNCTION__) ;
-  return false ;
-#endif
-}
-#endif
-
-
 int MeeGo::QmTime::getTimeDiff(time_t t, const QString &tz1, const QString &tz2)
 {
   string s1 = tz1.toStdString(), s2 = tz2.toStdString() ;
@@ -352,52 +308,13 @@ MeeGo::QmTimePrivate2::QmTimePrivate2(QObject *parent) : QObject(parent)
   counter = 0 ;
   initialized = false ;
   timed_info_valid = false ;
-#if F_TIME_FORMAT
-  gc = NULL ;
-#endif
   timed = NULL ;
 }
 
-#if F_TIME_FORMAT
-void MeeGo::QmTimePrivate2::first_run_init()
-{
-  static bool first_run = true ;
-  if (first_run)
-  {
-    g_type_init() ;
-    first_run = false ;
-  }
-}
-#endif
-
 void MeeGo::QmTimePrivate2::initialize()
 {
-#if F_TIME_FORMAT
-  first_run_init() ;
-#endif
-
   // we don't know anything yet
   timed_info_valid = false ;
-#if F_TIME_FORMAT
-  format = QmTime::formatUnknown ;
-
-  // to be notified by gconf
-  gc = gconf_client_get_default() ;
-  gconf_client_add_dir(gc, TIME_FORMAT_KEY, GCONF_CLIENT_PRELOAD_ONELEVEL, NULL) ;
-  notify_id = gconf_client_notify_add(gc, TIME_FORMAT_KEY, QmTimePrivate2::gconf_change_handler, this, NULL, NULL) ;
-
-  // is seems, we have to do it syncronously :-(
-  char *str = gconf_client_get_string(gc, TIME_FORMAT_KEY, NULL) ;
-
-  if (str==NULL)
-    log_error("gconf_client_get_string('%s') failed", TIME_FORMAT_KEY) ;
-  else
-  {
-    log_debug("got format value: '%s'", str) ;
-    format = parse_format_24(str) ;
-    g_free(str) ;
-  }
-#endif
 
   // to be notified by timed
   timed = new Maemo::Timed::Interface ;
@@ -470,16 +387,7 @@ void MeeGo::QmTimePrivate2::uninitialize_v2()
   delete timed ;
   timed = NULL ;
 
-#if F_TIME_FORMAT
-  gconf_client_notify_remove(gc, notify_id) ;
-  gconf_client_remove_dir(gc, TIME_FORMAT_KEY, NULL) ;
-  g_object_unref(gc);
-#endif
-
   timed_info_valid = false ;
-#if F_TIME_FORMAT
-  format = QmTime::formatUnknown ;
-#endif
 }
 
 void MeeGo::QmTimePrivate2::uninitialize()
@@ -495,16 +403,7 @@ void MeeGo::QmTimePrivate2::uninitialize()
   delete timed ;
   timed = NULL ;
 
-#if F_TIME_FORMAT
-  gconf_client_notify_remove(gc, notify_id) ;
-  gconf_client_remove_dir(gc, TIME_FORMAT_KEY, NULL) ;
-  g_object_unref(gc);
-#endif
-
   timed_info_valid = false ;
-#if F_TIME_FORMAT
-  format = QmTime::formatUnknown ;
-#endif
 }
 
 bool MeeGo::QmTime::localTime(time_t t, QDateTime &qdatetime, struct tm *tm)
@@ -558,51 +457,6 @@ MeeGo::QmTimePrivate2::~QmTimePrivate2()
   if (initialized)
     uninitialize_v2() ;
 }
-
-#if F_TIME_FORMAT
-void MeeGo::QmTimePrivate2::gconf_change_handler(GConfClient* , guint, GConfEntry* entry, gpointer user_data)
-{
-  QmTimePrivate2 *obj = QmTimePrivate2::get_object() ; // could be NULL? not really
-
-  /* This function is called by gconf machinery if our 12/24 key is changing */
-  if ((void*)user_data != (void*)obj or not obj)
-  {
-    log_error("unexpected user_data in gconf_change_handler(), ignoring it") ;
-    return ;
-  }
-
-  const char *key = gconf_entry_get_key(entry) ;
-  if (key==NULL or strcmp(key, TIME_FORMAT_KEY)!=0)
-  {
-    log_error("unexpected entry key '%s' in gconf_change_handler(), ignoring it", key ?: "[null]") ;
-    return ;
-  }
-
-  GConfValue *gconf_value = gconf_entry_get_value(entry) ;
-  const char *value = gconf_value_get_string(gconf_value) ;
-  QmTime::TimeFormat new_value = parse_format_24(value) ;
-
-  if (new_value != obj->format)
-  {
-    obj->format = new_value ;
-    obj->emit_signal(false) ;
-  }
-}
-#endif
-
-#if F_TIME_FORMAT
-MeeGo::QmTime::TimeFormat MeeGo::QmTimePrivate2::parse_format_24(const char *data)
-{
-  if (not data)
-    return MeeGo::QmTime::formatUnknown ;
-  else if (strcmp(data, "12")==0)
-    return MeeGo::QmTime::format12h ;
-  else if (strcmp(data, "24")==0)
-    return MeeGo::QmTime::format24h ;
-  else
-    return MeeGo::QmTime::formatUnknown ;
-}
-#endif
 
 void MeeGo::QmTimePrivate2::process_timed_info(const Maemo::Timed::WallClock::Info &info, bool system_time_changed, bool need_signal)
 {

@@ -47,8 +47,6 @@ namespace MeeGo { class QmTimePrivate2 ; }
 /* these macros are temporary, that's why no proper "MEEGO_QMTIME_" prefix */
 #define F_SUPPORT_DEPRECATED 1
 #define F_SUPPORT_UNUSED     1
-#define F_TIME_FORMAT        1
-
 
 #if F_SUPPORT_DEPRECATED
 /* to be replaces by MeeGo::QmTime::WhatChanged */
@@ -90,23 +88,6 @@ class MeeGo::QmTime : public QObject
   Q_ENUMS(AutoTimeZoneStatus) ;
 
 public:
-#if F_TIME_FORMAT
-  /** Format of textual time representation */
-  enum TimeFormat
-  {
-    Format12,     /**< 12 hours format  (\c  2:53pm ) */
-    Format24,     /**< 24 hours format  (\c 14:53   ) */
-    FormatUnknown = -1
-    ,
-    format24h = Format24,
-    format12h = Format12,
-    formatUnknown = FormatUnknown
-  } ;
-#if 0
-  enum TimeFormat { format24h = 0, format12h = 0, formatUnknown = 0 } ;
-#endif
-#endif
-
   /** Enumeration for change events for QmTime. */
   enum WhatChanged
   {
@@ -454,20 +435,6 @@ public:
    * @deprecated
    */
   int isOperatorTimeAccessible(void);
-#endif
-
-#if F_TIME_FORMAT
-  /**
-   * @brief Deprecated, don't use it.
-   * @deprecated
-   */
-  QmTime::TimeFormat getTimeFormat() ;
-
-  /**
-   * @brief Deprecated, don't use it.
-   * @deprecated
-   */
-  bool setTimeFormat(QmTime::TimeFormat format) ;
 #endif
 
 Q_SIGNALS:
