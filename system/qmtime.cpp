@@ -27,8 +27,6 @@
    </p>
  */
 
-#include <glib.h>
-
 #include <QDBusReply>
 #include <QDebug>
 #include <QDateTime>
