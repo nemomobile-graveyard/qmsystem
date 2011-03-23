@@ -95,16 +95,6 @@ public:
     OnlySettingsChanged  /**< Settings changed, system time is not changed */
   } ;
 
-#if 0
-  Q_ENUMS(ConnectionPolicy) ;
-  /** Policy regarding connection to time daemon */
-  enum ConnectionPolicy
-  {
-    ConnectSynchronously, /**< Process will block during initial settings retrieval from time daemon (default) */
-    ConnectAsynchronously /**< Get time related settings asynchronously, signal will be emitted when done */
-  } ;
-#endif
-
   /** Policy regarding disconnection from time daemon */
   enum DisconnectionPolicy
   {

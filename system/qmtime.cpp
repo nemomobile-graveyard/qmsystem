@@ -347,30 +347,6 @@ bool MeeGo::QmTimePrivate2::syncronize_timed_info()
   }
 }
 
-#if 0
-void MeeGo::QmTimePrivate2::query_timed_info()
-{
-  QDBusPendingCall call = timed->get_wall_clock_info_async() ;
-  QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this) ;
-  QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(query_finished(QDBusPendingCallWatcher*))) ;
-}
-
-void MeeGo::QmTimePrivate2::query_finished(QDBusPendingCallWatcher *watcher)
-{
-  QDBusPendingReply<Maemo::Timed::WallClock::Info> reply = *watcher ;
-  if (reply.isError())
-    log_error("querying timed info: error '%s'", reply.error().message().toStdString().c_str()) ;
-  else if (not reply.isValid())
-    log_error("querying timed info: invalid reply") ;
-  else // we have a valid reply
-  {
-    log_notice("querying timed info: a valid reply received") ;
-    process_timed_info(reply.value(), false, true) ;
-  }
-  delete watcher ;
-}
-#endif
-
 void MeeGo::QmTimePrivate2::uninitialize_v2()
 {
   initialized = false ;
@@ -425,30 +401,6 @@ bool MeeGo::QmTime::remoteTime(QString const &tz, time_t t, QDateTime &qdatetime
   }
   return MeeGo::QmTimePrivate2::remote_time(p, t, &qdatetime, tm) ;
 }
-
-#if 0
-void MeeGo::QmTimePrivate2::register_object(const MeeGo::QmTime *)
-{
-  if (not initialized)
-    initialize() ;
-  ++ object_counter ;
-}
-
-MeeGo::QmTimePrivate2::unregister_object(const MeeGo::QmTime *)
-{
-  if (--object_counter==0)
-  {
-    if (initialization_policy==QmTime::DisconnectWhenPossible and initialized)
-      uninitialize() ;
-  }
-}
-
-MeeGo::QmTimePrivate2::QmTimePrivate2(QObject *parent) : QObject(parent)
-{
-  initialized = false ;
-  object_counter = 0 ;
-}
-#endif
 
 MeeGo::QmTimePrivate2::~QmTimePrivate2()
 {
