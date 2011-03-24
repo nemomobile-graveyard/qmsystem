@@ -361,8 +361,8 @@ void MeeGo::QmTimePrivate2::uninitialize_v2()
       log_notice("disconnected from timed signal") ;
   }
 
-  delete timed ;
-  timed = NULL ;
+  if (timed)
+    delete timed, timed = NULL ;
 
   timed_info_valid = false ;
 }
@@ -377,8 +377,8 @@ void MeeGo::QmTimePrivate2::uninitialize()
   else
     log_notice("disconnected from timed signal") ;
 
-  delete timed ;
-  timed = NULL ;
+  if (timed)
+    delete timed, timed = NULL ;
 
   timed_info_valid = false ;
 }
