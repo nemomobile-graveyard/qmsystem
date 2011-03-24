@@ -37,8 +37,6 @@ using namespace std ;
 #include <QMutex>
 #include <timed/interface>
 
-#include <gconf/gconf-client.h>
-
 #include "qmtime.h"
 
 // Signal names
