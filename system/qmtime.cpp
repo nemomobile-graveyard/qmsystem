@@ -60,6 +60,7 @@ MeeGo::QmTime::~QmTime()
   QmTimePrivate2::unref_object() ;
 }
 
+QMutex MeeGo::QmTimePrivate2::object_mutex ;
 QMutex MeeGo::QmTimePrivate2::TzWrapper::mutex ;
 
 MeeGo::QmTimePrivate2::TzWrapper::TzWrapper(const char *tz) // NULL means "don't change", empty string means "unset"
@@ -286,6 +287,7 @@ MeeGo::QmTimePrivate2 MeeGo::QmTimePrivate2::object(NULL) ;
 
 MeeGo::QmTimePrivate2 *MeeGo::QmTimePrivate2::get_object()
 {
+  QMutexLocker locker(&object_mutex) ;
   ++ object.counter ;
   if (not object.initialized)
     object.initialize() ;
@@ -294,6 +296,7 @@ MeeGo::QmTimePrivate2 *MeeGo::QmTimePrivate2::get_object()
 
 void MeeGo::QmTimePrivate2::unref_object()
 {
+  QMutexLocker locker(&object_mutex) ;
   if (--object.counter==0 and object.disconn_policy==MeeGo::QmTime::DisconnectWhenPossible)
     object.uninitialize() ;
 }

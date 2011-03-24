@@ -64,6 +64,7 @@ class MeeGo::QmTimePrivate2 : public QObject
 
   // objects
   static QmTimePrivate2 object ;
+  static QMutex object_mutex ;
   static QmTimePrivate2 *get_object() ;
   static void unref_object() ;
 
