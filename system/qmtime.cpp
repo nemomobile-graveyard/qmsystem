@@ -57,6 +57,11 @@ MeeGo::QmTime::QmTime(QObject *parent) : QObject(parent)
 
 MeeGo::QmTime::~QmTime()
 {
+  disconnect(p, p_signal(), this, signal()) ;
+#if F_SUPPORT_DEPRECATED
+  disconnect(p, p_signal_o(), this, signal_o()) ;
+#endif
+
   QmTimePrivate2::unref_object() ;
 }
 
