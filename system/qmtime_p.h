@@ -63,7 +63,7 @@ class MeeGo::QmTimePrivate2 : public QObject
   virtual ~QmTimePrivate2() ;
 
   // objects
-  static QmTimePrivate2 object ;
+  static QmTimePrivate2* object ;
   static QMutex object_mutex ;
   static QmTimePrivate2 *get_object() ;
   static void unref_object() ;

@@ -283,22 +283,28 @@ bool MeeGo::QmTime::deviceDefaultTimezone(QString &default_timezone)
   return p->timed_info_valid ;
 }
 
-MeeGo::QmTimePrivate2 MeeGo::QmTimePrivate2::object(NULL) ;
+MeeGo::QmTimePrivate2* MeeGo::QmTimePrivate2::object = 0 ;
 
 MeeGo::QmTimePrivate2 *MeeGo::QmTimePrivate2::get_object()
 {
   QMutexLocker locker(&object_mutex) ;
-  ++ object.counter ;
-  if (not object.initialized)
-    object.initialize() ;
-  return &object ;
+  if (!object)
+    object = new QmTimePrivate2(0) ;
+  ++ object->counter ;
+  if (not object->initialized)
+    object->initialize() ;
+  return object ;
 }
 
 void MeeGo::QmTimePrivate2::unref_object()
 {
   QMutexLocker locker(&object_mutex) ;
-  if (--object.counter==0 and object.disconn_policy==MeeGo::QmTime::DisconnectWhenPossible)
-    object.uninitialize() ;
+  if (!object)
+    return ;
+  if (--object->counter==0 and object->disconn_policy==MeeGo::QmTime::DisconnectWhenPossible) {
+    object->uninitialize() ;
+    delete object, object = 0 ;
+  }
 }
 
 MeeGo::QmTimePrivate2::QmTimePrivate2(QObject *parent) : QObject(parent)
