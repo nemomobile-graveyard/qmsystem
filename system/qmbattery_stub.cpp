@@ -113,12 +113,32 @@ namespace MeeGo
         return false;
     }
 
+    int QmBattery::getAverageTalkCurrent(RemainingTimeMode mode) const
+    {
+        return 0;
+    }
+
+    int QmBattery::getAverageActiveCurrent(RemainingTimeMode mode) const
+    {
+        return 0;
+    }
+
     int QmBattery::getRemainingTalkTime(RemainingTimeMode) const
     {
         return 0;
     }
 
     int QmBattery::getRemainingIdleTime(RemainingTimeMode mode) const
+    {
+        return 0;
+    }
+
+    int QmBattery::getRemainingActiveTime(RemainingTimeMode mode) const
+    {
+        return 0;
+    }
+
+    int QmBattery::getAverageIdleCurrent(RemainingTimeMode mode) const
     {
         return 0;
     }
