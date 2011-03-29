@@ -32,7 +32,7 @@ Description: Development headers for QmSystem library
 
 Package: libqmsystem2-doc
 Section: doc
-Architecture: any
+Architecture: all
 Priority: optional
 Description: API documentation for libqmsystem2
  Doxygen-generated API documentation for QmSystem library.
