@@ -2,6 +2,7 @@ qmsystem2 (1.1.7) unstable; urgency=low
 
   [Matias Muhonen]
   * Generate the documentation package for all architectures
+  * Added the use time methods to the QmBattery stub
 
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  True, 29 Mar 2011 07:47:37 +0300
 
