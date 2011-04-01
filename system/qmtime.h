@@ -46,7 +46,6 @@ namespace MeeGo { class QmTimePrivate2 ; }
 
 /* these macros are temporary, that's why no proper "MEEGO_QMTIME_" prefix */
 #define F_SUPPORT_DEPRECATED 1
-#define F_SUPPORT_UNUSED     1
 
 #if F_SUPPORT_DEPRECATED
 /* to be replaces by MeeGo::QmTime::WhatChanged */
@@ -347,84 +346,12 @@ public:
 
   // obsolete deprecated methods //
 
-#if F_SUPPORT_UNUSED
-  /**
-   * @brief Deprecated, use getAutoTime() and getAutoTimezone() instead.
-   * @deprecated
-   */
-  bool getNetTime(QDateTime& time, QString& tz);
-#endif
-
 #if F_SUPPORT_DEPRECATED
   /**
    * @brief Deprecated, use setTime(time_t) instead.
    * @deprecated
    */
   bool setTime(const QDateTime& time);
-#endif
-
-#if F_SUPPORT_UNUSED
-  /**
-   * @brief Deprecated, use remoteTime() instead.
-   * @deprecated
-   */
-  bool getTZName(QString& s);
-#endif
-
-#if F_SUPPORT_UNUSED
-  /**
-   * @brief Deprecated, use remoteTime() instead.
-   * @deprecated
-   */
-  bool getRemoteTime(const QDateTime &moment, const QString &location, QDateTime &remoteTime);
-#endif
-
-#if F_SUPPORT_UNUSED
-  /**
-   * @brief Deprecated, use remoteTime() instead.
-   * @deprecated
-   */
-  int getUTCOffset(const QString &);
-#endif
-
-#if F_SUPPORT_UNUSED
-  /**
-   * @brief Deprecated, use remoteTime() instead.
-   * @deprecated
-   */
-  int getDSTUsage(const QDateTime &moment, const QString &location) ;
-#endif
-
-#if F_SUPPORT_UNUSED
-  /**
-   * @brief Deprecated, use getTimeDiff(time_t,const QString &,const QString &) instead.
-   * @deprecated
-   */
-  int getTimeDiff(const QDateTime &moment, const QString &location1, const QString &location2) ;
-#endif
-
-#if F_SUPPORT_UNUSED
-  /**
-   * @brief Deprecated, use setAutoSystemTime() and setAutoTimeZone() instead.
-   * @deprecated
-   */
-  bool setAutosync(bool enable);
-#endif
-
-#if F_SUPPORT_UNUSED
-  /**
-   * @brief Deprecated, use autoTimeZone() and autoSystemTime() instead.
-   * @deprecated
-   */
-  int getAutosync();
-#endif
-
-#if F_SUPPORT_UNUSED
-  /**
-   * @brief Deprecated, use isOperatorTimeAccessible(bool &) instead.
-   * @deprecated
-   */
-  int isOperatorTimeAccessible(void);
 #endif
 
 Q_SIGNALS:

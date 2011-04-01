@@ -459,23 +459,6 @@ bool MeeGo::QmTime::getAutoTimezone(QString &tz)
   return true ;
 }
 
-#if F_SUPPORT_UNUSED
-bool MeeGo::QmTime::getNetTime(QDateTime &time, QString &tz)
-{
-  time_t t = getAutoTime() ;
-  if (t==(time_t)(-1))
-    return false ;
-
-  bool res = getAutoTimezone(tz) ;
-  if (not res)
-    return false ;
-
-  time.setTime_t(t) ;
-
-  return true ;
-}
-#endif
-
 bool MeeGo::QmTime::setTime(time_t t)
 {
   Maemo::Timed::WallClock::Settings s ;
@@ -509,82 +492,3 @@ bool MeeGo::QmTime::setTime(const QDateTime &time)
 {
   return setTime(time.toTime_t()) ;
 }
-
-#if F_SUPPORT_UNUSED
-bool MeeGo::QmTime::getTZName(QString &s)
-{
-  struct tm tm ;
-  QDateTime dt ;
-  if (not localTime(time(NULL), dt, &tm))
-    return false ;
-
-  s = tm.tm_zone ;
-  return true ;
-}
-#endif
-
-#if F_SUPPORT_UNUSED
-bool MeeGo::QmTime::getRemoteTime(const QDateTime &time, const QString &tz, QDateTime &res)
-{
-  time_t t = time.toTime_t() ;
-  return remoteTime(tz, t, res) ;
-}
-#endif
-
-#if F_SUPPORT_UNUSED
-int MeeGo::QmTime::getUTCOffset(const QString &tz)
-{
-  QDateTime unused ;
-  struct tm tm ;
-  if (remoteTime(tz, time(NULL), unused, &tm))
-    return tm.tm_gmtoff ;
-
-  return 0 ; // But why???
-}
-#endif
-
-#if F_SUPPORT_UNUSED
-int MeeGo::QmTime::getDSTUsage(const QDateTime &time, const QString &tz)
-{
-  QDateTime unused ;
-  struct tm tm ;
-  if (remoteTime(tz, time.toTime_t(), unused, &tm))
-    return tm.tm_isdst ;
-
-  return 0 ; // But why???
-}
-#endif
-
-#if F_SUPPORT_UNUSED
-int MeeGo::QmTime::getTimeDiff(const QDateTime &time, const QString &tz1, const QString &tz2)
-{
-  return getTimeDiff(time.toTime_t(), tz1, tz2) ;
-}
-#endif
-
-#if F_SUPPORT_UNUSED
-// Autosync: the guys are expecting that both time and timezone are from cellular network.
-bool MeeGo::QmTime::setAutosync(bool enable)
-{
-  log_info("This method is deprecated, DO NOT USE IT!") ;
-  return setAutoSystemTime(enable ? AutoSystemTimeOn : AutoSystemTimeOff)
-    and setAutoTimeZone(enable ? AutoTimeZoneOn : AutoTimeZoneOff) ;
-}
-#endif
-
-#if F_SUPPORT_UNUSED
-int MeeGo::QmTime::getAutosync()
-{
-  log_info("This method is deprecated, DO NOT USE IT!") ;
-  return autoSystemTime() and autoTimeZone() ;
-}
-#endif
-
-#if F_SUPPORT_UNUSED
-int MeeGo::QmTime::isOperatorTimeAccessible()
-{
-  log_info("This method is deprecated, DO NOT USE IT!") ;
-  bool status ;
-  return isOperatorTimeAccessible(status) ? status : -1 ;
-}
-#endif
