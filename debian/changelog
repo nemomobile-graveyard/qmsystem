@@ -1,3 +1,10 @@
+qmsystem2 (1.1.8) unstable; urgency=low
+
+  [Matias Muhonen]
+  * Doxygen config fields missing from qmsystem2 debian/api (Fixes: NB#243293)
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Tue, 05 Apr 2011 10:07:25 +0300
+
 qmsystem2 (1.1.7) unstable; urgency=low
 
   [Matias Muhonen]
