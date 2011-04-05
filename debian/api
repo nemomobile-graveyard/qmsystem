@@ -1,7 +1,6 @@
 interface: QmSystem
 libs-pkg: libqmsystem2
 dev-pkg: libqmsystem2-dev
-doc-type: doxygen
 type: library
 headers: 
  /usr/include/qmsystem2/qmactivity.h 
@@ -17,3 +16,5 @@ headers:
  /usr/include/qmsystem2/qmtime.h
 state: stable
 scope: Nokia MeeGo
+doc-type: doxygen
+doxygen-conf: doc/Doxyfile
