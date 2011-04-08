@@ -241,7 +241,7 @@ namespace MeeGo {
     {
         MEEGO_PRIVATE(QmSensor);
 
-        stop();
+        (void)stop();
         priv->requestSession(type);
 
         return sessionType();
@@ -249,7 +249,7 @@ namespace MeeGo {
 
     void QmSensor::closeSession()
     {
-        stop();
+        (void)stop();
     }
 
     bool QmSensor::verifySessionLevel(QmSensor::SessionType type)
