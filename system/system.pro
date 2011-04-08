@@ -5,7 +5,7 @@ INCLUDEPATH += .
 DEFINES += SYSTEM_LIBRARY
 QT = core network dbus
 
-QMAKE_CXXFLAGS += -Wall -Wno-psabi
+QMAKE_CXXFLAGS += -Wall -Werror -Wno-psabi
 
 CONFIG += link_pkgconfig
 PKGCONFIG += dsme dsme_dbus_if gconf-2.0 libiphb sensord timed
