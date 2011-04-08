@@ -40,6 +40,8 @@ class TestClass : public QObject
 
 
     QTime lastPrint;
+    QTime ep;
+
 
 public slots:
     void dataAvailable(const MeeGo::QmRotationReading& data) {
@@ -55,9 +57,11 @@ public slots:
         xLatest = data.x;
         yLatest = data.y;
         zLatest = data.z;
+        count++;
     }
 
 private:
+    int count;
     void testFunc(const QString &msg, int x, int y) {
 
         printf("%s", msg.toAscii().data());
@@ -107,6 +111,8 @@ private:
             /// Special case when y-rotation flips over 0<->180
             /// Let them pass... :)
         }
+        printf("Received data reading %d\n\n", count);
+        printf("Time elapsed %d\n\n", ep.elapsed());
     }
 
     void initZ() {
@@ -149,6 +155,7 @@ private:
 
 private slots:
     void initTestCase() {
+
         receiveData = false;
         printData = false;
         sensor = new QmRotation();
@@ -163,6 +170,7 @@ private slots:
         sensor->setInterval(100);
         sensor->setStandbyOverride(true);
         QVERIFY2(sensor->start(), sensor->lastError().toLocal8Bit());
+        ep.start();
     }
 
    void testManual() {
@@ -173,7 +181,9 @@ private slots:
         QTest::qSleep(10000);
 
 
+        count = 0;
         testFunc(tr("\n\nPlease turn and hold the device so, that the display points up.\n"), 0, 0);
+        count = 0;
         testFunc(tr("\n\nPlease rotate the top edge of the device 45 degrees upwards.\n"), 45, 0);
         testFunc(tr("\n\nPlease reverse the previous rotation, and rotate the bottom edge of the device 45 degrees upwards.\n"), -45, 0);
         testFunc(tr("\n\nPlease reverse the previous rotation, and rotate the right edge of the device 45 degrees upwards.\n"), 0, -45);

@@ -1,3 +1,10 @@
+qmsystem2 (1.1.2) unstable; urgency=low
+
+  [Yang Yang]
+  * Add declination test for manual-compass-test
+
+ -- Yang Yang <ext-yang.25.yang@nokia.com>  Fri, 8 Apr 2011 10:00:19 +0300
+
 qmsystem2 (1.1.8) unstable; urgency=low
 
   [Matias Muhonen]
