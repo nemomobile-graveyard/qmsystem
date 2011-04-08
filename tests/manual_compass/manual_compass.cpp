@@ -64,6 +64,7 @@ public slots:
     }
 
     void compassDecChanged(const MeeGo::QmCompassReading newDegrees) {
+        Q_UNUSED(newDegrees);
         count++;
         //printf("\tSesnor YES declination : %d\n", newDegrees.degrees);
 
