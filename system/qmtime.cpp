@@ -404,9 +404,10 @@ bool MeeGo::QmTime::remoteTime(QString const &tz, time_t t, QDateTime &qdatetime
 {
   bool empty = tz.isEmpty() ;
   const char *p = "" ;
+  string timezone ;
   if (not empty)
   {
-    string timezone = (string)":" + tz.toStdString() ;
+    timezone = (string)":" + tz.toStdString() ;
     p = timezone.c_str() ;
     while(*p!='\0' and p[1]==':') // Make sure we have exactly one ':'
       ++ p ;
