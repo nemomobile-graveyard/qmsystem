@@ -1,5 +1,5 @@
 Name:     qmsystem
-Version:  1.0.6_1
+Version:  1.1.6
 Release:  1
 Summary:  QmSystem library
 Group:    System/System Control
@@ -18,12 +18,12 @@ BuildRequires: pkgconfig(QtCore) >= 4.5
 BuildRequires: pkgconfig(sensord) >= 0.6.33
 #BuildRequires: pkgconfig(sysinfo) >= 1.0.17
 BuildRequires: pkgconfig(timed) >= 2.31
-#BuildRequires: pkgconfig(usb_moded) >= 0.24
-#BuildRequires: devicelock-devel >= 0.2.11
+#BuildRequires: pkgconfig(usb_moded) >= 0.28
 BuildRequires: doxygen
 BuildRequires: fdupes
 BuildRequires: graphviz
 
+Requires: mce
 Requires: sensorfw >= 0.6.33
 Requires: timed >= 2.31
 

@@ -1,3 +1,19 @@
+* Fri Apr 08 2011 Miroslav Safr <miroslav.safr@tieto.com> 1.1.6
+- BMC#15199 - Update meegotouch framework
+- update to 1.1.6 -  required by meegotouch-systemui
+
+* Thu Feb 10 2011 Tapio Rantala <ext-tapio.rantala@nokia.com> 1.0.10-1
+- New upstream version (BMC#12784)
+- Drop displaystate-default patch, applied upstream
+
+* Fri Feb 04 2011 Tapio Rantala <ext-tapio.rantala@nokia.com> 1.0.8-1
+- New upstream version (BMC#12784)
+- Add displaystate-default patch, don't report display off if mce is unavailable
+
+* Tue Feb 01 2011 Tapio Rantala <ext-tapio.rantala@nokia.com> 1.0.7-1
+- New upstream version (BMC#12784)
+- Enable mce support
+
 * Fri Jan 21 2011 Tapio Rantala <ext-tapio.rantala@nokia.com> 1.0.6_1-1
 - New upstream version (BMC#12784)
 
