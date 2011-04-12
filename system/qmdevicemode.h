@@ -96,7 +96,7 @@ public:
     /*!
      * @brief Sets the device operation mode.
      * @credential mce::DeviceModeControl Resource token required to set the device (normal/flight) mode.
-     * @param state Operation mode to set
+     * @param mode Operation mode to set
      * @return True if a valid mode was requested, false otherwise
      */
     bool setMode(DeviceMode mode);

@@ -291,7 +291,7 @@ public:
   /**
    * Get info if the device supports time updates from cellular network operator.
    *
-   * @param   a reference to a boolean variable to store the result
+   * @param result   a reference to a boolean variable to store the result
    *
    * @return  True if information successfully retrieved
    */
@@ -310,9 +310,9 @@ public:
    * Calculate local time in given timezone
    *
    * @param   tz       the time zone
-   *          t        time in seconds from the Unix epoch begin
-   *          dt       a reference to variable to save broken down time representation
-   *          p        pointer to save struct tm providing low level details, NULL if not needed
+   * @param   t        time in seconds from the Unix epoch begin
+   * @param   dt       a reference to variable to save broken down time representation
+   * @param   p        pointer to save struct tm providing low level details, NULL if not needed
    *
    * @return  True if information successfully retrieved
    */
@@ -322,8 +322,8 @@ public:
    * Calculate local time (in current timezone)
    *
    * @param   t        time in seconds from the Unix epoch begin
-   *          dt       a reference to variable to save broken down time representation
-   *          p        pointer to save struct tm providing low level details, NULL if not needed
+   * @param   dt       a reference to variable to save broken down time representation
+   * @param   p        pointer to save struct tm providing low level details, NULL if not needed
    *
    * @return  True if information successfully retrieved
    */

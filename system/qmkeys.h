@@ -186,7 +186,7 @@ public:
    * @param key which state is being queried
    * @return The state of the given key
    */
-  State getKeyState(Key);
+  State getKeyState(Key key);
 
 Q_SIGNALS:
 
@@ -209,21 +209,21 @@ Q_SIGNALS:
    * @deprecated Deprecated, use keyEvent() instead.
    * @param where New camera luncher position
    */
-  void cameraLauncherMoved(QmKeys::CameraKeyPosition);
+  void cameraLauncherMoved(QmKeys::CameraKeyPosition where);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
    * @deprecated Deprecated, use keyEvent() instead.
    * @param Is the volume up key down
    */
-  void volumeUpMoved(bool);
+  void volumeUpMoved(bool Is);
 
   /*!
    * @brief Deprecated, use keyEvent() instead.
    * @deprecated Deprecated, use keyEvent() instead.
    * @param Is the volume down key down
    */
-  void volumeDownMoved(bool);
+  void volumeDownMoved(bool Is);
 
   /*!
    * @brief Sent when a key has changed state.

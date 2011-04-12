@@ -115,8 +115,6 @@ namespace MeeGo {
     Q_SIGNALS:
         /**
          * Sent when a tapping event has occurred.
-         * @param direction Direction of the tap
-         * @param type Type of the tap
          */
         void tapped(const MeeGo::QmTapReading);
 

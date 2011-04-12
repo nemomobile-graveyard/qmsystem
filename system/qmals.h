@@ -78,7 +78,7 @@ namespace MeeGo {
 
         /**
          * Sent when ambient light intensity has changed.
-         * @param value Observed ambient light intensity (lux)
+         * @param data Observed ambient light intensity (lux)
          */
         void ALSChanged(const MeeGo::QmAlsReading data);
 

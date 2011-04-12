@@ -117,7 +117,7 @@ public:
     /*!
      * @brief Requests to system to move into state @c nextState.
      * @credential dsme::DeviceStateControl Resource token required to set the device state (shutdown/reboot/powerup).
-     * @param nexstate New state
+     * @param nextState New state
      * @return True on success, false otherwise
      */
     bool set(NextState nextState);
