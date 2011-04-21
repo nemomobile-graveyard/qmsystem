@@ -2,8 +2,9 @@ qmsystem2 (1.1.10) unstable; urgency=low
 
   [Matias Muhonen]
   * Fix doxygen warnings
+  * Use relative input directory path for doxygen (Fixes: NB#249205)
 
- -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Tue, 12 Apr 2011 08:19:07 +0300
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Thu, 21 Apr 2011 11:24:06 +0300
 
 qmsystem2 (1.1.9) unstable; urgency=low
 
