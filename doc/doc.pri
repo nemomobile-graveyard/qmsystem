@@ -11,8 +11,7 @@ doctarget.target = docs
 contains(NO_DOCS,yes): {
 doctarget.commands = echo \"*** skipped building doxygen docs ***\"
 } else {
-doctarget.commands = INPUT=\"$${_PRO_FILE_PWD_}/system\" \
-                     STRIP_FROM_PATH=\"$${_PRO_FILE_PWD_}\" \
+doctarget.commands = STRIP_FROM_PATH=\"$${_PRO_FILE_PWD_}\" \
                      doxygen $$system(pwd)/Doxyfile
 }
 
