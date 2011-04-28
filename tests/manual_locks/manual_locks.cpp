@@ -85,7 +85,7 @@ private slots:
         signalDump.signal = false;
         bool result = locks->setState(MeeGo::QmLocks::Device, MeeGo::QmLocks::Locked);
         QVERIFY(result == true);
-        printf("Wait for  seconds...\n");
+        printf("Wait for 5 seconds...\n");
         QTest::qWait(5000);
         QVERIFY(signalDump.signal);
         QVERIFY(signalDump.lock == MeeGo::QmLocks::Device);
