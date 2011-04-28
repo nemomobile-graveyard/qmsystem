@@ -41,9 +41,14 @@ public:
 
 public slots:
     void stateChanged(MeeGo::QmLocks::Lock newLock, MeeGo::QmLocks::State newState) {
+        if (MeeGo::QmLocks::TouchAndKeyboard == newLock) {
+            /* Ignore tklock in this test */
+            return;
+        }
         lock = newLock;
         state = newState;
         signal = true;
+        printf("Receive new signal: %d %d %d\n", lock, state, signal);
     }
 };
 
@@ -80,7 +85,8 @@ private slots:
         signalDump.signal = false;
         bool result = locks->setState(MeeGo::QmLocks::Device, MeeGo::QmLocks::Locked);
         QVERIFY(result == true);
-        QTest::qWait(2000);
+        printf("Wait for  seconds...\n");
+        QTest::qWait(5000);
         QVERIFY(signalDump.signal);
         QVERIFY(signalDump.lock == MeeGo::QmLocks::Device);
         QVERIFY(signalDump.state == MeeGo::QmLocks::Locked);
