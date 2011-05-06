@@ -3,7 +3,10 @@ qmsystem2 (1.1.11) unstable; urgency=low
   [Yang Yang]
   * Fix manual-lock-test
 
- -- Yang Yang <ext-yang.25.yang@nokia.com>  Thu, 28 Apr 2011 15:10:06 +0300
+  [Matias Muhonen]
+  * Fix include statements in QmSystem API reference documentation (Fixes: NB#253271)
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Fri, 06 May 2011 08:52:27 +0300
 
 qmsystem2 (1.1.10) unstable; urgency=low
 
