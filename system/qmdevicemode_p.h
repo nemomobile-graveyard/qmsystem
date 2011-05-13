@@ -80,7 +80,7 @@ namespace MeeGo
         static QmDeviceMode::DeviceMode radioStateToDeviceMode(quint32 radioStateFlags) {
             QmDeviceMode::DeviceMode deviceMode = QmDeviceMode::Error;
             #if HAVE_MCE
-                if (radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH)) {
+                if (radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH | MCE_RADIO_STATE_NFC)) {
                     deviceMode = QmDeviceMode::Normal;
                 } else {
                     deviceMode = QmDeviceMode::Flight;
