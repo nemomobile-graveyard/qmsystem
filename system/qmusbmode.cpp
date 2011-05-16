@@ -253,6 +253,8 @@ QString QmUSBModePrivate::modeToString(QmUSBMode::Mode mode) {
         return MODE_UNDEFINED;
     case QmUSBMode::ModeRequest:
         return USB_CONNECTED_DIALOG_SHOW;
+    case QmUSBMode::SDK:
+        return MODE_WINDOWS_NET;
     default:
         return "";
     }
@@ -277,6 +279,8 @@ QmUSBMode::Mode QmUSBModePrivate::stringToMode(const QString &str) {
         return QmUSBMode::Undefined;
     } else if (str == USB_CONNECTED_DIALOG_SHOW) {
         return QmUSBMode::ModeRequest;
+    } else if (str == MODE_WINDOWS_NET) {
+        return QmUSBMode::SDK;
     } else {
         return QmUSBMode::Undefined;
     }

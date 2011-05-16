@@ -78,7 +78,8 @@ public:
         OviSuite,         //!< Ovi suite mode. Requires an MTP (media transfer protocol) client on the USB host.
         ModeRequest,      //!< Signaled as an indication that the USB mode should be set with setMode(QmUSBMode::Mode).
         Ask,              //!< Waiting for the USB mode to be set with setMode(QmUSBMode::Mode).
-        Undefined         //!< Unknown/error.
+        Undefined,        //!< Unknown/error.
+        SDK               //!< Windows network mode. Allows USB networking on the device.
     };
 
     /*!
