@@ -98,7 +98,7 @@ public:
 
     /*!
      * @brief Sets the default USB mode.
-     * @param mode The new default USB mode. The OviSuite, MassStorage, ChargingOnly and Ask modes can be set
+     * @param mode The new default USB mode. The OviSuite, MassStorage, ChargingOnly, Ask and SDK modes can be set
      * @return True if successful, false otherwise
      */
     bool setDefaultMode(QmUSBMode::Mode mode);
