@@ -91,7 +91,7 @@ public:
     /*!
      * @brief Sets the USB mode. Note that calling setMode is non-blocking, so the method returns immediately.
      * If the USB mode change succeeded, the modeChanged signal is emitted.
-     * @param mode The USB mode to be set. The OviSuite, MassStorage and ChargingOnly modes can be requested.
+     * @param mode The USB mode to be set. The OviSuite, MassStorage, ChargingOnly and SDK modes can be requested.
      * @return True if a valid mode was requested, false otherwise
      */
     bool setMode(QmUSBMode::Mode mode);
