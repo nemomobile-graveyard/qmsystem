@@ -38,6 +38,16 @@
 
 namespace MeeGo {
 
+// defined in libiphb.h
+const unsigned short QmHeartbeat::WAKEUP_SLOT_30_SEC   = IPHB_GS_WAIT_30_SEC;
+const unsigned short QmHeartbeat::WAKEUP_SLOT_2_5_MINS = IPHB_GS_WAIT_2_5_MINS;
+const unsigned short QmHeartbeat::WAKEUP_SLOT_5_MINS   = IPHB_GS_WAIT_5_MINS;
+const unsigned short QmHeartbeat::WAKEUP_SLOT_10_MINS  = IPHB_GS_WAIT_10_MINS;
+const unsigned short QmHeartbeat::WAKEUP_SLOT_30_MINS  = IPHB_GS_WAIT_30_MINS;
+const unsigned short QmHeartbeat::WAKEUP_SLOT_1_HOUR   = IPHB_GS_WAIT_1_HOUR;
+const unsigned short QmHeartbeat::WAKEUP_SLOT_2_HOURS  = IPHB_GS_WAIT_2_HOURS;
+const unsigned short QmHeartbeat::WAKEUP_SLOT_10_HOURS = IPHB_GS_WAIT_10_HOURS;
+
 #define LOG_ERROR { qWarning() << Q_FUNC_INFO << " PID=" << (unsigned long)getpid() << " " << strerror(errno) <<  " errno=" << errno; }
 
 QmHeartbeatPrivate::QmHeartbeatPrivate() {
