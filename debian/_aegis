@@ -12,10 +12,6 @@
     <for path="/usr/bin/devicemode-test" id="devicemode-test" />
   </request>
   <request>
-    <credential name="dsme::DeviceStateControl" />
-    <for path="/usr/bin/heartbeat-test" id="heartbeat-test" />
-  </request>
-  <request>
     <credential name="mce::LEDControl" />
     <for path="/usr/bin/led-test" id="led-test" />
   </request>
