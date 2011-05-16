@@ -68,15 +68,6 @@
         <!-- Run test usbmode application -->
         <step expected_result="0">/usr/bin/usbmode-test </step>
       </case>
-      <case name="watchdog-normal" level="Component" type="Functional" description="QmProcessWatchdog" timeout="330" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/processwatchdog-test testWatchdogBasicOperation</step>
-      </case>
-      <case name="watchdog-close-shave" level="Component" type="Functional" description="QmProcessWatchdog" timeout="180" subfeature="QTAPIs">
-        <step expected_result="0">/usr/bin/processwatchdog-test testWatchdogCloseShave</step>
-      </case>
-      <case name="watchdog-abort" level="Component" type="Functional" description="QmProcessWatchdog" timeout="180" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="134">/usr/bin/processwatchdog-test testWatchdogAbort</step>
-      </case>
       <case name="systeminformation" level="Component" type="Functional" description="QmSystemInformation" timeout="5" subfeature="QT_APIs" requirement="39927">
         <step expected_result="0">/usr/bin/systeminformation-test</step>
       </case>
