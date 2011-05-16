@@ -5,6 +5,7 @@ qmsystem2 (1.2.0) unstable; urgency=low
 
   [Matias Muhonen]
   * Add new enumeration "SDK" to MeeGo::QmUSBMode::Mode (Fixes: NB#255893)
+  * Add the dsme::DeviceStateControl credential for heartbeat-test
 
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Mon, 16 May 2011 10:54:39 +0300
 
