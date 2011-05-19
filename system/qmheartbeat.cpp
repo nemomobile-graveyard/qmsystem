@@ -76,7 +76,7 @@ bool QmHeartbeatPrivate::open(QmHeartbeat::SignalNeed signalNeed) {
                 LOG_ERROR;
             }
             else {
-                notifier = new QSocketNotifier( sockfd, QSocketNotifier::Read, this);
+                notifier = new QSocketNotifier(sockfd, QSocketNotifier::Read);
                 if (!notifier) {
                     qFatal("QSocketNotifier failed");
                 }
