@@ -2,6 +2,7 @@ qmsystem2 (1.2.1) unstable; urgency=low
 
   [Matias Muhonen]
   * Fix a double-free in QmHeartbeat
+  * Fix a double-free in QmProcessWatchdog
 
  -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Thu, 19 May 2011 12:29:36 +0300
 

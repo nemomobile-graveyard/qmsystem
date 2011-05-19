@@ -62,7 +62,7 @@ namespace MeeGo
                 qWarning("Could not register to the process watchdog service.");
                 return false;
             }
-            notifier = new QSocketNotifier(conn->fd, QSocketNotifier::Read, this);
+            notifier = new QSocketNotifier(conn->fd, QSocketNotifier::Read);
             connect(notifier, SIGNAL(activated(int)), this, SLOT(readable(int)));
             notifier->setEnabled(true);
 
