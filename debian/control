@@ -52,7 +52,7 @@ Description: debug stuff for qmsystem2-api-all-binary
 Package: qmsystem2-api-fast-tests
 Section: tests
 Architecture: any
-Depends: ci-testing, qmsystem2-api-all-binary (= ${binary:Version})
+Depends: ci-testing, mcetools, qmsystem2-api-all-binary (= ${binary:Version})
 XB-Maemo-CI-Packages: libqmsystem2
 XB-Maemo-CI-Stage: staging, validation
 Description: xml test description for libqmsystem2 library
