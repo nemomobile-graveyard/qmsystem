@@ -28,6 +28,7 @@
 #include <QTest>
 #include <QDebug>
 #include <QtDBus/qdbusinterface.h>
+#include <QProcess>
 
 /*
  * The device must be in the "user" state for this test.
@@ -86,6 +87,17 @@ private slots:
             QTest::qWait(5000);
             QCOMPARE(signalDump.mode, MeeGo::QmDeviceMode::Flight);
 
+            //QObject *parent;
+            qDebug()<<"Now test NFC mode";
+            QString program = "/sbin/mcetool";
+            QStringList arguments;
+            arguments << "----enable-radio=nfc";
+            qDebug()<<arguments;
+            QProcess *myProcess = new QProcess();
+            myProcess->start(program, arguments);
+            QCOMPARE(dm->getMode(), MeeGo::QmDeviceMode::Flight);
+            delete myProcess;
+
             QVERIFY2(dm->setMode(MeeGo::QmDeviceMode::Normal), "Note that the system must be in the user state");
             QCOMPARE(dm->getMode(), MeeGo::QmDeviceMode::Normal);
             QTest::qWait(5000);
@@ -101,6 +113,18 @@ private slots:
             QCOMPARE(dm->getMode(), MeeGo::QmDeviceMode::Flight);
             QTest::qWait(5000);
             QCOMPARE(signalDump.mode, MeeGo::QmDeviceMode::Flight);
+
+            //QObject *parent;
+            qDebug()<<"Now test NFC mode";
+            QString program = "/sbin/mcetool";
+            QStringList arguments;
+            arguments << "--enable-radio=nfc";
+            qDebug()<<program<<arguments;
+            QProcess *myProcess = new QProcess();
+            myProcess->start(program, arguments);
+            QTest::qWait(5000);
+            QCOMPARE(dm->getMode(), MeeGo::QmDeviceMode::Flight);
+            delete myProcess;
         }
     }
 

@@ -1,5 +1,8 @@
 qmsystem2 (1.2.1) unstable; urgency=low
 
+  [Yang Yang]
+  * Add "NFC" test to devicemode-test
+
   [Matias Muhonen]
   * Fix a double-free in QmHeartbeat
   * Fix a double-free in QmProcessWatchdog
