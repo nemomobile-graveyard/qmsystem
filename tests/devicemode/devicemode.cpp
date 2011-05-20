@@ -87,16 +87,15 @@ private slots:
             QTest::qWait(5000);
             QCOMPARE(signalDump.mode, MeeGo::QmDeviceMode::Flight);
 
-            //QObject *parent;
             qDebug()<<"Now test NFC mode";
-            QString program = "/sbin/mcetool";
-            QStringList arguments;
-            arguments << "----enable-radio=nfc";
-            qDebug()<<arguments;
-            QProcess *myProcess = new QProcess();
-            myProcess->start(program, arguments);
+            QString mcetool = "/sbin/mcetool";
+            QStringList nfc;
+            nfc << "--enable-radio=nfc";
+            qDebug()<<nfc;
+            QProcess runMCE;
+            runMCE.start(mcetool, nfc);
+            QTest::qWait(5000);
             QCOMPARE(dm->getMode(), MeeGo::QmDeviceMode::Flight);
-            delete myProcess;
 
             QVERIFY2(dm->setMode(MeeGo::QmDeviceMode::Normal), "Note that the system must be in the user state");
             QCOMPARE(dm->getMode(), MeeGo::QmDeviceMode::Normal);
@@ -114,17 +113,16 @@ private slots:
             QTest::qWait(5000);
             QCOMPARE(signalDump.mode, MeeGo::QmDeviceMode::Flight);
 
-            //QObject *parent;
             qDebug()<<"Now test NFC mode";
-            QString program = "/sbin/mcetool";
-            QStringList arguments;
-            arguments << "--enable-radio=nfc";
-            qDebug()<<program<<arguments;
-            QProcess *myProcess = new QProcess();
-            myProcess->start(program, arguments);
+            QString mcetool = "/sbin/mcetool";
+            QStringList nfc;
+            nfc << "--enable-radio=nfc";
+            qDebug()<<nfc;
+            QProcess runMCE;
+            runMCE.start(mcetool, nfc);
             QTest::qWait(5000);
             QCOMPARE(dm->getMode(), MeeGo::QmDeviceMode::Flight);
-            delete myProcess;
+
         }
     }
 
