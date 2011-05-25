@@ -433,6 +433,7 @@ void MeeGo::QmTimePrivate2::process_timed_info(const Maemo::Timed::WallClock::In
 
 void MeeGo::QmTimePrivate2::emit_signal(bool systime)
 {
+  tzset() ;
   emit change_signal(systime ? MeeGo::QmTime::TimeChanged : MeeGo::QmTime::OnlySettingsChanged) ;
   emit change_signal(systime ? MeeGo::QmTimeTimeChanged : MeeGo::QmTimeOnlySettingsChanged) ;
 }
