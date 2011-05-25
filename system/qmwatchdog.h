@@ -41,6 +41,7 @@ namespace MeeGo {
      * @scope Internal
      *
      * @brief Provides an interface for the DSME process watchdog service.
+     * @credential dsme::DeviceStateControl Resource token required to use the process watchdog service.
      */
     class QmProcessWatchdog : public QObject {
     Q_OBJECT;
