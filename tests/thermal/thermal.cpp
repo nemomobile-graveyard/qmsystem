@@ -134,8 +134,9 @@ class TestClass : public QObject
     Q_OBJECT
 
 public slots:
-    void thermalChanged(MeeGo::QmThermal::ThermalState newState) {
+    void thermalChanged(MeeGo::QmThermal::ThermalState newState) {        
         state = newState;
+        qDebug()<<"Thermal state changed: "<<state;
     }
 
 private:

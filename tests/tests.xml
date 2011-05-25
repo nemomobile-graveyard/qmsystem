@@ -22,7 +22,7 @@
         <step>echo " executing cat /var/junk"</step>
         <step>cat /var/junk</step>
         <step>echo "executing cat /var/cache/junk"</step>
-        <step>cat /var/cache/junk</step>
+        <step>cat /var/cache/junk</step>       
       </pre_steps>
       <case name="activity" level="Component" type="Functional" description="QmActivity"  timeout="15" subfeature="QT_APIs" requirement="39927">
         <!-- Run test activity application -->

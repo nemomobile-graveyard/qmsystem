@@ -26,6 +26,7 @@
  */
 #include <QObject>
 #include <qmdisplaystate.h>
+#include <qmlocks.h>
 #include <QTest>
 #include <QDebug>
 
@@ -40,6 +41,7 @@ public:
 public slots:
     void displayStateChanged(MeeGo::QmDisplayState::DisplayState newState ) {
         state = newState;
+        qDebug()<<"Received state changed signal: "<<state;
     }
 };
 
@@ -51,16 +53,21 @@ class TestClass : public QObject
 private:
     MeeGo::QmDisplayState *displaystate;
     SignalDump signalDump;
+    MeeGo::QmLocks *locks;
     
 private slots:
     void initTestCase() {
         displaystate = new MeeGo::QmDisplayState();
         QVERIFY(displaystate);
+        locks = new MeeGo::QmLocks();
+        QVERIFY(locks);
     }
 
     void testConnectSignals() {
         QVERIFY(connect(displaystate, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)),
                 &signalDump, SLOT(displayStateChanged(MeeGo::QmDisplayState::DisplayState))));
+
+
     }
 
     void testGet() {
@@ -86,9 +93,19 @@ private slots:
 
     void testSetStateOn() {
         displaystate->set(MeeGo::QmDisplayState::Off);
+        if (MeeGo::QmLocks::Locked == locks->getState(MeeGo::QmLocks::Device)) {
+            QVERIFY(locks->setState(MeeGo::QmLocks::Device, MeeGo::QmLocks::Unlocked));
+            qDebug()<<"Unlock device\n";
+        }
+        if (MeeGo::QmLocks::Locked == locks->getState(MeeGo::QmLocks::TouchAndKeyboard)) {
+            QVERIFY(locks->setState(MeeGo::QmLocks::TouchAndKeyboard, MeeGo::QmLocks::Unlocked));
+            qDebug()<<"Unlock touch screen and keyboard\n";
+        }
         bool result = displaystate->set(MeeGo::QmDisplayState::On);
         QVERIFY(result == true);
-        QTest::qWait(2000);
+        QTest::qWait(1000);
+        MeeGo::QmDisplayState::DisplayState currentState = displaystate->get();
+        QVERIFY(currentState == MeeGo::QmDisplayState::On);
         QVERIFY(signalDump.state == MeeGo::QmDisplayState::On);
     }
 
@@ -147,6 +164,7 @@ private slots:
 
     void cleanupTestCase() {
         delete displaystate;
+        delete lock;
     }
 };
 

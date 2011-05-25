@@ -1,6 +1,7 @@
 qmsystem2 (1.2.1) unstable; urgency=low
 
   [Yang Yang]
+  * Fix display-test, unlock tk and device before setting display on
   * Add "NFC" test to devicemode-test
 
   [Matias Muhonen]
