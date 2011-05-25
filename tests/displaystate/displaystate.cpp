@@ -164,7 +164,7 @@ private slots:
 
     void cleanupTestCase() {
         delete displaystate;
-        delete lock;
+        delete locks;
     }
 };
 
