@@ -62,7 +62,8 @@
       </case>
       <case name="thermal" level="Component" type="Functional" description="QmThermal" timeout="240" subfeature="QT_APIs" requirement="39927">
         <!-- Run test thermal application -->
-        <step expected_result="0">/usr/bin/aegis-su -r dsme::DeviceStateControl /sbin/dsmetool -a && /usr/bin/thermal-test </step>
+        <step expected_result="0">/usr/bin/aegis-su -r dsme::DeviceStateControl /sbin/dsmetool -a </step>
+        <step expected_result="0">/usr/bin/thermal-test </step>
       </case>
       <case name="usbmode" level="Component" type="Functional" description="QmUSBMode" timeout="240" subfeature="QT_APIs" requirement="39927">
         <!-- Run test usbmode application -->
