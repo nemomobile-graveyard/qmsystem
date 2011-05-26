@@ -10,7 +10,10 @@ qmsystem2 (1.2.1) unstable; urgency=low
   * Fix thermal-test, provide the dsme::DeviceStateControl credential
   * Improve QmWatchdog documentation
 
- -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Thu, 19 May 2011 12:29:36 +0300
+  [Ilya Dogolazky]
+  * tzset() has to be called before signalling time setting change (Fixes: NB#259764)
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Thu, 26 May 2011 06:54:57 +0300
 
 qmsystem2 (1.2.0) unstable; urgency=low
 
