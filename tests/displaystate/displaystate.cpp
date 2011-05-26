@@ -29,19 +29,35 @@
 #include <qmlocks.h>
 #include <QTest>
 #include <QDebug>
+#include <QList>
+
+static const int WAIT_TIME_MS = 1500;
+
+static QString displayStateToString(MeeGo::QmDisplayState::DisplayState displayState) {
+    QString state = "Unknown";
+
+    if (MeeGo::QmDisplayState::Off == displayState) {
+        state = "Off";
+    } else if (MeeGo::QmDisplayState::Dimmed == displayState) {
+        state = "Dimmed";
+    } else if (MeeGo::QmDisplayState::On == displayState) {
+        state = "On";
+    }
+    return state;
+}
 
 class SignalDump : public QObject {
     Q_OBJECT
 
 public:
-    SignalDump(QObject *parent = NULL) : QObject(parent), state(MeeGo::QmDisplayState::On) {}
+    SignalDump(QObject *parent = NULL) : QObject(parent) {}
 
-    MeeGo::QmDisplayState::DisplayState state;
+    QList<MeeGo::QmDisplayState::DisplayState> receivedStates;
 
 public slots:
     void displayStateChanged(MeeGo::QmDisplayState::DisplayState newState ) {
-        state = newState;
-        qDebug()<<"Received state changed signal: "<<state;
+		receivedStates << newState;
+        qDebug() << "Received state changed signal: " << displayStateToString(newState);
     }
 };
 
@@ -54,59 +70,70 @@ private:
     MeeGo::QmDisplayState *displaystate;
     SignalDump signalDump;
     MeeGo::QmLocks *locks;
-    
+
 private slots:
     void initTestCase() {
+        qDebug() << "initTestCase called";
+
         displaystate = new MeeGo::QmDisplayState();
         QVERIFY(displaystate);
+        QVERIFY(connect(displaystate, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)),
+                &signalDump, SLOT(displayStateChanged(MeeGo::QmDisplayState::DisplayState))));
+
         locks = new MeeGo::QmLocks();
         QVERIFY(locks);
     }
 
-    void testConnectSignals() {
-        QVERIFY(connect(displaystate, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)),
-                &signalDump, SLOT(displayStateChanged(MeeGo::QmDisplayState::DisplayState))));
+    void setDisplayState(MeeGo::QmDisplayState::DisplayState displayState) {
+        (void)displaystate->set(displayState);
 
-
-    }
-
-    void testGet() {
-        MeeGo::QmDisplayState::DisplayState result = displaystate->get();
-        (void)result;
+        qDebug() << "setDisplayState: " << displayStateToString(displayState);
+        QTest::qWait(WAIT_TIME_MS);
+        QVERIFY(displaystate->get() == displayState);
     }
 
     void testSetStateOff() {
-        displaystate->set(MeeGo::QmDisplayState::On);
-        bool result = displaystate->set(MeeGo::QmDisplayState::Off);
-        QVERIFY(result == true);
-        QTest::qWait(2000);
-        QVERIFY(signalDump.state == MeeGo::QmDisplayState::Off);
+        signalDump.receivedStates.clear();
+
+        setDisplayState(MeeGo::QmDisplayState::On);
+        setDisplayState(MeeGo::QmDisplayState::Off);
+
+        QVERIFY(signalDump.receivedStates.contains(MeeGo::QmDisplayState::Off));
+
+        QTest::qWait(WAIT_TIME_MS * 2);
     }
 
     void testSetStateDimmed() {
-        displaystate->set(MeeGo::QmDisplayState::On);
-        bool result = displaystate->set(MeeGo::QmDisplayState::Dimmed);
-        QVERIFY(result == true);
-        QTest::qWait(2000);
-        QVERIFY(signalDump.state == MeeGo::QmDisplayState::Dimmed);
+        signalDump.receivedStates.clear();
+
+        setDisplayState(MeeGo::QmDisplayState::On);
+        setDisplayState(MeeGo::QmDisplayState::Dimmed);
+
+        QVERIFY(signalDump.receivedStates.contains(MeeGo::QmDisplayState::Dimmed));
+
+        QTest::qWait(WAIT_TIME_MS * 2);
     }
 
     void testSetStateOn() {
-        displaystate->set(MeeGo::QmDisplayState::Off);
+        signalDump.receivedStates.clear();
+
+        setDisplayState(MeeGo::QmDisplayState::Off);
+
         if (MeeGo::QmLocks::Locked == locks->getState(MeeGo::QmLocks::Device)) {
             QVERIFY(locks->setState(MeeGo::QmLocks::Device, MeeGo::QmLocks::Unlocked));
-            qDebug()<<"Unlock device\n";
+            qDebug() << "Unlock device";
+            QTest::qWait(WAIT_TIME_MS);
         }
         if (MeeGo::QmLocks::Locked == locks->getState(MeeGo::QmLocks::TouchAndKeyboard)) {
             QVERIFY(locks->setState(MeeGo::QmLocks::TouchAndKeyboard, MeeGo::QmLocks::Unlocked));
-            qDebug()<<"Unlock touch screen and keyboard\n";
+            qDebug() << "Unlock touch screen and keyboard";
+            QTest::qWait(WAIT_TIME_MS);
         }
-        bool result = displaystate->set(MeeGo::QmDisplayState::On);
-        QVERIFY(result == true);
-        QTest::qWait(1000);
-        MeeGo::QmDisplayState::DisplayState currentState = displaystate->get();
-        QVERIFY(currentState == MeeGo::QmDisplayState::On);
-        QVERIFY(signalDump.state == MeeGo::QmDisplayState::On);
+
+        setDisplayState(MeeGo::QmDisplayState::On);
+        QVERIFY(signalDump.receivedStates.contains(MeeGo::QmDisplayState::On));
+
+        QTest::qWait(WAIT_TIME_MS * 2);
     }
 
     void testSetBlankingPause() {
@@ -163,6 +190,8 @@ private slots:
     }
 
     void cleanupTestCase() {
+        qDebug() << "cleanupTestCase called";
+
         delete displaystate;
         delete locks;
     }
