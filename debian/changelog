@@ -1,4 +1,4 @@
-qmsystem2 (1.2.1) unstable; urgency=low
+qmsystem2 (1.3.0) unstable; urgency=low
 
   [Yang Yang]
   * Fix display-test, unlock tk and device before setting display on
