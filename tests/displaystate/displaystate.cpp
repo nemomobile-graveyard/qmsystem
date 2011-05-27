@@ -26,7 +26,6 @@
  */
 #include <QObject>
 #include <qmdisplaystate.h>
-#include <qmlocks.h>
 #include <QTest>
 #include <QDebug>
 #include <QList>
@@ -52,12 +51,14 @@ class SignalDump : public QObject {
 public:
     SignalDump(QObject *parent = NULL) : QObject(parent) {}
 
+    MeeGo::QmDisplayState displayState;
     QList<MeeGo::QmDisplayState::DisplayState> receivedStates;
 
 public slots:
     void displayStateChanged(MeeGo::QmDisplayState::DisplayState newState ) {
 		receivedStates << newState;
         qDebug() << "Received state changed signal: " << displayStateToString(newState);
+        QVERIFY(displayState.get() == newState);
     }
 };
 
@@ -69,7 +70,6 @@ class TestClass : public QObject
 private:
     MeeGo::QmDisplayState *displaystate;
     SignalDump signalDump;
-    MeeGo::QmLocks *locks;
 
 private slots:
     void initTestCase() {
@@ -79,9 +79,6 @@ private slots:
         QVERIFY(displaystate);
         QVERIFY(connect(displaystate, SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState)),
                 &signalDump, SLOT(displayStateChanged(MeeGo::QmDisplayState::DisplayState))));
-
-        locks = new MeeGo::QmLocks();
-        QVERIFY(locks);
     }
 
     void setDisplayState(MeeGo::QmDisplayState::DisplayState displayState) {
@@ -89,7 +86,6 @@ private slots:
 
         qDebug() << "setDisplayState: " << displayStateToString(displayState);
         QTest::qWait(WAIT_TIME_MS);
-        QVERIFY(displaystate->get() == displayState);
     }
 
     void testSetStateOff() {
@@ -118,19 +114,8 @@ private slots:
         signalDump.receivedStates.clear();
 
         setDisplayState(MeeGo::QmDisplayState::Off);
-
-        if (MeeGo::QmLocks::Locked == locks->getState(MeeGo::QmLocks::Device)) {
-            QVERIFY(locks->setState(MeeGo::QmLocks::Device, MeeGo::QmLocks::Unlocked));
-            qDebug() << "Unlock device";
-            QTest::qWait(WAIT_TIME_MS);
-        }
-        if (MeeGo::QmLocks::Locked == locks->getState(MeeGo::QmLocks::TouchAndKeyboard)) {
-            QVERIFY(locks->setState(MeeGo::QmLocks::TouchAndKeyboard, MeeGo::QmLocks::Unlocked));
-            qDebug() << "Unlock touch screen and keyboard";
-            QTest::qWait(WAIT_TIME_MS);
-        }
-
         setDisplayState(MeeGo::QmDisplayState::On);
+
         QVERIFY(signalDump.receivedStates.contains(MeeGo::QmDisplayState::On));
 
         QTest::qWait(WAIT_TIME_MS * 2);
@@ -193,7 +178,6 @@ private slots:
         qDebug() << "cleanupTestCase called";
 
         delete displaystate;
-        delete locks;
     }
 };
 
