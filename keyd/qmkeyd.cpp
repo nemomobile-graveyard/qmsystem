@@ -80,7 +80,7 @@ QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv),
     if (argc > 1 && !strcmp(argv[1], "-d"))
         debugmode = 1;
 
-    server = new QLocalServer(this);
+    server = new QLocalServer();
     if (!connect(server, SIGNAL(newConnection()), this, SLOT(newConnection()))) {
         failStart("Failed to connect the newConnection signal\n");
     }
