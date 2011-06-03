@@ -8,7 +8,7 @@
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Timo Rongas <ext-timo.2.rongas@nokia.com>
-   @author Üstün Ergenoglu <ustun.ergenoglu@digia.com>
+   @author Üstün Ergenoglu <ext-ustun.ergenoglu@nokia.com>
 
    @scope Internal
 
