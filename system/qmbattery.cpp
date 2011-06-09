@@ -584,10 +584,14 @@ void QmBatteryPrivate::emitEventBatmon_()
 
     bool is_state_changed = (saved_stat_[BATTERY_STATE] != stat_[BATTERY_STATE]);
 
-    if (is_level_changed || is_state_changed)
+    // No signal for charging time changed, emit RemainingCapacityChanged
+    bool is_charging_time_changed = (saved_stat_[CHARGING_TIME] !=
+				     stat_[CHARGING_TIME]);
+
+    if (is_level_changed || is_state_changed || is_charging_time_changed)
         saveStat_();
 
-    if (is_level_changed) {
+    if (is_level_changed || is_charging_time_changed) {
         emit parent_->batteryRemainingCapacityChanged
             (stat_[BATTERY_LEVEL_PCT], stat_[BATTERY_LEVEL_NOW]);
         /* ToDo: Depreciated, remove when possible */
