@@ -11,6 +11,7 @@
    @author Raimo Vuonnala <raimo.vuonnala@nokia.com>
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Timo Rongas <ext-timo.rongas.nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    @scope Nokia Meego
 
@@ -46,13 +47,13 @@ class QmHeartbeatPrivate;
  * @scope Nokia Meego
  *
  * @class QmHeartbeat
- * @brief QmHeartbeat provides the system heartbeat service.
+ * @brief QmHeartbeat provides the system heartbeat service, which resembles a single-shot timer.
  * @details System heartbeat is a service for applications to synchronize their
  * activities to save the battery use time.
  * <p>
  * The main idea is that applications that must do periodic activity – after being
  * in sleep a certain period – do that at the same time: for example
- * send network “alive” messages at the same time (for example turn the wireless radio on
+ * send network "alive" messages at the same time (for example turn the wireless radio on
  * at the same time).
  * </p>
  * <p>
@@ -60,9 +61,9 @@ class QmHeartbeatPrivate;
  * by any applications that need to periodic wake-ups.
  * </p>
  * <p>
- * "Global sync" predefined values (slots), see wait(unsigned short, unsigned short, QmHeartbeat::WaitMode) function.
- * The timeline is divided into "fixed global slots (GS)" (all waiters for a certain slot
- * are woken up at the same time (also the lower-value waiters).
+ * It is preferable to use the predefined wait times. The system guarantees all waiters for a certain slot
+ * are woken up at the same time (also the lower-value waiters). For global sync predefined values (slots),
+ * see wait()
  * </p>
  * <p>
  * Note: the Qt Mobility System Information API provides the class QSystemAlignedTimer
@@ -155,6 +156,12 @@ public:
 
     /*!
      * @brief Waits for the next heartbeat.
+     * @details The function supports non-blocking and blocking behavior: in the blocking mode
+     *          (WaitHeartbeat) the function blocks until the timeout has occurred.
+     *          In the non-blocking mode (DoNotWaitHeartbeat) the wakeUp() signal is emitted when
+     *          the timeout has occurred. If the timeout has not occurred, subsequent wait()
+     *          calls adjust the current wait time. If a continuous timer like behavior is needed,
+     *          you can place a new wake-up with wait() when the wakeUp() signal is received.
      *
      * @param mintime   Time in seconds that MUST be waited before heartbeat is reacted to.
      *                  Value 0 means 'wake me up when someboy else is woken'.
@@ -175,10 +182,10 @@ public:
 
 
     /*!
-     * @brief Called if the application woke up by itself.
-     * @details This method should be called if the application
-     * has woken up by some other method than via system heartbeat
-     * to prevent unnecessary wakeup signals.
+     * @brief This should be called when the application wakes up via other means than a heartbeat.
+     * @details Effectively cancels the next heartbeat. The wakeUp signal will not be
+     *          signaled after calling this and a wait() call is needed for listening to the
+     *          heartbeat again. Other applications that are in their wakeup window *may* be woken up.
      *
      * @return		True if success, false if error
     */
@@ -186,7 +193,8 @@ public:
 
 Q_SIGNALS:
     /*!
-     * @brief Signals the wake up.
+     * @brief Signaled when a heartbeat is received. To get the signal, use open()
+     *        with the QmHeartbeat::SignalNeed mode.
      * @param time The wakeup time
      */
     void wakeUp(QTime time);
