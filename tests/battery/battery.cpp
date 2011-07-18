@@ -240,6 +240,11 @@ private slots:
         QTest::qWait(2000);
         QVERIFY(!signalDump.batteryCurrentSignal);
     }
+    void tst_getBatteryState()
+    {
+        MeeGo::QmBattery::BatteryState result = battery->getBatteryState();
+        QCOMPARE(result, battery->getBatteryState());
+    }
 
     void cleanupTestCase() {
         delete battery;

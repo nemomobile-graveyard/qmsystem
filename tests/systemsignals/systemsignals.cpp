@@ -149,6 +149,17 @@ private slots:
 
                 QVERIFY(signaldump.state == MeeGo::QmSystemState::Shutdown);
 	}
+    void testrebootdenied()
+    {
+        bool staterebootdeniedUSB   = MeeGo::QmSystemState::RebootDeniedUSB;
+        QVERIFY(staterebootdeniedUSB >=   0  && staterebootdeniedUSB <=  5);
+    }
+    void testshutdowndenied()
+    {
+        bool shutdowndeniedUSB   = MeeGo::QmSystemState::ShutdownDeniedUSB;
+        QVERIFY(shutdowndeniedUSB >=   0  && shutdowndeniedUSB <=  5);
+    }
+
 	
     void cleanupTestCase() {
         delete systemstate;
