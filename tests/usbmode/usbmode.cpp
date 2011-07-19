@@ -106,6 +106,7 @@ private slots:
             qDebug() << "Got read and write access to /home/user/MyDocs";
 
             QVERIFY(mountOptions.testFlag(MeeGo::QmUSBMode::ReadWriteMount));
+            QVERIFY(!mountOptions.testFlag(MeeGo::QmUSBMode::ReadOnlyMount));
             fclose(f);
         } else {
             qDebug() << "No read and write access to /home/user/MyDocs: " <<  strerror(errno);
@@ -113,6 +114,7 @@ private slots:
             if (access("/home/user/MyDocs", R_OK) == 0) {
                 qDebug() << "Got read access to /home/user/MyDocs";
 
+                QVERIFY(!mountOptions.testFlag(MeeGo::QmUSBMode::ReadWriteMount));
                 QVERIFY(mountOptions.testFlag(MeeGo::QmUSBMode::ReadOnlyMount));
             } else {
                 qDebug() << "No read or write access to /home/user/MyDocs";
