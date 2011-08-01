@@ -244,8 +244,7 @@ private slots:
     {
         MeeGo::QmBattery::BatteryState result = battery->getBatteryState();
         QVERIFY(result == MeeGo::QmBattery::StateEmpty || result == MeeGo::QmBattery::StateLow || 
-                result == MeeGo::QmBattery::StateOK || result == MeeGo::QmBattery::StateFull || 
-                result == MeeGo::QmBattery::StateEmpty);        
+                result == MeeGo::QmBattery::StateOK || result == MeeGo::QmBattery::StateFull);        
     }
 
     void cleanupTestCase() {
