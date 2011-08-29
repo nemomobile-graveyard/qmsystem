@@ -54,6 +54,9 @@ public:
     static QString modeToString(QmUSBMode::Mode mode);
     static QmUSBMode::Mode stringToMode(const QString &str);
 
+    QVector< QPair< QString , QString > > mountEntries();
+    QString mountOptions(QVector< QPair< QString , QString > > mountEntries, const QString &fileName);
+
 Q_SIGNALS:
     void modeChanged(MeeGo::QmUSBMode::Mode mode);
     void fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath mountPath);

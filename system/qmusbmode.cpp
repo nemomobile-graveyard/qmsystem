@@ -30,9 +30,9 @@
 #include <QDBusMessage>
 #include <QDBusReply>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include <QStringList>
+#include <mntent.h>
+#include <stdio.h>
 
 #if HAVE_USB_MODED_DEV
     #include <usb_moded-dbus.h>
@@ -193,28 +193,25 @@ QmUSBMode::Mode QmUSBMode::getDefaultMode() {
 }
 
 QmUSBMode::MountOptionFlags QmUSBMode::mountStatus(QmUSBMode::MountPath mountPath) {
+    MEEGO_PRIVATE(QmUSBMode);
+
     QmUSBMode::MountOptionFlags mountOptions;
-    const char *path = "/home/user/MyDocs";
-    struct stat statbuf;
+    QString mount = "/home/user/MyDocs";
+    QStringList mountOpts;
 
     if (QmUSBMode::DocumentDirectoryMount != mountPath) {
         /* We don't currently support other mount paths */
         goto out;
     }
 
-    memset(&statbuf, 0, sizeof statbuf);
+    mountOpts = priv->mountOptions(priv->mountEntries(), mount).split(",");
 
-    if (0 != stat(path, &statbuf)) {
-        /* Path not available */
-        goto out;
-    }
-
-    if (S_ISDIR(statbuf.st_mode) && 0 == access(path, R_OK | W_OK)) {
+    if (mountOpts.contains("rw")) {
         mountOptions |= QmUSBMode::ReadWriteMount;
         goto out;
     }
 
-    if (S_ISDIR(statbuf.st_mode) && 0 == access(path, R_OK)) {
+    if (mountOpts.contains("ro")) {
         mountOptions |= QmUSBMode::ReadOnlyMount;
         goto out;
     }
@@ -287,6 +284,45 @@ QmUSBMode::Mode QmUSBModePrivate::stringToMode(const QString &str) {
     } else {
         return QmUSBMode::Undefined;
     }
+}
+
+QVector< QPair< QString , QString > > QmUSBModePrivate::mountEntries() {
+    QVector< QPair< QString , QString > > entries;
+    mntent m;
+    char buf[1024];
+    FILE *f = 0;
+
+    if (!(f = setmntent("/proc/mounts", "r"))) {
+        perror("setmntent /proc/mounts");
+        if (!(f = setmntent("/etc/mtab", "r"))) {
+            perror("setmntent /etc/mtab");
+            goto out;
+        }
+    }
+
+    while (getmntent_r(f, &m, buf, sizeof(buf)) != 0) {
+        entries << qMakePair(QString::fromAscii(m.mnt_dir),
+                             QString::fromAscii(m.mnt_opts));
+    }
+
+out:
+    if (f) {
+        endmntent(f);
+    }
+    return entries;
+}
+
+QString QmUSBModePrivate::mountOptions(QVector< QPair< QString , QString > > mountEntries, const QString &fileName) {
+    QString mountOptions;
+    const size_t max = mountEntries.size();
+    for (size_t i=0; i < max; i++) {
+        QPair<QString, QString> entry = mountEntries.at(i);
+        /* Check if the mnt_dir matches the mount we are looking */
+        if (entry.first == fileName) {
+            return entry.second;
+        }
+    }
+    return mountOptions;
 }
 
 void QmUSBModePrivate::didReceiveError(const QString &errorCode) {

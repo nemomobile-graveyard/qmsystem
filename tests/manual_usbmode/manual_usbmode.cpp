@@ -1,15 +1,11 @@
 #include <QTime>
 #include <QObject>
+#include <QProcess>
 #include <qmusbmode.h>
 #include <QTest>
 #include <QStack>
 #include <QDebug>
 #include <iostream>
-
-#include <sys/types.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <time.h>
 
 using namespace MeeGo;
 
@@ -62,38 +58,31 @@ private:
     ModeStack modeStack;
 
     void verifyMountStatus(bool mustBeWritableMount = false) {
-        struct timespec ts = { 0, 0 };
-        char *path = 0;
-        FILE *f;
-        QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
-        bool readWriteMount = (mountOptions & QmUSBMode::ReadWriteMount);
-        bool readOnlyMount = (mountOptions & QmUSBMode::ReadOnlyMount);
+        bool readWriteMount = false, readOnlyMount = false;
+        QProcess mount;
+        mount.start("grep MyDocs /proc/mounts");
+        if (!mount.waitForFinished()) {
+            return;
+        }
+        QByteArray output = mount.readAllStandardOutput();
+        if (output.contains("MyDocs")) {
+            // mydocs mounted, so we should either get a read-only or a read-write mount
+            QmUSBMode::MountOptionFlags mountOptions = qmmode->mountStatus(QmUSBMode::DocumentDirectoryMount);
+            readWriteMount = (mountOptions & QmUSBMode::ReadWriteMount);
+            readOnlyMount = (mountOptions & QmUSBMode::ReadOnlyMount);
 
-        QVERIFY(clock_gettime(CLOCK_MONOTONIC, &ts) == 0);
-        QVERIFY(asprintf(&path, "/home/user/MyDocs/qmsystem.usbmode-test.%lu.%lu",
-                         (unsigned long)ts.tv_sec,
-                         (unsigned long)ts.tv_nsec) != -1);
-
-        f = fopen(path, "a+");
-        if (f) {
-            QVERIFY(readWriteMount);
-            QVERIFY(!readOnlyMount);
-            fclose(f);
-        } else {
-            if (access("/home/user/MyDocs", R_OK) == 0) {
-                QVERIFY(readOnlyMount);
-                QVERIFY(!readWriteMount);
-            } else {
+            if (output.contains(" rw,") || output.contains(",rw ") || output.contains(",rw,")) {
+                QVERIFY(readWriteMount);
                 QVERIFY(!readOnlyMount);
+            }
+            if (output.contains(" ro,") || output.contains(",ro ") || output.contains(",ro,")) {
+                QVERIFY(readOnlyMount);
                 QVERIFY(!readWriteMount);
             }
         }
-
         if (mustBeWritableMount) {
             QVERIFY(readWriteMount);
         }
-
-        free(path);
     }
 
     QString mode2str(QmUSBMode::Mode mode) {

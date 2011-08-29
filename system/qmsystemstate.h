@@ -115,13 +115,10 @@ public:
     ~QmSystemState();
 
     /*!
-     * @brief Requests the system to move into state @c nextState.
-     * @description The system state change may not actually change when the function returns;
-     *              use the systemStateChanged(MeeGo::QmSystemState::StateIndication) signal
-     *              to track the system state changes.
+     * @brief Requests to system to move into state @c nextState.
      * @credential dsme::DeviceStateControl Resource token required to set the device state (shutdown/reboot/powerup).
      * @param nextState New state
-     * @return True if a valid state was requested, false otherwise
+     * @return True on success, false otherwise
      */
     bool set(NextState nextState);
 
