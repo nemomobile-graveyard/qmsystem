@@ -3,6 +3,7 @@ qmsystem2 (1.4.0) unstable; urgency=low
   [Matias Muhonen]
   * Clarifications to the QmSystemState documentation
   * Improve error handling of QmCABC (Fixes: NB#270772)
+  * Don't use /proc/mounts for mount status (Fixes: NB#273012)
 
   [Ilya Dogolazky]
   * Clarifications to the QmTime API documentation
