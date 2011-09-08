@@ -1,6 +1,7 @@
 qmsystem2 (1.4.0) unstable; urgency=low
 
   [Matias Muhonen]
+  * Clarifications to the QmSystemState documentation
   * Improve error handling of QmCABC (Fixes: NB#270772)
 
   [Ilya Dogolazky]
