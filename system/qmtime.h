@@ -180,6 +180,8 @@ public:
    *
    * @note   Currently only automatic time setting based on network operator NITZ signal is supported, more time sources may be added in the future
    *
+   * @note   Switching off the automatic time setting doesn't affect current system time
+   *
    * @param  new_status AutoSystemTimeOn to enable, AutoSystemTimeOff to disable
    *
    * @return True if successfully set
@@ -204,6 +206,9 @@ public:
    *
    * @note   Currently only automatic time zone setting based on cellular network information is supported, more time zone sources may be added in the future
    *
+   * @note   Switching off the automatic time zone setting could cause change of current time zone. Currently the time zone value is set to the last manual set time zone, if known and to device's
+   *         default time zone otherwise. This behaviour could chagnge in the future.
+   *
    * @param  new_status AutoTimeZoneOn to enable, AutoTimeZoneOff to disable
    *
    * @return True if successfully set
@@ -214,6 +219,8 @@ public:
    * @brief       Set current system and RTC date and time.
    *
    * @credential  timed::TimeControl Resource token required to set the device time.
+   *
+   * @note This method (if successful) will switch off the automatic time update
    *
    * @param  time The new system time.
    *
@@ -252,6 +259,8 @@ public:
    *
    *           The above examples are purely informative. The content of the zone.alias reflects
    *           the set of supported time zones, and can be changed with a new tzdata version.
+   *
+   * @note This method (if successful) will switch off the automatic timezone update
    *
    * @return True if zone was succesfully set, or false if not.
    */
