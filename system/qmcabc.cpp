@@ -27,59 +27,109 @@
    </p>
  */
 #include "qmcabc.h"
-#include "qmipcinterface_p.h"
 
+#include "qmsysteminformation.h"
+
+#include <QDBusConnection>
+#include <QDBusMessage>
 #include <QDBusReply>
 
 #if HAVE_MCE
-    #include <mce/mode-names.h>
-    #include <mce/dbus-names.h>
 
-    static const QString cabc_dbus_names[] = {
-        MCE_CABC_MODE_OFF,
-        MCE_CABC_MODE_UI,
-        MCE_CABC_MODE_STILL_IMAGE,
-        MCE_CABC_MODE_MOVING_IMAGE
-    };
+#include <mce/mode-names.h>
+#include <mce/dbus-names.h>
 
-    static const int cabc_mode_num = sizeof(cabc_dbus_names) / sizeof(*cabc_dbus_names);
+static bool cabcModeToString(const MeeGo::QmCABC::Mode& mode, QString& cabcString)
+{
+    bool success = true;
 
-    static int find_cabc_mode_by_dbus_name(const QString &name)
-    {
-        for (int i=0; i < cabc_mode_num; ++i)
-            if (name == cabc_dbus_names[i])
-                return i;
-        return -1;
+    if (MeeGo::QmCABC::Off == mode) {
+        cabcString = MCE_CABC_MODE_OFF;
+    } else if (MeeGo::QmCABC::Ui == mode) {
+        cabcString = MCE_CABC_MODE_UI;
+    } else if (MeeGo::QmCABC::StillImage == mode) {
+        cabcString = MCE_CABC_MODE_STILL_IMAGE;
+    } else if (MeeGo::QmCABC::MovingImage == mode) {
+        cabcString = MCE_CABC_MODE_MOVING_IMAGE;
+    } else {
+        success = false;
     }
-#endif
+
+    return success;
+}
+
+static bool cabcStringToMode(const QString& cabcString, MeeGo::QmCABC::Mode& mode)
+{
+    bool success = true;
+
+    if (MCE_CABC_MODE_OFF == cabcString) {
+        mode = MeeGo::QmCABC::Off;
+    } else if (MCE_CABC_MODE_UI == cabcString) {
+        mode = MeeGo::QmCABC::Ui;
+    } else if (MCE_CABC_MODE_STILL_IMAGE == cabcString) {
+        mode = MeeGo::QmCABC::StillImage;
+    } else if (MCE_CABC_MODE_MOVING_IMAGE == cabcString) {
+        mode = MeeGo::QmCABC::MovingImage;
+    } else {
+        success = false;
+    }
+
+    return success;
+}
+
+#endif /* HAVE_MCE */
 
 namespace MeeGo
 {
-    bool QmCABC::set(Mode mode)
-    {
-        bool success = false;
-        #if HAVE_MCE
-            if (mode > -1 && mode < cabc_mode_num) {
-                QmIPCInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
-                cabc.callAsynchronously(MCE_CABC_MODE_REQ, cabc_dbus_names[mode]);
-                success = true;
-            }
-        #endif
+
+bool QmCABC::set(Mode mode)
+{
+    bool success = false;
+
+#if HAVE_MCE
+    MeeGo::QmSystemInformation systemInformation;
+    QString product;
+    QString cabcString;
+
+    if (!cabcModeToString(mode, cabcString)) {
+        // Invalid mode requested
         return success;
     }
 
-    QmCABC::Mode QmCABC::get() const
-    {
-        #if HAVE_MCE
-            QmIPCInterface cabc(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
-            QDBusReply<QString> reply = cabc.call(MCE_CABC_MODE_GET);
-            if (reply.isValid()) {
-                int mode = find_cabc_mode_by_dbus_name(reply.value());
-                if (mode >= 0) {
-                   return (Mode) mode;
-                }
-            }
-        #endif
-        return Off;
+    product = systemInformation.valueForKey("/component/product");
+
+    if ("RM-696" == product) {
+        // CABC not supported
+        return success;
     }
+
+    QDBusMessage cabcModeSetCall = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF,
+                                                                  MCE_CABC_MODE_REQ);
+    cabcModeSetCall << cabcString;
+
+    (void)QDBusConnection::systemBus().call(cabcModeSetCall, QDBus::NoBlock);
+    success = true;
+#endif /* HAVE_MCE */
+
+    return success;
 }
+
+QmCABC::Mode QmCABC::get() const
+{
+    QmCABC::Mode mode = Off;
+
+#if HAVE_MCE
+    QDBusReply<QString> reply = QDBusConnection::systemBus().call(
+                                    QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF,
+                                                                   MCE_CABC_MODE_GET));
+    if (!reply.isValid()) {
+        return mode;
+    }
+
+    (void)cabcStringToMode(reply.value(), mode);
+#endif /* HAVE_MCE */
+
+    return mode;
+}
+
+}  //MeeGo namespace
