@@ -28,6 +28,7 @@
 #include <QObject>
 #include <qmcabc.h>
 #include <QTest>
+#include <QDebug>
 
 #include "qmsysteminformation.h"
 
@@ -48,20 +49,27 @@ private slots:
         if ("RM-680" == product) {
             cabc = new MeeGo::QmCABC();
             QVERIFY(cabc);
+            qDebug() << "product " << product << ", testing CABC";
+        } else {
+            qDebug() << "product " << product << ", skipping CABC tests";
         }
     }
 
     void testGet() {
-        if (!cabc)
+        if (!cabc) {
+            qDebug() << "testGet skipped";
             return;
+        }
 
         MeeGo::QmCABC::Mode result = cabc->get();
         (void)result;
     }
 
     void testSetCabcOff() {
-        if (!cabc)
+        if (!cabc) {
+            qDebug() << "testSetCabcOff skipped";
             return;
+        }
 
         bool result = cabc->set(MeeGo::QmCABC::Off);
         QVERIFY(result == true);
@@ -72,8 +80,10 @@ private slots:
     }
 
     void testSetCabcUi() {
-        if (!cabc)
+        if (!cabc) {
+            qDebug() << "testSetCabcUi skipped";
             return;
+        }
 
         bool result = cabc->set(MeeGo::QmCABC::Ui);
         QVERIFY(result == true);
@@ -84,8 +94,10 @@ private slots:
     }
 
     void testSetCabcStillImage() {
-        if (!cabc)
+        if (!cabc) {
+            qDebug() <<  "testSetCabcStillImage skipped";
             return;
+        }
 
         bool result = cabc->set(MeeGo::QmCABC::StillImage);
         QVERIFY(result == true);
@@ -96,8 +108,10 @@ private slots:
     }
 
     void testSetCabcMovingImage() {
-        if (!cabc)
+        if (!cabc) {
+            qDebug() << "testSetCabcMovingImage skipped";
             return;
+        }
 
         bool result = cabc->set(MeeGo::QmCABC::MovingImage);
         QVERIFY(result == true);
