@@ -7,6 +7,7 @@
 
    @author Timo Olkkonen <ext-timo.p.olkkonen@nokia.com>
    @author Yang Yang <ext-yang.25.yang@nokia.com>
+   @author Matias Muhonen <ext-matias.muhonen@nokia.com>
 
    This file is part of SystemSW QtAPI.
 
@@ -34,6 +35,8 @@
 #include <linux/input.h>
 #include <stdint.h>
 
+#include "keytranslator.h"
+
 #define SERVER_NAME "/tmp/qmkeyd"
 
 class QmKeyd : public QCoreApplication
@@ -41,18 +44,39 @@ class QmKeyd : public QCoreApplication
     Q_OBJECT
 
 public:
+    enum EventType
+    {
+        BluetoothEvent,
+        GPIOKeysEvent,
+        KeypadEvent,
+        /*
+         * Enhancement Control Interface event, for example
+         * a multimedia headset accessory
+         */
+        ECIEvent,
+        PowerButtonEvent
+    };
+
     QmKeyd(int argc, char** argv);
     ~QmKeyd();
 
 private slots:
     void newConnection();
     void disconnected();
-    void didReceiveKeyEventFromFile(int);
     void clientSocketReadyRead();
     void detectBT(int);
 
+    void didReceiveKeyFromBluetooth(int);
+    void didReceiveKeyFromGpioKeys(int);
+    void didReceiveKeyFromKeypad(int);
+    void didReceiveKeyFromEci(int);
+    void didReceiveKeyFromPowerButton(int);
+    void translatedKeyReceived(struct input_event &ev);
+
 private:
     void cleanSocket();
+    void handleKeyEvent(int fd, EventType eventType);
+    void broadcastToClients(struct input_event &ev);
     bool isKeySupported(struct input_event &ev);
     bool isHeadset(int fd);
     void openHandles();
@@ -71,6 +95,8 @@ private:
     int inotifyWd, inotifyFd;
     char *btfname;
     int users;
+
+    KeyTranslator keyTranslator[2];
 };
 
 #endif // QMKEYD_H
