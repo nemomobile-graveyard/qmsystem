@@ -310,6 +310,10 @@ private slots:
         doTestNew(QmKeys::VolumeUp, QmKeys::KeyUp);
         doTestNew(QmKeys::VolumeDown, QmKeys::KeyDown);
         doTestNew(QmKeys::VolumeDown, QmKeys::KeyUp);
+        doTestNew(QmKeys::NextSong, QmKeys::KeyDown);
+        doTestNew(QmKeys::NextSong, QmKeys::KeyUp);
+        doTestNew(QmKeys::PreviousSong, QmKeys::KeyDown);
+        doTestNew(QmKeys::PreviousSong, QmKeys::KeyUp);
     }
 
     void testBT() {

@@ -105,6 +105,22 @@ QmKeyd::QmKeyd(int argc, char**argv) : QCoreApplication(argc, argv),
     if (!connect(inputNotifier, SIGNAL(activated(int)), this, SLOT(detectBT(int)))) {
         failStart("Failed to connect the inotify activated signal\n");
     }
+
+    keyTranslator[0].shortPressKey = KEY_PREVIOUSSONG;
+    keyTranslator[0].longPressKey = KEY_REWIND;
+
+    keyTranslator[1].shortPressKey = KEY_NEXTSONG;
+    keyTranslator[1].longPressKey = KEY_FORWARD;
+
+    if (!connect(&keyTranslator[0], SIGNAL(keyTranslated(struct input_event&)),
+                                   this, SLOT(translatedKeyReceived(struct input_event&)))) {
+        failStart("Failed to connect the keyTranslator[0] signal\n");
+    }
+
+    if (!connect(&keyTranslator[1], SIGNAL(keyTranslated(struct input_event&)),
+                                   this, SLOT(translatedKeyReceived(struct input_event&)))) {
+        failStart("Failed to connect the keyTranslator[1] signal\n");
+    }
 }
 
 QmKeyd::~QmKeyd()
@@ -233,7 +249,7 @@ void QmKeyd::detectBT(int inotify)
 
                          /* Receive notifications for the headset */
                          btNotifier = new QSocketNotifier(btFile, QSocketNotifier::Read);
-                         connect(btNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyEventFromFile(int)));
+                         connect(btNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyFromBluetooth(int)));
                      } else {
                          close(fd);
                      }
@@ -350,8 +366,52 @@ bool QmKeyd::isKeyPressed(int fd, int key)
     return !!(keys[key/8] & (1 << (key % 8)));
 }
 
-/* Called when we get an input event from a file descriptor. */
-void QmKeyd::didReceiveKeyEventFromFile(int fd)
+void QmKeyd::didReceiveKeyFromBluetooth(int fd)
+{
+    if (debugmode) {
+        syslog(LOG_DEBUG, "Received a key from bluetooth");
+    }
+    handleKeyEvent(fd, QmKeyd::BluetoothEvent);
+}
+
+void QmKeyd::didReceiveKeyFromGpioKeys(int fd)
+{
+    if (debugmode) {
+        syslog(LOG_DEBUG, "Received a key from gpio keys");
+    }
+    handleKeyEvent(fd, QmKeyd::GPIOKeysEvent);
+}
+
+void QmKeyd::didReceiveKeyFromKeypad(int fd)
+{
+    if (debugmode) {
+        syslog(LOG_DEBUG, "Received a key from keypad");
+    }
+    handleKeyEvent(fd, QmKeyd::KeypadEvent);
+}
+
+void QmKeyd::didReceiveKeyFromEci(int fd)
+{
+    if (debugmode) {
+        syslog(LOG_DEBUG, "Received a key from eci");
+    }
+    handleKeyEvent(fd, QmKeyd::ECIEvent);
+}
+
+void QmKeyd::didReceiveKeyFromPowerButton(int fd)
+{
+    if (debugmode) {
+        syslog(LOG_DEBUG, "Received a key from power button");
+    }
+    handleKeyEvent(fd, QmKeyd::PowerButtonEvent);
+}
+
+void QmKeyd::translatedKeyReceived(struct input_event &ev)
+{
+    broadcastToClients(ev);
+}
+
+void QmKeyd::handleKeyEvent(int fd, EventType eventType)
 {
     for (;;) {
         struct input_event ev;
@@ -362,13 +422,38 @@ void QmKeyd::didReceiveKeyEventFromFile(int fd)
             break;
         }
 
-        if (ret == sizeof(ev) && isKeySupported(ev)) {
-            // Broadcast the input event back to the clients over the client socket.
-            QLocalSocket *socket;
-            foreach (socket, connections) {
-                socket->write((char*)&ev, sizeof(ev));
-            }
+        if (!(ret == sizeof(ev) && isKeySupported(ev))) {
+            continue;
         }
+
+        switch (eventType) {
+            case ECIEvent:
+                if (ev.type == EV_KEY && ev.code == KEY_REWIND) {
+                    // KEY_REWIND short press is mapped to KEY_PREVIOUSSONG
+                    keyTranslator[0].handleEvent(ev);
+                } else if (ev.type == EV_KEY && ev.code == KEY_FORWARD) {
+                    // KEY_FORWARD short press is mapped to KEY_NEXTSONG
+                    keyTranslator[1].handleEvent(ev);
+                } else {
+                    broadcastToClients(ev);
+                }
+                break;
+            case BluetoothEvent:         /* FALL THROUGH */
+            case GPIOKeysEvent:          /* FALL THROUGH */
+            case KeypadEvent:            /* FALL THROUGH */
+            case PowerButtonEvent:       /* FALL THROUGH */
+            default:
+                broadcastToClients(ev); break;
+        }
+    }
+}
+
+// Broadcast the input event back to the clients over the client socket.
+void QmKeyd::broadcastToClients(struct input_event &ev)
+{
+    QLocalSocket *socket;
+    foreach (socket, connections) {
+        socket->write((char*)&ev, sizeof(ev));
     }
 }
 
@@ -420,7 +505,7 @@ void QmKeyd::openHandles()
         gpioFile = open(GPIO_KEYS, O_RDONLY | O_NONBLOCK);
         if (gpioFile != -1) {
             gpioNotifier = new QSocketNotifier(gpioFile, QSocketNotifier::Read);
-            connect(gpioNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyEventFromFile(int)));
+            connect(gpioNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyFromGpioKeys(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", GPIO_KEYS);
             gpioNotifier = 0;
@@ -431,7 +516,7 @@ void QmKeyd::openHandles()
         keypadFile = open(KEYPAD, O_RDONLY | O_NONBLOCK);
         if (keypadFile != -1) {
             keypadNotifier = new QSocketNotifier(keypadFile, QSocketNotifier::Read);
-            connect(keypadNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyEventFromFile(int)));
+            connect(keypadNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyFromKeypad(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", KEYPAD);
             keypadNotifier = 0;
@@ -441,7 +526,7 @@ void QmKeyd::openHandles()
         eciFile = open(ECI, O_RDONLY | O_NONBLOCK);
         if (eciFile != -1) {
             eciNotifier = new QSocketNotifier(eciFile, QSocketNotifier::Read);
-            connect(eciNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyEventFromFile(int)));
+            connect(eciNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyFromEci(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", ECI);
             eciNotifier = 0;
@@ -451,7 +536,7 @@ void QmKeyd::openHandles()
         powerButtonFile = open(PWRBUTTON, O_RDONLY | O_NONBLOCK);
         if (powerButtonFile != -1) {
             powerButtonNotifier = new QSocketNotifier(powerButtonFile, QSocketNotifier::Read);
-            connect(powerButtonNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyEventFromFile(int)));
+            connect(powerButtonNotifier, SIGNAL(activated(int)), this, SLOT(didReceiveKeyFromPowerButton(int)));
         } else {
             syslog(LOG_WARNING, "Could not open %s\n", PWRBUTTON);
             powerButtonNotifier = 0;

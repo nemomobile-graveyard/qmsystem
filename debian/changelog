@@ -1,3 +1,14 @@
+qmsystem2 (1.4.1) unstable; urgency=low
+
+  [Matias Muhonen]
+  * Implement short/long press detection in qmkeyd (Fixes: NB#280522)
+    | Thanks to Simo Piiroinen
+
+  [Yang Yang]
+  * Add test for NextSong and PreviousSong events to manual-keys-test
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Tue, 13 Sep 2011 13:05:34 +0300
+
 qmsystem2 (1.4.0) unstable; urgency=low
 
   [Matias Muhonen]
