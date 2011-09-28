@@ -30,15 +30,15 @@
 #include <time.h>
 #include <syslog.h>
 
-const static bool   debug          = false;
-/* after this many key repeats, the key press is interpreted as a long press */
-const static size_t keyRepeatLimit = 2;
+const static bool   debug                = false;
+const static int    longPressTimeoutInMs = 1000;
 
 KeyTranslator::KeyTranslator(QObject *parent) :
     QObject(parent),
-    longPress(false),
-    repeatCount(0)
+    state(WAIT_FOR_KEYPRESS)
 {
+    longPressTimer.setSingleShot(true);
+    connect(&longPressTimer, SIGNAL(timeout()), this, SLOT(longPressTimeout()));
 }
 
 KeyTranslator::~KeyTranslator()
@@ -58,32 +58,29 @@ void KeyTranslator::handleEvent(struct input_event &ev)
     }
 
     if (ev.value == 1) {
+        state = WAIT_FOR_LONG_PRESS;
         handleKeyDown();
     } else if (ev.value == 2) {
-        handleKeyRepeat();
+        /* ignore key repeats */
     } else if (ev.value == 0) {
         handleKeyUp();
+        state = WAIT_FOR_KEYPRESS;
     }
 }
 
 void KeyTranslator::handleKeyDown()
 {
-    longPress = false, repeatCount = 0;
+    if (longPressTimer.isActive()) {
+        /* this should never happen, as we should get KeyUp
+           before KeyDown, but let's make sure */
+        longPressTimer.stop();
+    }
+
+    longPressTimer.start(longPressTimeoutInMs);
 
     if (debug) {
         syslog(LOG_DEBUG,
                "handleKeyDown");
-    }
-}
-
-void KeyTranslator::handleKeyRepeat()
-{
-    ++repeatCount;
-
-    if (debug) {
-        syslog(LOG_DEBUG,
-               "handleKeyRepeat, key repeated %i times",
-               repeatCount);
     }
 }
 
@@ -94,25 +91,51 @@ void KeyTranslator::handleKeyUp()
     memset(&keyDownEvent, 0, sizeof keyDownEvent);
     memset(&keyUpEvent, 0, sizeof keyUpEvent);
 
-    longPress = (repeatCount > keyRepeatLimit), repeatCount = 0;
+    if (longPressTimer.isActive()) {
+        /* long press timer is still running,
+           so this was a short press */
+        longPressTimer.stop();
 
-    keyDownEvent.time = monotime();
-    keyDownEvent.type = EV_KEY;
-    keyDownEvent.code = (longPress ? longPressKey : shortPressKey);
-    keyDownEvent.value = 1;
+        /* since this was a short press, send the KeyDown
+           event */
+        keyDownEvent.time = monotime();
+        keyDownEvent.type = EV_KEY;
+        keyDownEvent.code = shortPressKey;
+        keyDownEvent.value = 1;
 
-    keyUpEvent.time = monotime();
-    keyUpEvent.type = EV_KEY;
-    keyUpEvent.code = (longPress ? longPressKey : shortPressKey);
-    keyUpEvent.value = 0;
-
-    if (debug) {
-        syslog(LOG_DEBUG,
-               "handleKeyUp, emit %s", (longPress ? "long press" : "short press"));
+        emit keyTranslated(keyDownEvent);
     }
 
-    emit keyTranslated(keyDownEvent);
+    /* now send the KeyUp event */
+    keyUpEvent.time = monotime();
+    keyUpEvent.type = EV_KEY;
+    keyUpEvent.code = (state == LONG_PRESS_DETECTED ? longPressKey : shortPressKey);
+    keyUpEvent.value = 0;
+
     emit keyTranslated(keyUpEvent);
+}
+
+void KeyTranslator::longPressTimeout()
+{
+    struct input_event keyDownEvent;
+
+    memset(&keyDownEvent, 0, sizeof keyDownEvent);
+
+    if (state != WAIT_FOR_LONG_PRESS) {
+       /* we shouldn't have an active timer if
+          we are not waiting for a long press */
+       return;
+    }
+
+    /* long press detected, send the KeyDown event */
+    keyDownEvent.time = monotime();
+    keyDownEvent.type = EV_KEY;
+    keyDownEvent.code = longPressKey;
+    keyDownEvent.value = 1;
+
+    emit keyTranslated(keyDownEvent);
+
+    state = LONG_PRESS_DETECTED;
 }
 
 struct timeval KeyTranslator::monotime()

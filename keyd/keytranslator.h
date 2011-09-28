@@ -26,23 +26,33 @@
 #define KEYTRANSLATOR_H
 
 #include <QObject>
+#include <QTimer>
 
 #include <linux/types.h>
 #include <linux/input.h>
+
+enum State {
+    WAIT_FOR_KEYPRESS,
+    WAIT_FOR_LONG_PRESS,
+    LONG_PRESS_DETECTED,
+};
 
 class KeyTranslator : public QObject
 {
     Q_OBJECT
 
 private:
-    bool longPress;
-    size_t repeatCount;
+    QTimer longPressTimer;
+    State state;
 
     void handleKeyDown();
-    void handleKeyRepeat();
     void handleKeyUp();
 
     static struct timeval monotime();
+
+private Q_SLOTS:
+
+    void longPressTimeout();
 
 public:
     __u16 shortPressKey;
