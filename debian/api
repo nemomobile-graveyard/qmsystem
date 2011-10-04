@@ -11,6 +11,7 @@ headers:
  /usr/include/qmsystem2/qmheartbeat.h
  /usr/include/qmsystem2/qmkeys.h
  /usr/include/qmsystem2/qmlocks.h
+ /usr/include/qmsystem2/qmsysteminformation.h
  /usr/include/qmsystem2/qmsystemstate.h
  /usr/include/qmsystem2/qmthermal.h
  /usr/include/qmsystem2/qmtime.h
