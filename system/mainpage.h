@@ -80,6 +80,10 @@ it is recommended that you use the Qt Mobility <A HREF="http://doc.qt.nokia.com/
     <TD>provides information and actions on device locks.</TD>
 </TR>
 <TR>
+    <TD>MeeGo::QmSystemInformation</TD>
+    <TD>provides an interface to the system information service.</TD>
+</TR>
+<TR>
     <TD>MeeGo::QmSystemState</TD>
     <TD>provides information and actions on device state.</TD>
 </TR>

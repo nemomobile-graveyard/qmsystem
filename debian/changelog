@@ -1,9 +1,16 @@
+qmsystem2 (1.4.3) unstable; urgency=low
+
+  [Matias Muhonen]
+  * Implement API to check the PR1.x version (Fixes: NB#284723)
+
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Fri, 30 Sep 2011 13:18:04 +0300
+
 qmsystem2 (1.4.2) unstable; urgency=low
 
   [Matias Muhonen]
-  * Improve short/long press detection in qmkeyd (Fixes: NB#283778)
+  * Improve short/long press detection in qmkeyd (Fixes: NB#280522)
 
- -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Thu, 22 Sep 2011 09:19:53 +0300
+ -- Matias Muhonen <ext-matias.muhonen@nokia.com>  Tue, 28 Sep 2011 07:04:27 +0300
 
 qmsystem2 (1.4.1) unstable; urgency=low
 
