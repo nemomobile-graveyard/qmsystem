@@ -12,6 +12,7 @@ SOURCES += main.cpp \
     keytranslator.cpp
 HEADERS += qmkeyd.h \
     keytranslator.h
+LIBS += -lrt
 
 target.path = $$(DESTDIR)/usr/sbin
 INSTALLS = target
