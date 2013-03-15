@@ -172,6 +172,13 @@ bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode) {
     if (str.isEmpty()) {
         return false;
     }
+
+    // Meego uses different gconf databases for root and user, so sending dbus message to set it 
+    QDBusMessage usbDefaultModeSetCall = QDBusMessage::createMethodCall(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE, USB_MODE_CONFIG_SET);
+    usbDefaultModeSetCall << str;
+
+    (void)QDBusConnection::systemBus().call(usbDefaultModeSetCall, QDBus::NoBlock);
+
     gboolean ret = gconf_client_set_string(priv->gcClient, USB_MODE_GCONF, str.toAscii().data(), NULL);
     if (ret == TRUE) {
         return true;

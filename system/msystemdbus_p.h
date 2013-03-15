@@ -79,6 +79,7 @@
 
     #define USB_MODE_STATE_REQUEST          "mode_request"
     #define USB_MODE_STATE_SET              "set_mode"
+    #define USB_MODE_CONFIG_SET             "set_config"
 
     #define USB_CONNECTED                   "USB connected"
     #define USB_DISCONNECTED                "USB disconnected"
