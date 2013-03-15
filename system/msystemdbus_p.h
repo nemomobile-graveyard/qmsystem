@@ -92,6 +92,7 @@
     #define MODE_CHARGING                   "charging_only"
     #define MODE_UNDEFINED                  "undefined"
     #define MODE_ASK                        "ask"
+    #define MODE_WINDOWS_NET                "windows_network"
 #endif /* HAVE_USB_MODED_DEV */
 
 #endif // MSYSTEMDBUS_P_H
