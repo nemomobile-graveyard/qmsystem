@@ -118,6 +118,10 @@ private:
             return "SDK";
         case QmUSBMode::Undefined:
             return "Undefined";
+	 case QmUSBMode::MTP:
+	     return "MTP";
+	 case QmUSBMode::Developer:
+	     return "Developer";
         default:
             return "An unknown mode!";
         }

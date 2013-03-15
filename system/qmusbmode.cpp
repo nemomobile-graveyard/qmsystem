@@ -164,7 +164,7 @@ bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode) {
     MEEGO_PRIVATE(QmUSBMode);
 
     // The OviSuite, MassStorage, ChargingOnly and Ask modes can be requested
-    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || MTP == mode)) {
+    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || MTP == mode || Ask == mode)) {
         return false;
     }
 

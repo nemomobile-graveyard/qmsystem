@@ -78,6 +78,8 @@ private slots:
         setGetDefaultMode(QmUSBMode::ChargingOnly);
         setGetDefaultMode(QmUSBMode::OviSuite);
         setGetDefaultMode(QmUSBMode::Ask);
+        setGetDefaultMode(QmUSBMode::MTP);
+        setGetDefaultMode(QmUSBMode::Developer);
     }
 
     void testMountStatus() {
