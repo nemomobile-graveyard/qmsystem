@@ -93,6 +93,8 @@
     #define MODE_UNDEFINED                  "undefined"
     #define MODE_ASK                        "ask"
     #define MODE_WINDOWS_NET                "windows_network"
+    #define MODE_DEVELOPER                  "developer_mode"
+    #define MODE_MTP                        "mtp_mode"
 #endif /* HAVE_USB_MODED_DEV */
 
 #endif // MSYSTEMDBUS_P_H

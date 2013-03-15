@@ -144,7 +144,7 @@ bool QmUSBMode::setMode(QmUSBMode::Mode mode) {
     MEEGO_PRIVATE(QmUSBMode);
 
     // The OviSuite, MassStorage, ChargingOnly and SDK modes can be requested
-    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode)) {
+    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || MTP == mode)) {
         return false;
     }
 
@@ -164,7 +164,7 @@ bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode) {
     MEEGO_PRIVATE(QmUSBMode);
 
     // The OviSuite, MassStorage, ChargingOnly and Ask modes can be requested
-    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || Ask == mode || SDK == mode)) {
+    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || MTP == mode)) {
         return false;
     }
 
@@ -265,6 +265,10 @@ QString QmUSBModePrivate::modeToString(QmUSBMode::Mode mode) {
         return USB_CONNECTED_DIALOG_SHOW;
     case QmUSBMode::SDK:
         return MODE_WINDOWS_NET;
+    case QmUSBMode::MTP:
+	return MODE_MTP;
+    case QmUSBMode::Developer:
+	return MODE_DEVELOPER;
     default:
         return "";
     }
@@ -291,6 +295,10 @@ QmUSBMode::Mode QmUSBModePrivate::stringToMode(const QString &str) {
         return QmUSBMode::ModeRequest;
     } else if (str == MODE_WINDOWS_NET) {
         return QmUSBMode::SDK;
+    } else if (str == MODE_MTP) {
+	return QmUSBMode::MTP;
+    } else if (str == MODE_DEVELOPER) {
+	return QmUSBMode::Developer;
     } else {
         return QmUSBMode::Undefined;
     }
