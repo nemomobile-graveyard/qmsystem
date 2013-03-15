@@ -47,7 +47,7 @@ linux-g++-maemo {
 }
 
 # Test definition installation
-testdefinition.files = tests.xml session
-testdefinition.path = /usr/share/qmsystem2-api-fast-tests
+testdefinition.files = tests.xml
+testdefinition.path = /usr/share/qmsystem-tests
 
 INSTALLS += testdefinition

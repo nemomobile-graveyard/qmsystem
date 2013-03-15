@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <testdefinition version="0.1">
   <!-- Test suite, name mandatory - the same as test package name -->
-  <suite name="libqmsystem2-tests" domain="System Software">
+  <suite name="qmsystem-tests" domain="System Software">
     <!-- At least one set per suite, name and description mandatory -->
 
     <set name="Qt-API-subsystem-classes" description="Unit test cases for SystemSW APIs" feature="SystemSW Qt API">
