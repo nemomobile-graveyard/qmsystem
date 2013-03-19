@@ -15,22 +15,10 @@
         <step>ls -l /var/run/dbus</step>
         <step>echo "executing ls -l /dev/rtc*"</step>
         <step>ls -l /dev/rtc*</step>
-        <step>echo "executing echo A >/var/junk"</step>
-        <step>echo A >/var/junk</step>
-        <step>echo "executing echo A >/var/cache/junk"</step>
-        <step>echo A >/var/cache/junk</step>
-        <step>echo " executing cat /var/junk"</step>
-        <step>cat /var/junk</step>
-        <step>echo "executing cat /var/cache/junk"</step>
-        <step>cat /var/cache/junk</step>       
       </pre_steps>
       <case name="activity" level="Component" type="Functional" description="QmActivity"  timeout="15" subfeature="QT_APIs" requirement="39927">
         <!-- Run test activity application -->
         <step expected_result="0">/usr/bin/activity-test </step>
-      </case>
-      <case name="battery" level="Component" type="Functional" description="QmBattery" timeout="120" subfeature="QT_APIs" requirement="39927">
-        <!-- Run test cabc application -->
-        <step expected_result="0">/usr/bin/battery-test </step>
       </case>
       <case name="cabc" level="Component" type="Functional" description="QmCABC" timeout="15" subfeature="QT_APIs" requirement="39927">
         <!-- Run test cabc application -->
@@ -62,7 +50,7 @@
       </case>
       <case name="thermal" level="Component" type="Functional" description="QmThermal" timeout="240" subfeature="QT_APIs" requirement="39927">
         <!-- Run test thermal application -->
-        <step expected_result="0">/usr/bin/aegis-su -r dsme::DeviceStateControl /sbin/dsmetool -a </step>
+        <step expected_result="0">/usr/sbin/dsmetool -a </step>
         <step expected_result="0">/usr/bin/thermal-test </step>
       </case>
       <case name="usbmode" level="Component" type="Functional" description="QmUSBMode" timeout="240" subfeature="QT_APIs" requirement="39927">
@@ -71,19 +59,6 @@
       </case>
       <case name="systeminformation" level="Component" type="Functional" description="QmSystemInformation" timeout="5" subfeature="QT_APIs" requirement="39927">
         <step expected_result="0">/usr/bin/systeminformation-test</step>
-      </case>
-      <case name="system-state" level="Component" type="Functional" description="QmSystemState" timeout="30" subfeature="QT_APIs" requirement="39927">
-        <step>mkdir -p /tmp/qmsystemstatejail</step>
-        <step>mkdir -p /tmp/qmsystemstatejail/usr</step>
-        <step>mkdir -p /tmp/qmsystemstatejail/lib</step>
-        <step>mkdir -p /tmp/qmsystemstatejail/dev</step>
-        <step>mkdir -p /tmp/qmsystemstatejail/var/lib/dsme</step>
-        <step>mount -o bind /usr /tmp/qmsystemstatejail/usr</step>
-        <step>mount -o bind /lib /tmp/qmsystemstatejail/lib</step>
-        <step>mount -o bind /dev /tmp/qmsystemstatejail/dev</step>
-        <step expected_result="0">chroot /tmp/qmsystemstatejail /usr/bin/system-test testGetRunstate</step>
-        <!-- bootreason uses libsysinfo0, don't attempt to run in a chroot -->
-        <step expected_result="0">/usr/bin/system-test testGetBootreason</step>
       </case>
       <case name="powerontime" level="Component" type="Functional" description="QmSystemPowerOnTime" timeout="30" subfeature="QT_APIs" requirement="39927">
         <step expected_result="0">/usr/bin/powerontime-test</step>
@@ -97,16 +72,6 @@
         <scratchbox>false</scratchbox>
         <hardware>true</hardware>
       </environments>
-
-      <get>
-        <file>/var/log/syslog</file>
-      </get>
-
-      <post_steps> 
-        <step>umount /tmp/qmsystemstatejail/usr</step>
-        <step>umount /tmp/qmsystemstatejail/lib</step>
-        <step>umount /tmp/qmsystemstatejail/dev</step>
-      </post_steps>
     </set>
 
     <set name="Sensor-Service-API" description="Unit test cases for com.nokia.SensorService APIs" feature="SystemSW Qt API">
