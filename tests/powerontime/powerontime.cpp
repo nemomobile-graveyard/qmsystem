@@ -48,9 +48,9 @@ private slots:
             // Wait for the power on time to accumulate
 	    QTest::qWait(5000);
 
-	    // cur - prev >= 0 if the timer accumulates as it should
+	    // cur - prev > 0 if the timer accumulates as it should
 	    int diff = state.getPowerOnTimeInSeconds() - pot;
-            QVERIFY(diff >= 0);
+            QVERIFY(diff > 0);
         }
     }
 };
