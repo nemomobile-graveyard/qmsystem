@@ -122,19 +122,23 @@ private slots:
             runMCE.start(mcetool, nfc);
             QTest::qWait(5000);
             QCOMPARE(dm->getMode(), MeeGo::QmDeviceMode::Flight);
-
         }
+        // restore initial value
+        QVERIFY(dm->setMode(mode));
     }
 
     void testSetGetPSMState() {
+        MeeGo::QmDeviceMode::PSMState init_state = dm->getPSMState();
         for (int state=0; state < 2; state++) {
             bool result = dm->setPSMState(((MeeGo::QmDeviceMode::PSMState)state));
             QVERIFY(result);
             QCOMPARE((int)dm->getPSMState(), state);
         }
+        QVERIFY(dm->setPSMState(init_state));
     }
 
     void testDevicePSMStateChanged() {
+        MeeGo::QmDeviceMode::PSMState init_state = dm->getPSMState();
         QVERIFY(dm->setPSMState(MeeGo::QmDeviceMode::PSMStateOn));
         for (int state=0; state < 2; state++) {
             bool result = dm->setPSMState((MeeGo::QmDeviceMode::PSMState)state);
@@ -142,10 +146,13 @@ private slots:
             QTest::qWait(5000);
             QCOMPARE((int)signalDump.state, state);
         }
+        QVERIFY(dm->setPSMState(init_state));
     }
 
 
     void testSetGetPSMBatteryMode() {
+        int init_mode = dm->getPSMBatteryMode();
+
         QVERIFY(dm->setPSMBatteryMode(0));
         QCOMPARE(dm->getPSMBatteryMode(), 0);
 
@@ -173,6 +180,7 @@ private slots:
         QVERIFY(dm->setPSMBatteryMode(55));
         QCOMPARE(dm->getPSMBatteryMode(), 50);
 
+        QVERIFY(dm->setPSMBatteryMode(init_mode));
     }
 
     void cleanupTestCase() {
