@@ -38,7 +38,7 @@
  *
  * Signal emitted from the com.nokia.mce.signal interface
  *
- *    Name        powersave_mode_ind
+ *   Name        powersave_mode_ind
  *   Parameters  dbus_bool_t  mode TRUE (=on)/ FALSE(=off)
  *   Description Sent when the powersave mode is changed
  *
@@ -209,84 +209,156 @@ namespace MeeGo
     }
 
     bool QmDeviceMode::setPSMState(QmDeviceMode::PSMState state) {
-        MEEGO_PRIVATE(QmDeviceMode)
 
-        gboolean val = FALSE;
+        // check proper state value
+        bool val = false;
+
         if (state == PSMStateOff) {
-            val = FALSE;
+            val = false;
         } else if (state == PSMStateOn) {
-            val = TRUE;
+            val = true;
         } else {
             return false;
         }
 
-        gboolean ret = gconf_client_set_bool(priv->gcClient, FORCE_POWER_SAVING, val, NULL);
-        if (ret == TRUE) {
+        #if HAVE_MCE
+            QList<QVariant> argumentList;
+            argumentList << QVariant::fromValue(QDBusObjectPath(FORCE_POWER_SAVING));
+            argumentList << QVariant::fromValue(QDBusVariant(val));
+
+            QDBusMessage setConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                    MCE_REQUEST_PATH,
+                                                                    MCE_REQUEST_IF,
+                                                                    MCE_SET_CONFIG);
+            setConfig.setArguments(argumentList);
+
+            (void)QDBusConnection::systemBus().call(setConfig, QDBus::NoBlock);
+
             return true;
-        } else {
-            return false;
-        }
+        #endif
+
+        return false;
     }
 
     bool QmDeviceMode::setPSMBatteryMode(int percentages) {
-        MEEGO_PRIVATE(QmDeviceMode)
+
+        bool ret = false;
+        bool enable_psm = false;
 
         if (percentages < 0 || percentages > 100) {
-            return false;
+            return ret;
         }
 
-        int value = 0;
-        if (percentages > 0) {
-            GSList *list = gconf_client_get_list(priv->gcClient, THRESHOLDS, GCONF_VALUE_INT, NULL);
-            if (!list) {
-                return false;
-            }
-            GSList *elem = list;
-            do {
-                int data = GPOINTER_TO_INT(elem->data);
-                if (percentages <= data || !elem->next) {
-                    value = data;
-                    break;
+        #if HAVE_MCE
+            if (percentages > 0) {
+                enable_psm = true;
+
+                // Get the list of possible threshold values.
+                QList<QVariant> getArgumentList;
+                getArgumentList << QVariant::fromValue(QDBusObjectPath(THRESHOLDS));
+
+                QDBusMessage getConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                        MCE_REQUEST_PATH,
+                                                                        MCE_REQUEST_IF,
+                                                                        MCE_GET_CONFIG);
+                getConfig.setArguments(getArgumentList);
+
+                QDBusReply<QDBusVariant> getPossibleDisplayBlankTimeoutsReply = QDBusConnection::systemBus().call(getConfig);
+
+                // Check if the percentage value is in the list of possible values.
+                if (getPossibleDisplayBlankTimeoutsReply.isValid()) {
+                    const QDBusArgument possibleValues = getPossibleDisplayBlankTimeoutsReply.value().variant().value<QDBusArgument>();
+                    if (possibleValues.currentType() == QDBusArgument::ArrayType) {
+                        possibleValues.beginArray();
+                        int value;
+                        while (!possibleValues.atEnd()) {
+                            possibleValues >> value;
+                            if (percentages <= value || possibleValues.atEnd()) {
+                                // Set the threshold value.
+                                QList<QVariant> argumentList;
+                                argumentList << QVariant::fromValue(QDBusObjectPath(THRESHOLD));
+                                argumentList << QVariant::fromValue(QDBusVariant(value));
+
+                                QDBusMessage setConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                                        MCE_REQUEST_PATH,
+                                                                                        MCE_REQUEST_IF,
+                                                                                        MCE_SET_CONFIG);
+                                setConfig.setArguments(argumentList);
+
+                                (void)QDBusConnection::systemBus().call(setConfig, QDBus::NoBlock);
+
+                                break;
+                            }
+                        }
+                        possibleValues.endArray();
+                    }
                 }
-            } while ((elem = g_slist_next(elem)));
-            g_slist_free(list);
-        }
-
-        gboolean ret = FALSE;
-        if (value == 0) {
-            ret = gconf_client_set_bool(priv->gcClient, ENABLE_POWER_SAVING, FALSE, NULL);
-        } else {
-            ret = gconf_client_set_bool(priv->gcClient, ENABLE_POWER_SAVING, TRUE, NULL);
-            if (ret == TRUE) {
-                ret = gconf_client_set_int(priv->gcClient, THRESHOLD, value, NULL);
             }
-        }
 
-        if (ret == TRUE) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+            // Enable or disable psm according to percentages value
+            QList<QVariant> argumentList;
+            argumentList << QVariant::fromValue(QDBusObjectPath(ENABLE_POWER_SAVING));
+            argumentList << QVariant::fromValue(QDBusVariant(enable_psm));
+
+            QDBusMessage setConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                    MCE_REQUEST_PATH,
+                                                                    MCE_REQUEST_IF,
+                                                                    MCE_SET_CONFIG);
+            setConfig.setArguments(argumentList);
+
+            (void)QDBusConnection::systemBus().call(setConfig, QDBus::NoBlock);
+
+            ret = true;
+        #endif
+
+        return ret;
+    }   
 
     int QmDeviceMode::getPSMBatteryMode() {
-        MEEGO_PRIVATE(QmDeviceMode)
 
-        GError *error = NULL;
-        gboolean ret = gconf_client_get_bool(priv->gcClient, ENABLE_POWER_SAVING, &error);
-        if (error) {
-            g_error_free(error);
-            return -1;
-        }
-        if (ret == FALSE) {
-            return 0;
-        }
-        int retVal = gconf_client_get_int(priv->gcClient, THRESHOLD, &error);
-        if (error) {
-            g_error_free(error);
-            return -1;
-        }
-        return retVal;
+        int ret = -1;
+        bool psm_enabled = false;
+
+        #if HAVE_MCE
+            QList<QVariant> argumentListEnab;
+            argumentListEnab << QVariant::fromValue(QDBusObjectPath(ENABLE_POWER_SAVING));
+
+            QDBusMessage getEnabConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                        MCE_REQUEST_PATH,
+                                                                        MCE_REQUEST_IF,
+                                                                        MCE_GET_CONFIG);
+            getEnabConfig.setArguments(argumentListEnab);
+
+            QDBusReply<QDBusVariant> getPSMBatteryModeEnabReply = QDBusConnection::systemBus().call(getEnabConfig);
+
+            if (getPSMBatteryModeEnabReply.isValid()) {
+                psm_enabled = getPSMBatteryModeEnabReply.value().variant().toBool();
+            } else {
+                return ret;
+            }
+
+            if (psm_enabled == false) {
+                return 0;
+            }
+
+            QList<QVariant> argumentListThres;
+            argumentListThres << QVariant::fromValue(QDBusObjectPath(THRESHOLD));
+
+            QDBusMessage getThresConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                         MCE_REQUEST_PATH,
+                                                                         MCE_REQUEST_IF,
+                                                                         MCE_GET_CONFIG);
+            getThresConfig.setArguments(argumentListThres);
+
+            QDBusReply<QDBusVariant> getPSMBatteryModeThresReply = QDBusConnection::systemBus().call(getThresConfig);
+
+            if (getPSMBatteryModeThresReply.isValid()) {
+                ret = getPSMBatteryModeThresReply.value().variant().toInt();
+            }
+
+        #endif
+
+        return ret;
     }
 
 } // namespace MeeGo
