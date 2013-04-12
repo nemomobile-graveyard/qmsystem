@@ -127,7 +127,7 @@ private slots:
     }
 
     void testGetMaxDisplayBrightnessValue() {
-        displaystate->getMaxDisplayBrightnessValue();
+        qDebug() << "DisplayMaxBrightnessValue: " << displaystate->getMaxDisplayBrightnessValue();
     }
 
     void testDisplayBrightnessValue() {
@@ -136,6 +136,9 @@ private slots:
         displaystate->setDisplayBrightnessValue(3);
         int result = displaystate->getDisplayBrightnessValue();
         QVERIFY(result == 3);
+        displaystate->setDisplayBrightnessValue(2);
+        result = displaystate->getDisplayBrightnessValue();
+        QVERIFY(result == 2);
 
         displaystate->setDisplayBrightnessValue(originalDisplayBrightnessValue);
     }
@@ -146,6 +149,9 @@ private slots:
         displaystate->setDisplayBlankTimeout(10);
         int result = displaystate->getDisplayBlankTimeout();
         QVERIFY(result == 10);
+        displaystate->setDisplayBlankTimeout(15);
+        result = displaystate->getDisplayBlankTimeout();
+        QVERIFY(result == 15);
 
         displaystate->setDisplayBlankTimeout(originalDisplayBlankTimeout);
     }
@@ -156,6 +162,9 @@ private slots:
         displaystate->setDisplayDimTimeout(15);
         int result = displaystate->getDisplayDimTimeout();
         QVERIFY(result == 15);
+        displaystate->setDisplayDimTimeout(60);
+        result = displaystate->getDisplayDimTimeout();
+        QVERIFY(result == 60);
 
         displaystate->setDisplayDimTimeout(originalDisplayDimTimeout);
     }

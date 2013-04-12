@@ -36,16 +36,18 @@
     #include "mce/mode-names.h"
 #endif
 
-#include <gconf/gconf-client.h>
+//Strings for MCE Conf keys.
+#define MCE_CONF_DISPLAY_DIR "/system/osso/dsm/display"
+#define MAX_BRIGHTNESS_KEY MCE_CONF_DISPLAY_DIR "/" "max_display_brightness_levels"
+#define BRIGHTNESS_KEY MCE_CONF_DISPLAY_DIR "/" "display_brightness"
+#define BLANK_TIMEOUT_KEY MCE_CONF_DISPLAY_DIR "/" "display_blank_timeout"
+#define DIM_TIMEOUT_KEY MCE_CONF_DISPLAY_DIR "/" "display_dim_timeout"
+#define BLANKING_CHARGING_KEY MCE_CONF_DISPLAY_DIR "/" "inhibit_blank_mode"
+#define POSSIBLE_DIM_LIST_KEY MCE_CONF_DISPLAY_DIR "/" "possible_display_dim_timeouts"
+#define POSSIBLE_BLANK_LIST_KEY MCE_CONF_DISPLAY_DIR "/" "possible_display_blank_timeouts"
 
-//Strings for GConf keys.
-#define GCONF_DISPLAY_DIR "/system/osso/dsm/display"
-#define MAX_BRIGHTNESS_KEY GCONF_DISPLAY_DIR "/" "max_display_brightness_levels"
-#define BRIGHTNESS_KEY GCONF_DISPLAY_DIR "/" "display_brightness"
-#define BLANK_TIMEOUT_KEY GCONF_DISPLAY_DIR "/" "display_blank_timeout"
-#define DIM_TIMEOUT_KEY GCONF_DISPLAY_DIR "/" "display_dim_timeout"
-#define BLANKING_CHARGING_KEY GCONF_DISPLAY_DIR "/" "inhibit_blank_mode"
-#define POSSIBLE_DIM_LIST_KEY GCONF_DISPLAY_DIR "/" "possible_display_dim_timeouts"
+#define MCE_GET_CONFIG "get_config"
+#define MCE_SET_CONFIG "set_config"
 
 #define SIGNAL_DISPLAY_STATE 0
 
@@ -58,19 +60,14 @@ namespace MeeGo
 
     public:
         QmDisplayStatePrivate() {
-            g_type_init();
-            gc = gconf_client_get_default();
-
             connectCount[SIGNAL_DISPLAY_STATE] = 0;
         }
 
         ~QmDisplayStatePrivate() {
-            g_object_unref(gc), gc = 0;
         }
 
         QMutex connectMutex;
         size_t connectCount[1];
-        GConfClient *gc;
 
     Q_SIGNALS:
         void displayStateChanged(MeeGo::QmDisplayState::DisplayState);

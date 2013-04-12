@@ -1,3 +1,8 @@
+* Fri Apr 12 2013 Matti Kosola <matti.kosola@jollamobile.com> - 1.4.5
+- Fixes NEMO#654 : Qmsystem QmDeviceMode use mce settings
+- Fixes NEMO#655 : Qmsystem QmDisplayState use mce settings
+- Add some tests for QmDisplayState
+
 * Tue Mar 19 2013 Matti Kosola <matti.kosola@jollamobile.com> - 1.4.4
 - Add qmsystem.yaml and qmsystem.changes to rpm directory
 - Merge patches from Nemo/Mer OBS to git
