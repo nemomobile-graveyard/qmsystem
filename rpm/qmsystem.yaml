@@ -6,7 +6,7 @@ Group: System/System Control
 License: LGPLv2
 URL: http://github.com/nemomobile/qmsystem
 Sources:
-    - "%{name}-1.4.4.tar.bz2"
+    - "%{name}-1.4.5.tar.bz2"
 Description: This package contains the QmSystem library.
 
 Requires:
