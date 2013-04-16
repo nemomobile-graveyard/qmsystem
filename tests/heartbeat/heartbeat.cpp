@@ -127,12 +127,14 @@ private slots:
         int sleep_s = 4;
 
         QTime result = heartbeat2->wait(0, sleep_s, MeeGo::QmHeartbeat::WaitHeartbeat);
+        qDebug() << "Slept " << result.second() << "seconds" ;
         QVERIFY(result.second() >= sleep_s && result.second() <= sleep_s+1);
         QVERIFY(got_signal == 0);
         heartbeat2->IWokeUp();
 
         sleep_s=7;
         result = heartbeat2->wait(0, 7, MeeGo::QmHeartbeat::DoNotWaitHeartbeat);
+        qDebug() << "Slept " << result.second() << "seconds" ;
         QVERIFY(result.second() >= 0 &&  result.second() <= 1);
         QTest::qWait(8000);
         heartbeat2->IWokeUp();

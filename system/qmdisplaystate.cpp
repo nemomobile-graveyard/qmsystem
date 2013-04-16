@@ -146,62 +146,116 @@ bool QmDisplayState::set(QmDisplayState::DisplayState state) {
 }
 
 int QmDisplayState::getMaxDisplayBrightnessValue() {
-    MEEGO_PRIVATE(QmDisplayState);
 
-    GError* error = NULL;
-    int ret = gconf_client_get_int(priv->gc, MAX_BRIGHTNESS_KEY, &error);
-    if ( error ) {
-        ret = -1;
-        g_error_free (error);
-    }
+    int ret = -1;
+
+    #if HAVE_MCE
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(QDBusObjectPath(MAX_BRIGHTNESS_KEY));
+
+        QDBusMessage getConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                MCE_REQUEST_PATH,
+                                                                MCE_REQUEST_IF,
+                                                                MCE_GET_CONFIG);
+        getConfig.setArguments(argumentList);
+
+        QDBusReply<QDBusVariant> getMaxDisplayBrightnessValueReply = QDBusConnection::systemBus().call(getConfig);
+
+        if (getMaxDisplayBrightnessValueReply.isValid())
+            ret = getMaxDisplayBrightnessValueReply.value().variant().toInt();
+    #endif
+
     return ret;
 }
 
 int QmDisplayState::getDisplayBrightnessValue() {
-    MEEGO_PRIVATE(QmDisplayState);
 
-    GError* error = NULL;
-    int ret = gconf_client_get_int(priv->gc, BRIGHTNESS_KEY, &error);
-    if ( error ) {
-        ret = -1;
-        g_error_free (error);
-    }
+    int ret = -1;
+
+    #if HAVE_MCE
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(QDBusObjectPath(BRIGHTNESS_KEY));
+
+        QDBusMessage getConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                MCE_REQUEST_PATH,
+                                                                MCE_REQUEST_IF,
+                                                                MCE_GET_CONFIG);
+        getConfig.setArguments(argumentList);
+
+        QDBusReply<QDBusVariant> getDisplayBrightnessValueReply = QDBusConnection::systemBus().call(getConfig);
+
+        if (getDisplayBrightnessValueReply.isValid())
+            ret = getDisplayBrightnessValueReply.value().variant().toInt();
+    #endif
+
     return ret;
 }
 
 int QmDisplayState::getDisplayBlankTimeout() {
-    MEEGO_PRIVATE(QmDisplayState);
 
-    GError* error = NULL;
-    int ret = gconf_client_get_int(priv->gc, BLANK_TIMEOUT_KEY, &error);
-    if ( error ) {
-        ret = -1;
-        g_error_free (error);
-    }
+    int ret = -1;
+
+    #if HAVE_MCE
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(QDBusObjectPath(BLANK_TIMEOUT_KEY));
+
+        QDBusMessage getConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                MCE_REQUEST_PATH,
+                                                                MCE_REQUEST_IF,
+                                                                MCE_GET_CONFIG);
+        getConfig.setArguments(argumentList);
+
+        QDBusReply<QDBusVariant> getDisplayBlankTimeoutReply = QDBusConnection::systemBus().call(getConfig);
+
+        if (getDisplayBlankTimeoutReply.isValid())
+            ret = getDisplayBlankTimeoutReply.value().variant().toInt();
+    #endif
+
     return ret;
 }
 
 int QmDisplayState::getDisplayDimTimeout() {
-    MEEGO_PRIVATE(QmDisplayState);
 
-    GError* error = NULL;
-    int ret = gconf_client_get_int(priv->gc, DIM_TIMEOUT_KEY, &error);
-    if ( error ) {
-        ret = -1;
-        g_error_free (error);
-    }
+    int ret = -1;
+
+    #if HAVE_MCE
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(QDBusObjectPath(DIM_TIMEOUT_KEY));
+
+        QDBusMessage getConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                MCE_REQUEST_PATH,
+                                                                MCE_REQUEST_IF,
+                                                                MCE_GET_CONFIG);
+        getConfig.setArguments(argumentList);
+
+        QDBusReply<QDBusVariant> getDisplayDimTimeoutReply = QDBusConnection::systemBus().call(getConfig);
+
+        if (getDisplayDimTimeoutReply.isValid())
+            ret = getDisplayDimTimeoutReply.value().variant().toInt();
+    #endif
+
     return ret;
 }
 
 bool QmDisplayState::getBlankingWhenCharging() {
-    MEEGO_PRIVATE(QmDisplayState);
 
-    GError* error = NULL;
-    int val = gconf_client_get_int(priv->gc, BLANKING_CHARGING_KEY, &error);
-    if ( error ) {
-        g_error_free (error);
-        return false;
-    }
+    int val = -1;
+
+    #if HAVE_MCE
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(QDBusObjectPath(BLANKING_CHARGING_KEY));
+
+        QDBusMessage getConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                MCE_REQUEST_PATH,
+                                                                MCE_REQUEST_IF,
+                                                                MCE_GET_CONFIG);
+        getConfig.setArguments(argumentList);
+
+        QDBusReply<QDBusVariant> getDisplayDimTimeoutReply = QDBusConnection::systemBus().call(getConfig);
+
+        if (getDisplayDimTimeoutReply.isValid())
+            val = getDisplayDimTimeoutReply.value().variant().toInt();
+    #endif
 
     // check if blanking is not inhibited during charging.
     bool ret = (val == 0);
@@ -209,52 +263,131 @@ bool QmDisplayState::getBlankingWhenCharging() {
 }
 
 void QmDisplayState::setDisplayBrightnessValue(int brightness) {
-    MEEGO_PRIVATE(QmDisplayState);
 
     if ((1 > brightness) || (brightness > getMaxDisplayBrightnessValue())) {
         return;
     }
 
-    gconf_client_set_int(priv->gc, BRIGHTNESS_KEY, brightness, NULL);
+    #if HAVE_MCE
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(QDBusObjectPath(BRIGHTNESS_KEY));
+        argumentList << QVariant::fromValue(QDBusVariant(brightness));
+
+        QDBusMessage setConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                MCE_REQUEST_PATH,
+                                                                MCE_REQUEST_IF,
+                                                                MCE_SET_CONFIG);
+        setConfig.setArguments(argumentList);
+
+        (void)QDBusConnection::systemBus().call(setConfig, QDBus::NoBlock);
+    #endif
 }
 
 void QmDisplayState::setDisplayBlankTimeout(int timeout) {
-    MEEGO_PRIVATE(QmDisplayState);
 
-    gconf_client_set_int(priv->gc, BLANK_TIMEOUT_KEY, timeout, NULL);
+    #if HAVE_MCE
+        // Get the list of possible values for blanking timeout.
+        QList<QVariant> getArgumentList;
+        getArgumentList << QVariant::fromValue(QDBusObjectPath(POSSIBLE_BLANK_LIST_KEY));
+
+        QDBusMessage getConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                MCE_REQUEST_PATH,
+                                                                MCE_REQUEST_IF,
+                                                                MCE_GET_CONFIG);
+        getConfig.setArguments(getArgumentList);
+
+        QDBusReply<QDBusVariant> getPossibleDisplayBlankTimeoutsReply = QDBusConnection::systemBus().call(getConfig);
+
+        // Check if the timeout value is in the list of possible values.
+        if (getPossibleDisplayBlankTimeoutsReply.isValid()) {
+            const QDBusArgument possibleValues = getPossibleDisplayBlankTimeoutsReply.value().variant().value<QDBusArgument>();
+            if (possibleValues.currentType() == QDBusArgument::ArrayType) {
+                possibleValues.beginArray();
+                int value;
+                while (!possibleValues.atEnd()) {
+                    possibleValues >> value;
+                    if (value == timeout) {
+                        // Set the timeout value.
+                        QList<QVariant> argumentList;
+                        argumentList << QVariant::fromValue(QDBusObjectPath(BLANK_TIMEOUT_KEY));
+                        argumentList << QVariant::fromValue(QDBusVariant(timeout));
+
+                        QDBusMessage setConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                                MCE_REQUEST_PATH,
+                                                                                MCE_REQUEST_IF,
+                                                                                MCE_SET_CONFIG);
+                        setConfig.setArguments(argumentList);
+
+                        (void)QDBusConnection::systemBus().call(setConfig, QDBus::NoBlock);
+                    }
+                }
+                possibleValues.endArray();
+            }
+        }
+    #endif
 }
 
 void QmDisplayState::setDisplayDimTimeout(int timeout) {
-    MEEGO_PRIVATE(QmDisplayState);
 
-    GSList* list = NULL;
-    GError* error = NULL;
+    #if HAVE_MCE
+        // Get the list of possible values for dimming timeout.
+	QList<QVariant> getArgumentList;
+        getArgumentList << QVariant::fromValue(QDBusObjectPath(POSSIBLE_DIM_LIST_KEY));
 
-    // Get the list of possible values for dimming timeout.
-    list = gconf_client_get_list(priv->gc, POSSIBLE_DIM_LIST_KEY, GCONF_VALUE_INT, &error);
-    if ( error ) {
-        g_error_free(error);
-        g_slist_free(list);
-        return;
-    }
+        QDBusMessage getConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                MCE_REQUEST_PATH,
+                                                                MCE_REQUEST_IF,
+                                                                MCE_GET_CONFIG);
+        getConfig.setArguments(getArgumentList);
 
-    // Check if the timeout value is in the list of possible values.
-    if (g_slist_index(list, (gconstpointer)timeout) == -1 ) {
-        g_slist_free(list);
-        return;
-    }
+        QDBusReply<QDBusVariant> getPossibleDisplayDimTimeoutsReply = QDBusConnection::systemBus().call(getConfig);
 
-    // Set the timeout value.
-    gconf_client_set_int(priv->gc, DIM_TIMEOUT_KEY, timeout, NULL);
-    g_slist_free(list);
+        // Check if the timeout value is in the list of possible values.
+        if (getPossibleDisplayDimTimeoutsReply.isValid()) {
+            const QDBusArgument possibleValues = getPossibleDisplayDimTimeoutsReply.value().variant().value<QDBusArgument>();
+            if (possibleValues.currentType() == QDBusArgument::ArrayType) {
+                possibleValues.beginArray();
+                int value;
+                while (!possibleValues.atEnd()) {
+                    possibleValues >> value;
+                    if (value == timeout) {
+                        // Set the timeout value.
+                        QList<QVariant> argumentList;
+                        argumentList << QVariant::fromValue(QDBusObjectPath(DIM_TIMEOUT_KEY));
+                        argumentList << QVariant::fromValue(QDBusVariant(timeout));
+
+                        QDBusMessage setConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                                MCE_REQUEST_PATH,
+                                                                                MCE_REQUEST_IF,
+                                                                                MCE_SET_CONFIG);
+                        setConfig.setArguments(argumentList);
+
+                        (void)QDBusConnection::systemBus().call(setConfig, QDBus::NoBlock);
+                    }
+                }
+                possibleValues.endArray();
+            }
+	}
+    #endif
 }
 
 void QmDisplayState::setBlankingWhenCharging(bool blanking) {
-    MEEGO_PRIVATE(QmDisplayState);
 
     int b = (blanking ? 0 : 1);
 
-    gconf_client_set_int(priv->gc, BLANKING_CHARGING_KEY, b, NULL);
+    #if HAVE_MCE
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(QDBusObjectPath(BLANKING_CHARGING_KEY));
+        argumentList << QVariant::fromValue(QDBusVariant(b));
+
+        QDBusMessage setConfig = QDBusMessage::createMethodCall(MCE_SERVICE,
+                                                                MCE_REQUEST_PATH,
+                                                                MCE_REQUEST_IF,
+                                                                MCE_SET_CONFIG);
+        setConfig.setArguments(argumentList);
+
+        (void)QDBusConnection::systemBus().call(setConfig, QDBus::NoBlock);
+    #endif
 }
 
 bool QmDisplayState::setBlankingPause(void) {

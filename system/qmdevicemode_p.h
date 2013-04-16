@@ -38,12 +38,15 @@
     #include "mce/mode-names.h"
 #endif
 
-#include <gconf/gconf-client.h>
+//Strings for MCE Conf keys.
 #define PATH "/system/osso/dsm/energymanagement"
 #define FORCE_POWER_SAVING PATH"/force_power_saving"
 #define ENABLE_POWER_SAVING PATH"/enable_power_saving"
 #define THRESHOLDS PATH"/possible_psm_thresholds"
 #define THRESHOLD PATH"/psm_threshold"
+
+#define MCE_GET_CONFIG "get_config"
+#define MCE_SET_CONFIG "set_config"
 
 #define SIGNAL_DEVICE_MODE 0
 #define SIGNAL_PSM_MODE 1
@@ -64,9 +67,6 @@ namespace MeeGo
             #endif
 
             connectCount[SIGNAL_DEVICE_MODE] = connectCount[SIGNAL_PSM_MODE] = 0;
-
-            g_type_init();
-            gcClient = gconf_client_get_default();
         }
 
         ~QmDeviceModePrivate() {
@@ -74,7 +74,6 @@ namespace MeeGo
                 if (requestIf)
                     delete requestIf, requestIf = 0;
             #endif
-            g_object_unref(gcClient), gcClient = 0;
         }
 
         static QmDeviceMode::DeviceMode radioStateToDeviceMode(quint32 radioStateFlags) {
@@ -102,7 +101,6 @@ namespace MeeGo
         QMutex connectMutex;
         size_t connectCount[2];
         QmIPCInterface *requestIf;
-        GConfClient *gcClient;
 
     Q_SIGNALS:
 
