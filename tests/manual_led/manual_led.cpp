@@ -55,7 +55,7 @@ private slots:
 
     void testPattern() {
         QFETCH(QString, pattern);
-        printf("\n\nThe next pattern is called %s.\n", pattern.toAscii().data());
+        printf("\n\nThe next pattern is called %s.\n", pattern.toUtf8().data());
         printf("Please look at the LED and see if the pattern is correct.\n");
         printf("The pattern will be activated for 20 seconds.\n");
         printf("Press enter to activate the pattern.\n");
@@ -63,10 +63,10 @@ private slots:
 
         QVERIFY(led->enable());
         QVERIFY(led->activate(pattern));
-        printf("Pattern %s activated...\n", pattern.toAscii().data());
+        printf("Pattern %s activated...\n", pattern.toUtf8().data());
         QTest::qWait(20*1000);
         QVERIFY(led->deactivate(pattern));
-        printf("Pattern %s deactivated...\n", pattern.toAscii().data());
+        printf("Pattern %s deactivated...\n", pattern.toUtf8().data());
         QVERIFY(led->disable());
     }
 

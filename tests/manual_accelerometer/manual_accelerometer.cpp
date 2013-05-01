@@ -50,7 +50,7 @@ public slots:
         zLatest = data.z;
     }
     void errorSignal(QString error) {
-        printf("error: %s\n", error.toAscii().data());
+        printf("error: %s\n", error.toUtf8().data());
     }
 
     
@@ -72,7 +72,7 @@ private slots:
 
     void testFunc(const QString &msg, int x, int y, int z) {
 
-        printf("%s", msg.toAscii().data());
+        printf("%s", msg.toUtf8().data());
         printf("You have 10 seconds...\n");
         count = 0;
         xSum = 0;

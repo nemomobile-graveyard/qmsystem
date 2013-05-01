@@ -40,7 +40,7 @@ public slots:
         if (receiveOrientations) {
             orientationChangedFlag = true;
             orientation = newOrientation;
-            printf("\treceived orientation: %s\n", orientationToString(orientation.value).toAscii().data());
+            printf("\treceived orientation: %s\n", orientationToString(orientation.value).toUtf8().data());
         }
     }
 
@@ -76,7 +76,7 @@ private:
 
     void testFunc(QmOrientation::Orientation orientationToTest) {
 
-        printf("\n\nPlease turn and hold the device so, that %s. You have 10 seconds...\n", orientationToString(orientationToTest).toAscii().data());
+        printf("\n\nPlease turn and hold the device so, that %s. You have 10 seconds...\n", orientationToString(orientationToTest).toUtf8().data());
         receiveOrientations = true;
         QTest::qWait(10000);
         QCOMPARE(orientation.value, orientationToTest);

@@ -128,7 +128,7 @@ private:
     }
 
     void testFunc(QmUSBMode::Mode defaultMode, QmUSBMode::Mode mode) {
-        printf("\n\nTesting with defaultMode %s and mode %s\n\n", mode2str(defaultMode).toAscii().data(), mode2str(mode).toAscii().data());
+        printf("\n\nTesting with defaultMode %s and mode %s\n\n", mode2str(defaultMode).toUtf8().data(), mode2str(mode).toUtf8().data());
 
         printf("\n\nPlease remove the usb cable.\n");
         printf("You have 10 seconds...\n\n");

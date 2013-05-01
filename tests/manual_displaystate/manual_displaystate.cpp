@@ -52,7 +52,7 @@ private slots:
 
     void stateChangeFunc(QmDisplayState::DisplayState state) {
         QString stateStr = stateToString(state);
-        printf("Setting the display To %s...\n", stateStr.toAscii().data());
+        printf("Setting the display To %s...\n", stateStr.toUtf8().data());
         QVERIFY2(displaystate->set(state), "Could not set the state!");
 
         QString question;
@@ -61,14 +61,14 @@ private slots:
             question = QString("Was the display dimmed and then Off (y/n)?");
             QTest::qWait(3000);
         } else {
-            printf("Please look at the display, and verify that it is really %s\n", stateStr.toAscii().data());
+            printf("Please look at the display, and verify that it is really %s\n", stateStr.toUtf8().data());
             question = QString("Is the display %1 (y/n)?").arg(stateStr);
         }
 
         string res = "";
         do {
-            //printf("\nIs the display %s? (y/n)?\n", stateStr.toAscii().data());
-            printf("\n%s\n", question.toAscii().data());
+            //printf("\nIs the display %s? (y/n)?\n", stateStr.toUtf8().data());
+            printf("\n%s\n", question.toUtf8().data());
             cin >> res;
         } while (res != "y" && res != "Y" && res != "n" && res != "N" && res != "\n");
 

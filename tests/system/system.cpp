@@ -67,7 +67,7 @@ private:
             out << stateStr;
             file.close();
 
-            QVERIFY2(systemstate->getRunState() == state, stateStr.toAscii().data());
+            QVERIFY2(systemstate->getRunState() == state, stateStr.toUtf8().data());
         }
 
     }

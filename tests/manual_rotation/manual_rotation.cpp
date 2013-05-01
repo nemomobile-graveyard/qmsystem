@@ -64,7 +64,7 @@ private:
     int count;
     void testFunc(const QString &msg, int x, int y) {
 
-        printf("%s", msg.toAscii().data());
+        printf("%s", msg.toUtf8().data());
         printf("You have 10 seconds...\n");
         valueList.clear();
         QTest::qWait(10000);
@@ -130,7 +130,7 @@ private:
     }
 
     void testFuncForZ(const QString &msg, int z) {
-        printf("\n\n%s\n", msg.toAscii().data());
+        printf("\n\n%s\n", msg.toUtf8().data());
         printf("Your goal is to get z to: %d\n", z);
         printf("You got 10 seconds...\n");
         printData = true;

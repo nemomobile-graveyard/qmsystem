@@ -93,7 +93,7 @@ private:
     }
 
     void testFunc(const QString &msg, int wantedDeg) {
-        printf("%s", msg.toAscii().data());
+        printf("%s", msg.toUtf8().data());
         printf("The required angle from north is %d.\n", wantedDeg);
         printf("You have 10 seconds...\n\n");
         compassValues.clear();

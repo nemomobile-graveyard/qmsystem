@@ -8,7 +8,9 @@ QT = core network dbus
 QMAKE_CXXFLAGS += -Wall -Wno-psabi
 
 CONFIG += link_pkgconfig
-PKGCONFIG += dsme dsme_dbus_if gconf-2.0 libiphb sensord timed
+PKGCONFIG += dsme dsme_dbus_if gconf-2.0 libiphb sensord
+equals(QT_MAJOR_VERSION, 4): PKGCONFIG += timed
+equals(QT_MAJOR_VERSION, 5): PKGCONFIG += timed-qt5
 
 message("Compiling with mce support")
 DEFINES += HAVE_MCE

@@ -56,13 +56,13 @@ public slots:
         }
 
         cameraPos = newPos;
-        printf("\tCurrent camera position is: %s\n", cameraToString(cameraPos).toAscii().data());
+        printf("\tCurrent camera position is: %s\n", cameraToString(cameraPos).toUtf8().data());
     }
 
     void sliderChanged(QmKeys::KeyboardSliderPosition newPos) {
         sliderPos = newPos;
 
-        printf("\tCurrent keyboard slider position is: %s\n", sliderToString(sliderPos).toAscii().data());
+        printf("\tCurrent keyboard slider position is: %s\n", sliderToString(sliderPos).toUtf8().data());
     }
 
     void volumeUpPressed(bool pressed) {
@@ -81,7 +81,7 @@ public slots:
 
     void keyEvent(MeeGo::QmKeys::Key key, MeeGo::QmKeys::State state) {
         if (keyMap.find(key) == keyMap.end() || keyMap.value(key) != state) {
-            printf("\tkeyEvent: %s in state %s\n",keyToString(key).toAscii().data(), stateToString(state).toAscii().data());
+            printf("\tkeyEvent: %s in state %s\n",keyToString(key).toUtf8().data(), stateToString(state).toUtf8().data());
         }
         keyMap[key] = state;
     }
@@ -180,7 +180,7 @@ private:
     }
 
     void doTest(QmKeys::CameraKeyPosition pos) {
-        printf("Please press/release the camera button to be %s.\nYou have 10 seconds...\n", cameraToString(pos).toAscii().data());
+        printf("Please press/release the camera button to be %s.\nYou have 10 seconds...\n", cameraToString(pos).toUtf8().data());
         QTest::qWait(10*1000);
         QCOMPARE(cameraPos, pos);
         QCOMPARE(cameraPos, keys->getCameraLauncherPosition());
@@ -188,7 +188,7 @@ private:
     }
 
     void doTestNew(QmKeys::Key key, QmKeys::State state) {
-        printf("Please move %s to be in the state %s.\nYou have 10 seconds...\n", keyToString(key).toAscii().data(), stateToString(state).toAscii().data());
+        printf("Please move %s to be in the state %s.\nYou have 10 seconds...\n", keyToString(key).toUtf8().data(), stateToString(state).toUtf8().data());
         QTest::qWait(10*1000);
         QCOMPARE(keyMap.value(key), state);
         QCOMPARE(state, keys->getKeyState(key));

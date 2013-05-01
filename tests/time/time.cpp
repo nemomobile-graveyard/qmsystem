@@ -249,8 +249,8 @@ private slots:
         QDateTime current2 = QDateTime::currentDateTime();
         int secsTo = current.secsTo(current2);
         QString str = QString("Time difference: %1").arg(secsTo);
-        QVERIFY2(secsTo >= 4, str.toAscii().data());
-        QVERIFY2(secsTo <= 5, str.toAscii().data());
+        QVERIFY2(secsTo >= 4, str.toUtf8().data());
+        QVERIFY2(secsTo <= 5, str.toUtf8().data());
     }
 
     QString  get_zone_abbreviation_now(QmTime *t, QString location)
@@ -288,10 +288,10 @@ private slots:
 
         for (unsigned i=0; i < sizeof(tzs)/sizeof(*tzs); i++) {
 
-            QVERIFY2(time->setTimezone(tzs[i].tz), tzs[i].tz.toAscii().data());
+            QVERIFY2(time->setTimezone(tzs[i].tz), tzs[i].tz.toUtf8().data());
 
             QString tz2;
-            QVERIFY2(time->getTimezone(tz2), tzs[i].tz.toAscii().data());
+            QVERIFY2(time->getTimezone(tz2), tzs[i].tz.toUtf8().data());
             QCOMPARE(tzs[i].zone.isEmpty() ? tzs[i].tz : tzs[i].zone, tz2);
             qDebug()<<tz2;
 
@@ -303,8 +303,8 @@ private slots:
             QCOMPARE(tzs[i].tzname, abbreviation);
 
             int diff = dateTime.secsTo(QDateTime::currentDateTime());
-            QVERIFY2(diff <= tzs[i].secsTo + 5, tzs[i].tz.toAscii());
-            QVERIFY2(diff >= tzs[i].secsTo - 5, tzs[i].tz.toAscii());
+            QVERIFY2(diff <= tzs[i].secsTo + 5, tzs[i].tz.toUtf8());
+            QVERIFY2(diff >= tzs[i].secsTo - 5, tzs[i].tz.toUtf8());
         }
     }
 

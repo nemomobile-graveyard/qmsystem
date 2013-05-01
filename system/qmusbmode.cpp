@@ -179,7 +179,7 @@ bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode) {
 
     (void)QDBusConnection::systemBus().call(usbDefaultModeSetCall, QDBus::NoBlock);
 
-    gboolean ret = gconf_client_set_string(priv->gcClient, USB_MODE_GCONF, str.toAscii().data(), NULL);
+    gboolean ret = gconf_client_set_string(priv->gcClient, USB_MODE_GCONF, str.toUtf8().data(), NULL);
     if (ret == TRUE) {
         return true;
     } else {
