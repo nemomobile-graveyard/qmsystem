@@ -1,5 +1,6 @@
 TEMPLATE = lib
-TARGET = qmsystem2
+equals(QT_MAJOR_VERSION, 4): TARGET = qmsystem2
+equals(QT_MAJOR_VERSION, 5): TARGET = qmsystem2-qt5
 DEPENDPATH += .
 INCLUDEPATH += .
 DEFINES += SYSTEM_LIBRARY
@@ -123,7 +124,8 @@ contextsubscriber {
     DEFINES += PROVIDE_CONTEXT_INFO
     LIBS += -lcontextsubscriber
 }
-targetheaders.path = /usr/include/qmsystem2
+equals(QT_MAJOR_VERSION, 4): targetheaders.path = /usr/include/qmsystem2
+equals(QT_MAJOR_VERSION, 5): targetheaders.path = /usr/include/qmsystem2-qt5
 targetheaders.files = $$HEADERS
 target.path = /usr/lib/
 INSTALLS += target \

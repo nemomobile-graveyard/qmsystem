@@ -1,0 +1,4 @@
+LIBS += -lqmsystem2-qt5
+DEPENDPATH += /usr/include/qmsystem2-qt5
+INCLUDEPATH += /usr/include/qmsystem2-qt5
+CONFIG += timed-qt5 qt
