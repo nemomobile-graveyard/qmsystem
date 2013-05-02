@@ -14,7 +14,7 @@ Release:    1
 Group:      System/System Control
 License:    LGPLv2
 URL:        http://github.com/nemomobile/qmsystem
-Source0:    %{name}-1.4.5.tar.bz2
+Source0:    %{name}-%{version}.tar.bz2
 Requires:   sensorfw-qt5 >= 0.6.33
 Requires:   timed-qt5 >= 2.31
 Requires:   mce
