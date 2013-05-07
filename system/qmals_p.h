@@ -30,8 +30,8 @@
 
 #include "qmals.h"
 #include "qmsensor_p.h"
-#include "sensord/alssensor_i.h"
-#include "sensord/sensormanagerinterface.h"
+#include "alssensor_i.h"
+#include "sensormanagerinterface.h"
 
 namespace MeeGo
 {

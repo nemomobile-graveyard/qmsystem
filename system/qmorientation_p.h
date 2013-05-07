@@ -30,8 +30,8 @@
 
 #include "qmorientation.h"
 
-#include "sensord/orientationsensor_i.h"
-#include "sensord/sensormanagerinterface.h"
+#include "orientationsensor_i.h"
+#include "sensormanagerinterface.h"
 #include "datatypes/posedata.h"
 #include "qmsensor_p.h"
 

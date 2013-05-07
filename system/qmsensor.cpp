@@ -27,7 +27,7 @@
 #include "qmsensor.h"
 #include "qmsensor_p.h"
 #include "system_global.h"
-#include "sensord/sensormanagerinterface.h"
+#include "sensormanagerinterface.h"
 #include <QDebug>
 
 #define GET_SENSOR_PTR_PTR(name) AbstractSensorChannelInterface** name = getSensorIfcPtr();

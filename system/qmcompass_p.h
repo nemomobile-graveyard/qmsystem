@@ -31,8 +31,8 @@
 #include "qmcompass.h"
 #include "qmsensor.h"
 #include "qmsensor_p.h"
-#include "sensord/compasssensor_i.h"
-#include "sensord/sensormanagerinterface.h"
+#include "compasssensor_i.h"
+#include "sensormanagerinterface.h"
 
 namespace MeeGo
 {

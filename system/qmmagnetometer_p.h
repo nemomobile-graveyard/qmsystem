@@ -30,8 +30,8 @@
 
 #include "qmmagnetometer.h"
 #include "qmsensor_p.h"
-#include "sensord/magnetometersensor_i.h"
-#include "sensord/sensormanagerinterface.h"
+#include "magnetometersensor_i.h"
+#include "sensormanagerinterface.h"
 
 namespace MeeGo
 {

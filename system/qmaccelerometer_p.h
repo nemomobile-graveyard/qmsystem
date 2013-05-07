@@ -31,8 +31,8 @@
 
 #include "qmaccelerometer.h"
 #include "qmsensor_p.h"
-#include "sensord/accelerometersensor_i.h"
-#include "sensord/sensormanagerinterface.h"
+#include "accelerometersensor_i.h"
+#include "sensormanagerinterface.h"
 
 namespace MeeGo
 {

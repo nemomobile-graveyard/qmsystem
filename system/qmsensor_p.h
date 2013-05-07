@@ -28,7 +28,7 @@
 #ifndef QMSENSOR_P_H
 #define QMSENSOR_P_H
 
-#include "sensord/abstractsensor_i.h"
+#include "abstractsensor_i.h"
 #include "qmsensor.h"
 
 #define DEFINE_GENERIC_FUNCTIONS(Class) \

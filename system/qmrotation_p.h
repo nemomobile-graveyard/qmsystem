@@ -30,8 +30,8 @@
 
 #include "qmrotation.h"
 #include "qmsensor_p.h"
-#include "sensord/rotationsensor_i.h"
-#include "sensord/sensormanagerinterface.h"
+#include "rotationsensor_i.h"
+#include "sensormanagerinterface.h"
 #include <math.h>
 
 namespace MeeGo

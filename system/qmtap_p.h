@@ -30,8 +30,8 @@
 
 #include "qmtap.h"
 #include "qmsensor_p.h"
-#include "sensord/tapsensor_i.h"
-#include "sensord/sensormanagerinterface.h"
+#include "tapsensor_i.h"
+#include "sensormanagerinterface.h"
 
 namespace MeeGo
 {
