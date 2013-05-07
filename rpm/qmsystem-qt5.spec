@@ -30,6 +30,7 @@ BuildRequires:  pkgconfig(libiphb) >= 0.61.29
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(Qt5Network)
+BuildRequires:  pkgconfig(Qt5Test)
 BuildRequires:  pkgconfig(sensord-qt5) >= 0.6.33
 BuildRequires:  pkgconfig(timed-qt5) >= 2.31
 BuildRequires:  fdupes
