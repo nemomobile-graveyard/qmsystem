@@ -16,8 +16,8 @@ License:    LGPLv2
 URL:        http://github.com/nemomobile/qmsystem
 Source0:    %{name}-%{version}.tar.bz2
 Source100:  qmsystem-qt5.yaml
-Requires:   sensorfw >= 0.6.33
-Requires:   timed >= 2.31
+Requires:   sensorfw-qt5 >= 0.6.33
+Requires:   timed-qt5 >= 2.31
 Requires:   mce
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig

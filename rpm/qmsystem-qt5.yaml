@@ -10,8 +10,8 @@ Sources:
 Description: This package contains the QmSystem library.
 
 Requires:
-    - sensorfw >= 0.6.33
-    - timed >= 2.31
+    - sensorfw-qt5 >= 0.6.33
+    - timed-qt5 >= 2.31
     - mce
 PkgBR:
     - fdupes
