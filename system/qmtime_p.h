@@ -35,7 +35,12 @@ using namespace std ;
 
 #include <QDebug>
 #include <QMutex>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <timed-qt5/interface>
+#else
 #include <timed/interface>
+#endif
 
 #include "qmtime.h"
 
