@@ -62,7 +62,7 @@ Development headers for compiling applications against the QmSystem library.
 
 %build
 # >> build pre
-%qmake
+%qmake5
 make
 # << build pre
 
