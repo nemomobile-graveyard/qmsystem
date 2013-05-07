@@ -100,7 +100,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 # >> files tests
 %doc debian/copyright
-%{_bindir}/*-test
+/opt/tests/qmsystem-tests/*-test
 %{_datadir}/%{name}-tests/tests.xml
 # << files tests
 

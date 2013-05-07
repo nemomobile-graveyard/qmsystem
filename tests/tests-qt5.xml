@@ -18,54 +18,54 @@
       </pre_steps>
       <case name="activity" level="Component" type="Functional" description="QmActivity"  timeout="15" subfeature="QT_APIs" requirement="39927">
         <!-- Run test activity application -->
-        <step expected_result="0">/usr/bin/activity-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/activity-test </step>
       </case>
       <case name="cabc" level="Component" type="Functional" description="QmCABC" timeout="15" subfeature="QT_APIs" requirement="39927">
         <!-- Run test cabc application -->
-        <step expected_result="0">/usr/bin/cabc-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/cabc-test </step>
       </case>
       <case name="callstate" level="Component" type="Functional" description="QmCallState" timeout="120" subfeature="QT_APIs" requirement="39927">
         <!-- Run test  callstate application -->
-        <step expected_result="0">/usr/bin/callstate-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/callstate-test </step>
       </case>
       <case name="devicemode" level="Component" type="Functional" description="QmDeviceMode" timeout="120" subfeature="QT_APIs" requirement="39927">
         <!-- Run test devicemode application -->
-        <step expected_result="0">/usr/bin/devicemode-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/devicemode-test </step>
       </case>
       <case name="displaystate" level="Component" type="Functional" description="QmDisplayState" timeout="120" subfeature="QT_APIs" requirement="39927">
         <!-- Run test displaystate application -->
-        <step expected_result="0">/usr/bin/displaystate-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/displaystate-test </step>
       </case>
       <case name="heartbeat" level="Component" type="Functional" description="QmHeartbeat" timeout="120" subfeature="QT_APIs" requirement="39927">
         <!-- Run test heartbeat application -->
-        <step expected_result="0">/usr/bin/heartbeat-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/heartbeat-test </step>
       </case>
       <case name="led" level="Component" type="Functional" description="QmLed" timeout="15" subfeature="QT_APIs" requirement="39927">
         <!-- Run test led application -->
-        <step expected_result="0">/usr/bin/led-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/led-test </step>
       </case>
       <case name="locks" level="Component" type="Functional" description="QmLocks" timeout="120" subfeature="QT_APIs" requirement="39927">
         <!-- Run test locks application -->
-        <step expected_result="0">/usr/bin/locks-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/locks-test </step>
       </case>
       <case name="thermal" level="Component" type="Functional" description="QmThermal" timeout="240" subfeature="QT_APIs" requirement="39927">
         <!-- Run test thermal application -->
         <step expected_result="0">/usr/sbin/dsmetool -a </step>
-        <step expected_result="0">/usr/bin/thermal-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/thermal-test </step>
       </case>
       <case name="usbmode" level="Component" type="Functional" description="QmUSBMode" timeout="240" subfeature="QT_APIs" requirement="39927">
         <!-- Run test usbmode application -->
-        <step expected_result="0">/usr/bin/usbmode-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/usbmode-test </step>
       </case>
       <case name="systeminformation" level="Component" type="Functional" description="QmSystemInformation" timeout="5" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/systeminformation-test</step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/systeminformation-test</step>
       </case>
       <case name="powerontime" level="Component" type="Functional" description="QmSystemPowerOnTime" timeout="30" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/powerontime-test</step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/powerontime-test</step>
       </case>
       <case name="time" level="Component" type="Functional" description="QmTime"  timeout="180" subfeature="QT_APIs" requirement="39927">
         <!-- Run test time-test application -->
-        <step expected_result="0">/usr/bin/time-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/time-test </step>
       </case>
       <!-- Environments optional - tells where the tests are run -->
       <environments>
@@ -84,35 +84,35 @@
 
       <case name="accelerometer" level="Component" type="Functional" description="QmAccelerometer" timeout="15"  subfeature="QT_APIs" requirement="39927">
         <!-- Run test accelerometer application -->
-        <step expected_result="0">/usr/bin/accelerometer-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/accelerometer-test </step>
       </case>
       <case name="als" level="Component" type="Functional" description="QmALS" timeout="15" subfeature="QT_APIs" requirement="39927">
         <!-- Run test als application -->
-        <step expected_result="0">/usr/bin/als-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/als-test </step>
       </case>
       <case name="compass" level="Component" type="Functional" description="QmCompass" timeout="15" subfeature="QT_APIs" requirement="39927">
         <!-- Run test compass application -->
-        <step expected_result="0">/usr/bin/compass-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/compass-test </step>
       </case>
       <case name="orientation" level="Component" type="Functional" description="QmOrientation" timeout="15" subfeature="QT_APIs" requirement="39927">
         <!-- Run test orientation application -->
-        <step expected_result="0">/usr/bin/orientation-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/orientation-test </step>
       </case>
       <case name="tap" level="Component" type="Functional" description="QmTap" timeout="15" subfeature="QT_APIs" requirement="39927">
         <!-- Run test  tap application -->
-        <step expected_result="0">/usr/bin/tap-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/tap-test </step>
       </case>
       <case name="proximity" level="Component" type="Functional" description="QmProximity" timeout="15"  subfeature="QT_APIs" requirement="39927">
         <!-- Run test proximity application -->
-        <step expected_result="0">/usr/bin/proximity-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/proximity-test </step>
       </case>
       <case name="rotation" level="Component" type="Functional" description="QmRotation" timeout="15"  subfeature="QT_APIs" requirement="39927">
         <!-- Run test rotation application -->
-        <step expected_result="0">/usr/bin/rotation-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/rotation-test </step>
       </case>
       <case name="magnetometer" level="Component" type="Functional" description="QmMagnetometer" timeout="15"  subfeature="QT_APIs" requirement="39927">
         <!-- Run test magnetometer application -->
-        <step expected_result="0">/usr/bin/magnetometer-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/magnetometer-test </step>
       </case>
       <environments>
         <scratchbox>false</scratchbox>
@@ -122,56 +122,56 @@
 
     <set name="Qt-API-manual-tests" description="Manual test cases for Qt API" feature="SystemSW Qt API">
       <case name="manual-orientation" level="Component" type="Functional" manual="true" description="QmOrientation" subfeature="Accelerometer - device orientation" requirement="39948">
-        <step expected_result="0">/usr/bin/manual-orientation-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-orientation-test </step>
       </case>
       <case name="manual-accelerometer" level="Component" type="Functional" manual="true" description="QmAccelerometer" subfeature="Accelerometer - device orientation" requirement="39948">
-        <step expected_result="0">/usr/bin/manual-accelerometer-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-accelerometer-test </step>
       </case>
       <case name="manual-compass" level="Component" type="Functional" manual="true" description="QmCompass" subfeature="Magnetometer in SensorFW" requirement="39960">
-        <step expected_result="0">/usr/bin/manual-compass-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-compass-test </step>
       </case>
       <case name="manual-als" level="Component" type="Functional" manual="true" description="QmALS" subfeature="Ambient Light Sensor" requirement="39945">
-        <step expected_result="0">/usr/bin/manual-als-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-als-test </step>
       </case>	
       <case name="manual-proximity" level="Component" type="Functional" manual="true" description="QmProximity" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/manual-proximity-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-proximity-test </step>
       </case>
       <case name="manual-displaystate" level="Component" type="Functional" manual="true" description="QmDisplayState" subfeature="Display control and settings enabler" requirement="74691">
-        <step expected_result="0">/usr/bin/manual-displaystate-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-displaystate-test </step>
       </case>
       <case name="manual-rotation" level="Component" type="Functional" manual="true" description="QmRotation" subfeature="Accelerometer - device orientation" requirement="39948">
-	    <step expected_result="0">/usr/bin/manual-rotation-test </step>
+	    <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-rotation-test </step>
       </case>
       <case name="manual-keys-camera" level="Component" type="Functional" manual="true" description="QmKeys" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/manual-keys-test testCameraBasic</step>
-        <step expected_result="0">/usr/bin/manual-keys-test testCameraStress</step>
-        <step expected_result="0">/usr/bin/manual-keys-test testCameraBasicNew</step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-keys-test testCameraBasic</step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-keys-test testCameraStress</step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-keys-test testCameraBasicNew</step>
       </case>
       <case name="manual-keys-slider" level="Component" type="Functional" manual="true" description="QmKeys" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/manual-keys-test testKeypadSlideBasic</step>
-        <step expected_result="0">/usr/bin/manual-keys-test testKeypadSlideBasicNew</step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-keys-test testKeypadSlideBasic</step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-keys-test testKeypadSlideBasicNew</step>
       </case>
       <case name="manual-keys-volume" level="Component" type="Functional" manual="true" description="QmKeys" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/manual-keys-test testVolumeBasic</step>
-        <step expected_result="0">/usr/bin/manual-keys-test testVolumeBasicNew</step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-keys-test testVolumeBasic</step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-keys-test testVolumeBasicNew</step>
       </case>
       <case name="manual-keys-eci" level="Component" type="Functional" manual="true" description="QmKeys" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/manual-keys-test testECI</step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-keys-test testECI</step>
       </case>
       <case name="manual-led" level="Component" type="Functional" manual="true" description="QmLed" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/manual-led-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-led-test </step>
       </case>
       <case name="manual-bgcalibration" level="Component" type="Functional" manual="true" description="QmMagnetometer" subfeature="Magnetometer in SensorFW" requirement="39960">
-        <step expected_result="0">/usr/bin/manual-bgcalibration-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-bgcalibration-test </step>
       </case>
       <case name="manual-locks" level="Component" type="Functional" manual="true" description="devicelock" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/manual-locks-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-locks-test </step>
       </case>
       <case name="manual-usbmode" level="Component" type="Functional" manual="true" description="usbmode" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/manual-usbmode-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-usbmode-test </step>
       </case>
       <case name="manual-tap" level="Component" type="Functional" manual="true" description="tap" subfeature="QT_APIs" requirement="39927">
-        <step expected_result="0">/usr/bin/manual-tap-test </step>
+        <step expected_result="0">/opt/tests/qmsystem-qt5-tests/manual-tap-test </step>
       </case>
       <environments>
         <scratchbox>false</scratchbox>

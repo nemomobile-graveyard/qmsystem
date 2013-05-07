@@ -1,3 +1,5 @@
+equals(QT_MAJOR_VERSION, 4): system(cp tests-qt4.xml tests.xml)
+equals(QT_MAJOR_VERSION, 5): system(cp tests-qt5.xml tests.xml)
 
 TEMPLATE = subdirs
 
@@ -48,6 +50,7 @@ linux-g++-maemo {
 
 # Test definition installation
 testdefinition.files = tests.xml
-testdefinition.path = /usr/share/qmsystem-tests
+equals(QT_MAJOR_VERSION, 4): testdefinition.path = /usr/share/qmsystem-tests
+equals(QT_MAJOR_VERSION, 5): testdefinition.path = /usr/share/qmsystem-qt5-tests
 
 INSTALLS += testdefinition

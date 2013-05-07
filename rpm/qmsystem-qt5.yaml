@@ -1,0 +1,45 @@
+Name: qmsystem-qt5
+Summary: QmSystem library
+Version: 1.4.6
+Release: 1
+Group: System/System Control
+License: LGPLv2
+URL: http://github.com/nemomobile/qmsystem
+Sources:
+    - "%{name}-%{version}.tar.bz2"
+Description: This package contains the QmSystem library.
+
+Requires:
+    - sensorfw >= 0.6.33
+    - timed >= 2.31
+    - mce
+PkgBR:
+    - fdupes
+PkgConfigBR:
+    - mce
+    - dbus-1
+    - dsme
+    - dsme_dbus_if
+    - gconf-2.0
+    - libiphb >= 0.61.29
+    - Qt5Core
+    - Qt5DBus
+    - Qt5Network
+    - sensord-qt5 >= 0.6.33
+    - timed-qt5 >= 2.31
+Configure: none
+Builder: none
+SubPackages:
+
+    - Name: tests
+      Summary: Unit test cases and xml test description for libqmsystem2 library
+      Group: Development/System
+      Description: "%{summary}."
+      Requires:
+          - testrunner-lite
+
+    - Name: devel
+      Summary: Development headers for QmSystem library
+      Group: Development/Libraries
+      Description: Development headers for compiling applications against the QmSystem library.
+

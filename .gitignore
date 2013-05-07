@@ -5,8 +5,10 @@ Makefile
 *.o
 moc_*
 *.moc
-keyd/qmkeyd2
+keyd/qmkeyd2*
 libqmsystem2*.so*
+tests/tests.xml
+tests/*/*-test
 
 debian/files
 debian/libqmsystem2-dbg.debhelper.*

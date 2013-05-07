@@ -7,6 +7,7 @@ PKGCONFIGFILES.path = /usr/lib/pkgconfig
 
 equals(QT_MAJOR_VERSION, 4): QTCONFIGFILES.files = qmsystem2.prf
 equals(QT_MAJOR_VERSION, 5): QTCONFIGFILES.files = qmsystem2-qt5.prf
-QTCONFIGFILES.path = /usr/share/qt4/mkspecs/features
+equals(QT_MAJOR_VERSION, 4): QTCONFIGFILES.path = /usr/share/qt4/mkspecs/features
+equals(QT_MAJOR_VERSION, 5): QTCONFIGFILES.path = /usr/share/qt5/mkspecs/features
 
 INSTALLS += PKGCONFIGFILES QTCONFIGFILES
