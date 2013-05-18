@@ -23,7 +23,7 @@ PkgConfigBR:
     - gconf-2.0
     - libiphb >= 0.61.29
     - QtCore >= 4.5
-    - sensorfw >= 0.6.33
+    - sensord >= 0.6.33
     - timed >= 2.31
 Configure: none
 Builder: none
