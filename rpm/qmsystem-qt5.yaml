@@ -26,7 +26,7 @@ PkgConfigBR:
     - Qt5DBus
     - Qt5Network
     - Qt5Test
-    - sensorfw-qt5 >= 0.6.33
+    - sensord-qt5 >= 0.6.33
     - timed-qt5 >= 2.31
 Configure: none
 Builder: none
