@@ -32,6 +32,9 @@
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusReply>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QMetaMethod>
+#endif
 
 namespace MeeGo {
 
@@ -52,13 +55,21 @@ QmDisplayState::~QmDisplayState() {
     MEEGO_UNINITIALIZE(QmDisplayState);
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+void QmDisplayState::connectNotify(const QMetaMethod &signal) {
+#else
 void QmDisplayState::connectNotify(const char *signal) {
+#endif
     MEEGO_PRIVATE(QmDisplayState)
 
     /* QObject::connect() needs to be thread-safe */
     QMutexLocker locker(&priv->connectMutex);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    if (signal == QMetaMethod::fromSignal(&QmDisplayState::displayStateChanged)) {
+#else
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState))))) {
+#endif
         if (0 == priv->connectCount[SIGNAL_DISPLAY_STATE]) {
             #if HAVE_MCE
                 QDBusConnection::systemBus().connect(MCE_SERVICE,
@@ -73,13 +84,21 @@ void QmDisplayState::connectNotify(const char *signal) {
     }
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+void QmDisplayState::disconnectNotify(const QMetaMethod &signal) {
+#else
 void QmDisplayState::disconnectNotify(const char *signal) {
+#endif
     MEEGO_PRIVATE(QmDisplayState)
 
     /* QObject::disconnect() needs to be thread-safe */
     QMutexLocker locker(&priv->connectMutex);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    if (signal == QMetaMethod::fromSignal(&QmDisplayState::displayStateChanged)) {
+#else
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(displayStateChanged(MeeGo::QmDisplayState::DisplayState))))) {
+#endif
         priv->connectCount[SIGNAL_DISPLAY_STATE]--;
 
         if (0 == priv->connectCount[SIGNAL_DISPLAY_STATE]) {

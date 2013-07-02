@@ -32,6 +32,9 @@
 #include <QDBusConnection>
 #include <QDBusReply>
 #include <QDBusMessage>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QMetaMethod>
+#endif
 
 /*
  * PSM stuff (spec)
@@ -83,13 +86,21 @@ namespace MeeGo
         MEEGO_UNINITIALIZE(QmDeviceMode);
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    void QmDeviceMode::connectNotify(const QMetaMethod &signal) {
+#else
     void QmDeviceMode::connectNotify(const char *signal) {
+#endif
         MEEGO_PRIVATE(QmDeviceMode)
 
         /* QObject::connect() needs to be thread-safe */
         QMutexLocker locker(&priv->connectMutex);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        if (signal == QMetaMethod::fromSignal(&QmDeviceMode::deviceModeChanged)) {
+#else
         if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode))))) {
+#endif
             if (0 == priv->connectCount[SIGNAL_DEVICE_MODE]) {
                 #if HAVE_MCE
                     QDBusConnection::systemBus().connect(MCE_SERVICE,
@@ -101,7 +112,11 @@ namespace MeeGo
                 #endif
             }
             priv->connectCount[SIGNAL_DEVICE_MODE]++;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        } else if (signal == QMetaMethod::fromSignal(&QmDeviceMode::devicePSMStateChanged)) {
+#else
         } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState))))) {
+#endif
             if (0 == priv->connectCount[SIGNAL_PSM_MODE]) {
                 #if HAVE_MCE
                     QDBusConnection::systemBus().connect(MCE_SERVICE,
@@ -116,13 +131,21 @@ namespace MeeGo
         }
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    void QmDeviceMode::disconnectNotify(const QMetaMethod &signal) {
+#else
     void QmDeviceMode::disconnectNotify(const char *signal) {
+#endif
         MEEGO_PRIVATE(QmDeviceMode)
 
         /* QObject::disconnect() needs to be thread-safe */
         QMutexLocker locker(&priv->connectMutex);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        if (signal == QMetaMethod::fromSignal(&QmDeviceMode::deviceModeChanged)) {
+#else
         if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(deviceModeChanged(MeeGo::QmDeviceMode::DeviceMode))))) {
+#endif
             priv->connectCount[SIGNAL_DEVICE_MODE]--;
 
             if (0 == priv->connectCount[SIGNAL_DEVICE_MODE]) {
@@ -135,7 +158,11 @@ namespace MeeGo
                                                             SLOT(deviceModeChangedSlot(const quint32)));
                 #endif
             }
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        } else if (signal == QMetaMethod::fromSignal(&QmDeviceMode::devicePSMStateChanged)) {
+#else
         } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(devicePSMStateChanged(MeeGo::QmDeviceMode::PSMState))))) {
+#endif
             priv->connectCount[SIGNAL_PSM_MODE]--;
 
             if (0 == priv->connectCount[SIGNAL_PSM_MODE]) {
