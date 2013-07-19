@@ -81,7 +81,9 @@ public:
         Undefined,        //!< Unknown/error.
         SDK,              //!< Windows network mode. Allows USB networking on the device.
 	Developer,	  //!< Developer mode. Allows USB networking
-	MTP		  //!< MTP mode. Allows for generic MTP
+	MTP,		  //!< MTP mode. Allows for generic MTP
+	Adb,		  //!< adb mode. Allows Android Debug Bridge
+	Diag		  //!< diag mode. Allows Qualcomm Diag
     };
 
     /*!
