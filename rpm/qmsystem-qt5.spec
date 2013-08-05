@@ -9,7 +9,7 @@ Name:       qmsystem-qt5
 # << macros
 
 Summary:    QmSystem library
-Version:    1.4.7
+Version:    1.4.11
 Release:    1
 Group:      System/System Control
 License:    LGPLv2
