@@ -87,6 +87,12 @@ public:
     };
 
     /*!
+     * @brief Gets the list of supported USB modes.
+     * @return The list of supported USB modes
+     */
+    QList<QmUSBMode::Mode> getSupportedModes();
+
+    /*!
      * @brief Gets the current USB mode.
      * @return Returns the current USB mode
      */

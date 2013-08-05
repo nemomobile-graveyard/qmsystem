@@ -157,6 +157,24 @@ void QmUSBMode::disconnectNotify(const char *signal) {
     }
 }
 
+QList<QmUSBMode::Mode> QmUSBMode::getSupportedModes() {
+    MEEGO_PRIVATE(QmUSBMode);
+
+    QList<QmUSBMode::Mode> supportedModes;
+    QDBusReply<QString> usbModeReply = QDBusConnection::systemBus().call(
+                                           QDBusMessage::createMethodCall(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE,
+                                                                          USB_MODE_LIST));
+    if (usbModeReply.isValid()) {
+        foreach (const QString &usbModeString, usbModeReply.value().split(", ")) {
+            QmUSBMode::Mode usbMode = priv->stringToMode(usbModeString);
+            if (usbMode != QmUSBMode::Undefined) {
+                supportedModes.append(usbMode);
+            }
+        }
+    }
+    return supportedModes;
+}
+
 QmUSBMode::Mode QmUSBMode::getMode() {
     MEEGO_PRIVATE(QmUSBMode);
 
