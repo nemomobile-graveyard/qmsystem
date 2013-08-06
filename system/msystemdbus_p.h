@@ -89,7 +89,7 @@
     #define USB_PRE_UNMOUNT                 "pre-unmount"
 
     #define MODE_MASS_STORAGE               "mass_storage"
-    #define MODE_OVI_SUITE                  "ovi_suite"
+    #define MODE_OVI_SUITE                  "pc_suite"
     #define MODE_CHARGING                   "charging_only"
     #define MODE_UNDEFINED                  "undefined"
     #define MODE_ASK                        "ask"
