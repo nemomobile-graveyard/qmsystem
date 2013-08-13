@@ -75,12 +75,12 @@ void QmLocks::connectNotify(const char *signal) {
                                                      priv,
                                                      SLOT(touchAndKeyboardStateChanged(const QString&)));
             #endif
-            QDBusConnection::systemBus().connect(DEVLOCK_SERVICE,
+            QDBusConnection::sessionBus().connect(DEVLOCK_SERVICE,
                                                  DEVLOCK_PATH,
                                                  DEVLOCK_SERVICE,
                                                  DEVLOCK_SIGNAL,
                                                  priv,
-                                                 SLOT(deviceStateChanged(int,int)));
+                                                 SLOT(deviceStateChanged(int)));
         }
         priv->connectCount[SIGNAL_LOCK_STATE]++;
     }
@@ -111,12 +111,12 @@ void QmLocks::disconnectNotify(const char *signal) {
                                                         priv,
                                                         SLOT(touchAndKeyboardStateChanged(const QString&)));
             #endif
-            QDBusConnection::systemBus().disconnect(DEVLOCK_SERVICE,
+            QDBusConnection::sessionBus().disconnect(DEVLOCK_SERVICE,
                                                     DEVLOCK_PATH,
                                                     DEVLOCK_SERVICE,
                                                     DEVLOCK_SIGNAL,
                                                     priv,
-                                                    SLOT(deviceStateChanged(int,int)));
+                                                    SLOT(deviceStateChanged(int)));
         }
     }
 }
