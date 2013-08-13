@@ -41,6 +41,18 @@ QmIPCInterface::QmIPCInterface(const char* service,
                                         parent) {
 }
 
+QmIPCInterface::QmIPCInterface(const char* service,
+                               const char* path,
+                               const char* interface,
+                               QDBusConnection connection,
+                               QObject *parent)
+              :  QDBusAbstractInterface(service,
+                                        path,
+                                        interface,
+                                        connection,
+                                        parent) {
+}
+
 QmIPCInterface::~QmIPCInterface() {
 }
 
