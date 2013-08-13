@@ -44,11 +44,11 @@
 #include "qmipcinterface_p.h"
 
 // The DBus system service provided by devicelock
-#define DEVLOCK_SERVICE "com.nokia.devicelock"
+#define DEVLOCK_SERVICE "com.jolla.devicelockd"
 // The interface that the devicelock uses
-#define DEVLOCK_INTERFACE "com.nokia.devicelock"
+#define DEVLOCK_INTERFACE "com.jolla.devicelockd"
 // The DBus path of the service
-#define DEVLOCK_PATH "/request"
+#define DEVLOCK_PATH "/"
 // Method used to determine the state of the devicelock
 #define DEVLOCK_GET "getState"
 // Method used to set the state of the devicelock
@@ -56,10 +56,10 @@
 // A DBus signal used to notify that the state of hte lock has changed
 #define DEVLOCK_SIGNAL "stateChanged"
 
-#define DEVLOCK_LOCK_TYPE_DEVICE 1
 #define DEVLOCK_LOCK_STATE_UNLOCKED 0
 #define DEVLOCK_LOCK_STATE_LOCKED 1
-#define DEVLOCK_LOCK_STATE_UNDEFINED 8
+#define DEVLOCK_LOCK_STATE_INITIALIZING 2
+#define DEVLOCK_LOCK_STATE_UNDEFINED 3
 
 #define SIGNAL_LOCK_STATE 0
 
@@ -78,7 +78,7 @@ namespace MeeGo
                 mceRequestIf = new QmIPCInterface(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
             #endif
 
-            devlockIf = new QmIPCInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE);
+            devlockIf = new QmIPCInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE, QDBusConnection::sessionBus());
 
             connectCount[SIGNAL_LOCK_STATE] = 0;
         }
@@ -148,12 +148,12 @@ namespace MeeGo
 
             if (what == QmLocks::Device) {
                 if (async) {
-                    QDBusPendingCall pcall = devlockIf->asyncCall(DEVLOCK_GET, DEVLOCK_LOCK_TYPE_DEVICE);
+                    QDBusPendingCall pcall = devlockIf->asyncCall(DEVLOCK_GET);
                     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pcall, this);
                     QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
                                      this, SLOT(didReceiveDeviceLockState(QDBusPendingCallWatcher*)));
                 } else {
-                    QDBusReply<int> reply = devlockIf->call(DEVLOCK_GET, DEVLOCK_LOCK_TYPE_DEVICE);
+                    QDBusReply<int> reply = devlockIf->call(DEVLOCK_GET);
                     if (reply.isValid()) {
                         state = QmLocksPrivate::stateToState(reply.value());
                     }
@@ -179,7 +179,7 @@ namespace MeeGo
         bool setState(QmLocks::Lock what, QmLocks::State how) {
             bool success = false;
             if (what == QmLocks::Device) {
-                devlockIf->callAsynchronously(DEVLOCK_SET, DEVLOCK_LOCK_TYPE_DEVICE, stateToState(how));
+                devlockIf->callAsynchronously(DEVLOCK_SET, stateToState(how));
                 success = true;
             } else if (what == QmLocks::TouchAndKeyboard) {
                 #if HAVE_MCE
@@ -224,10 +224,8 @@ namespace MeeGo
             call->deleteLater();
         }
 
-        void deviceStateChanged(int device, int state) {
-            if (device == DEVLOCK_LOCK_TYPE_DEVICE) {
-                emit stateChanged(QmLocks::Device, stateToState(state));
-            }
+        void deviceStateChanged(int state) {
+            emit stateChanged(QmLocks::Device, stateToState(state));
         }
 
         void touchAndKeyboardStateChanged(const QString& state) {

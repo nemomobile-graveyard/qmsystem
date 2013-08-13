@@ -48,6 +48,11 @@ public:
                    const char* path,
                    const char* interface,
                    QObject *parent = 0);
+    QmIPCInterface(const char* service,
+                   const char* path,
+                   const char* interface,
+                   QDBusConnection connection,
+                   QObject *parent = 0);
     virtual ~QmIPCInterface();
 
     QList<QVariant> get(const QString& method,
