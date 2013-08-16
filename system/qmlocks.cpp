@@ -75,9 +75,9 @@ void QmLocks::connectNotify(const char *signal) {
                                                      priv,
                                                      SLOT(touchAndKeyboardStateChanged(const QString&)));
             #endif
-            QDBusConnection::sessionBus().connect(DEVLOCK_SERVICE,
+            QDBusConnection::systemBus().connect(DEVLOCK_SERVICE,
                                                  DEVLOCK_PATH,
-                                                 DEVLOCK_SERVICE,
+                                                 DEVLOCK_INTERFACE,
                                                  DEVLOCK_SIGNAL,
                                                  priv,
                                                  SLOT(deviceStateChanged(int)));

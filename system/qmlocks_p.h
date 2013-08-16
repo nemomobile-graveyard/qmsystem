@@ -44,13 +44,13 @@
 #include "qmipcinterface_p.h"
 
 // The DBus system service provided by devicelock
-#define DEVLOCK_SERVICE "com.jolla.devicelockd"
+#define DEVLOCK_SERVICE "org.nemomobile.lipstick"
 // The interface that the devicelock uses
-#define DEVLOCK_INTERFACE "com.jolla.devicelockd"
+#define DEVLOCK_INTERFACE "org.nemomobile.lipstick.devicelock"
 // The DBus path of the service
-#define DEVLOCK_PATH "/"
+#define DEVLOCK_PATH "/devicelock"
 // Method used to determine the state of the devicelock
-#define DEVLOCK_GET "getState"
+#define DEVLOCK_GET "state"
 // Method used to set the state of the devicelock
 #define DEVLOCK_SET "setState"
 // A DBus signal used to notify that the state of hte lock has changed
@@ -58,8 +58,7 @@
 
 #define DEVLOCK_LOCK_STATE_UNLOCKED 0
 #define DEVLOCK_LOCK_STATE_LOCKED 1
-#define DEVLOCK_LOCK_STATE_INITIALIZING 2
-#define DEVLOCK_LOCK_STATE_UNDEFINED 3
+#define DEVLOCK_LOCK_STATE_UNDEFINED 2
 
 #define SIGNAL_LOCK_STATE 0
 
@@ -78,7 +77,7 @@ namespace MeeGo
                 mceRequestIf = new QmIPCInterface(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF);
             #endif
 
-            devlockIf = new QmIPCInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_SERVICE, QDBusConnection::sessionBus());
+            devlockIf = new QmIPCInterface(DEVLOCK_SERVICE, DEVLOCK_PATH, DEVLOCK_INTERFACE);
 
             connectCount[SIGNAL_LOCK_STATE] = 0;
         }
