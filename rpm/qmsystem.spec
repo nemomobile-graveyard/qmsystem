@@ -9,7 +9,7 @@ Name:       qmsystem
 # << macros
 
 Summary:    QmSystem library
-Version:    1.4.13
+Version:    1.4.14
 Release:    1
 Group:      System/System Control
 License:    LGPLv2
