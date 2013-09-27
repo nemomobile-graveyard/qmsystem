@@ -32,7 +32,7 @@
 
 #include <QMutex>
 
-#define SYS_THERMALMANAGER_SERVICE        "com.nokia.thermalmanager"
+#define SYS_THERMALMANAGER_SERVICE        ""
 #define SYS_THERMALMANAGER_INTERFACE      "com.nokia.thermalmanager"
 #define SYS_THERMALMANAGER_PATH           "/com/nokia/thermalmanager"
 #define SYS_THERMALMANAGER_STATE_GET      "get_thermal_state"
