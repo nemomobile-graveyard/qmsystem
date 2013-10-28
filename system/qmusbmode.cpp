@@ -29,9 +29,12 @@
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusReply>
+#include <QDBusInterface>
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QMetaMethod>
 #endif
+
+#include <QDebug>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -45,7 +48,6 @@
     #include "msystemdbus_p.h"
 #endif
 
-#define USB_MODE_GCONF          "/Meego/System/UsbMode"
 #define SIGNAL_USB_MODE 0
 #define SIGNAL_USB_ERROR 1
 
@@ -220,30 +222,25 @@ bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode) {
         return false;
     }
 
-    // Meego uses different gconf databases for root and user, so sending dbus message to set it 
-    QDBusMessage usbDefaultModeSetCall = QDBusMessage::createMethodCall(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE, USB_MODE_CONFIG_SET);
-    usbDefaultModeSetCall << str;
+    QDBusInterface usbModed(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE, QDBusConnection::systemBus());
+    QDBusMessage result = usbModed.call(QLatin1String(USB_MODE_CONFIG_SET), str);
 
-    (void)QDBusConnection::systemBus().call(usbDefaultModeSetCall, QDBus::NoBlock);
-
-    gboolean ret = gconf_client_set_string(priv->gcClient, USB_MODE_GCONF, str.toUtf8().data(), NULL);
-    if (ret == TRUE) {
-        return true;
-    } else {
-        return false;
-    }
+    return (result.type() != QDBusMessage::ErrorMessage);
 }
 
 QmUSBMode::Mode QmUSBMode::getDefaultMode() {
     MEEGO_PRIVATE(QmUSBMode);
 
-    QmUSBMode::Mode mode = QmUSBMode::Undefined;
-    gchar *val = gconf_client_get_string(priv->gcClient, USB_MODE_GCONF, NULL);
-    if (val) {
-        mode = priv->stringToMode(QString(val));
+    QDBusInterface usbModed(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE, QDBusConnection::systemBus());
+    QDBusMessage result = usbModed.call(QLatin1String(USB_MODE_STATE_REQUEST));
+
+    if (result.type() != QDBusMessage::ReplyMessage || result.arguments().size() != 1) {
+        qDebug() << "Got error while requesting default USB mode: " << result.errorMessage();
+        return QmUSBMode::Undefined;
     }
-    g_free(val);
-    return mode;
+
+    QString mode = result.arguments().first().toString();
+    return priv->stringToMode(mode);
 }
 
 QmUSBMode::MountOptionFlags QmUSBMode::mountStatus(QmUSBMode::MountPath mountPath) {
@@ -281,13 +278,9 @@ out:
 
 QmUSBModePrivate::QmUSBModePrivate(QObject *parent) : QObject(parent) {
     connectCount[SIGNAL_USB_MODE] = connectCount[SIGNAL_USB_ERROR] = 0;
-
-    g_type_init();
-    gcClient = gconf_client_get_default();
 }
 
 QmUSBModePrivate::~QmUSBModePrivate() {
-    g_object_unref(gcClient), gcClient = 0;
 }
 
 QString QmUSBModePrivate::modeToString(QmUSBMode::Mode mode) {
