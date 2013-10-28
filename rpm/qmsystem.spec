@@ -25,7 +25,6 @@ BuildRequires:  pkgconfig(mce)
 BuildRequires:  pkgconfig(dbus-1)
 BuildRequires:  pkgconfig(dsme)
 BuildRequires:  pkgconfig(dsme_dbus_if)
-BuildRequires:  pkgconfig(gconf-2.0)
 BuildRequires:  pkgconfig(libiphb) >= 0.61.29
 BuildRequires:  pkgconfig(QtCore) >= 4.5
 BuildRequires:  pkgconfig(sensord) >= 0.6.33
