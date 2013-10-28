@@ -28,7 +28,6 @@ SUBDIRS = accelerometer \
           manual_accelerometer \
           manual_batterymon \
           manual_bgcalibration \
-          manual_compass \
           manual_als \
           manual_displaystate \
           manual_locks \
