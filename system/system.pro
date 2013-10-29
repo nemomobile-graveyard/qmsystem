@@ -9,7 +9,7 @@ QT = core network dbus
 QMAKE_CXXFLAGS += -Wall -Wno-psabi
 
 CONFIG += link_pkgconfig
-PKGCONFIG += dsme dsme_dbus_if gconf-2.0 libiphb
+PKGCONFIG += dsme dsme_dbus_if libiphb
 equals(QT_MAJOR_VERSION, 4): PKGCONFIG += timed sensord
 equals(QT_MAJOR_VERSION, 5): PKGCONFIG += timed-qt5 sensord-qt5
 

@@ -30,7 +30,6 @@
 
 #include "qmusbmode.h"
 
-#include <gconf/gconf-client.h>
 #include <QMutex>
 #include <QPair>
 #include <QVector>
@@ -44,7 +43,6 @@ public:
     Q_OBJECT;
     MEEGO_DECLARE_PUBLIC(QmUSBMode);
 
-    GConfClient *gcClient;
     QMutex connectMutex;
     size_t connectCount[2];
 

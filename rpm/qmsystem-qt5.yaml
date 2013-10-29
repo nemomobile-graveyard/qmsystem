@@ -20,7 +20,6 @@ PkgConfigBR:
     - dbus-1
     - dsme
     - dsme_dbus_if
-    - gconf-2.0
     - libiphb >= 0.61.29
     - Qt5Core
     - Qt5DBus
