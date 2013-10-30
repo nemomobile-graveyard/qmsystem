@@ -232,7 +232,7 @@ QmUSBMode::Mode QmUSBMode::getDefaultMode() {
     MEEGO_PRIVATE(QmUSBMode);
 
     QDBusInterface usbModed(USB_MODE_SERVICE, USB_MODE_OBJECT, USB_MODE_INTERFACE, QDBusConnection::systemBus());
-    QDBusMessage result = usbModed.call(QLatin1String(USB_MODE_STATE_REQUEST));
+    QDBusMessage result = usbModed.call(QLatin1String(USB_MODE_CONFIG_GET));
 
     if (result.type() != QDBusMessage::ReplyMessage || result.arguments().size() != 1) {
         qDebug() << "Got error while requesting default USB mode: " << result.errorMessage();
