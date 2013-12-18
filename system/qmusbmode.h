@@ -83,7 +83,8 @@ public:
 	Developer,	  //!< Developer mode. Allows USB networking
 	MTP,		  //!< MTP mode. Allows for generic MTP
 	Adb,		  //!< adb mode. Allows Android Debug Bridge
-	Diag		  //!< diag mode. Allows Qualcomm Diag
+	Diag,		  //!< diag mode. Allows Qualcomm Diag
+	ConnectionSharing //!< Cellular connection sharing/tethering. 
     };
 
     /*!
