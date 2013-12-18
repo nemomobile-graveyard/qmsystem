@@ -193,7 +193,8 @@ bool QmUSBMode::setMode(QmUSBMode::Mode mode) {
     MEEGO_PRIVATE(QmUSBMode);
 
     // The OviSuite, MassStorage, ChargingOnly and SDK modes can be requested
-    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || MTP == mode || Adb == mode || Diag == mode)) {
+    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || 
+	  MTP == mode || Adb == mode || Diag == mode || ConnectionSharing == mode)) {
         return false;
     }
 
@@ -213,7 +214,8 @@ bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode) {
     MEEGO_PRIVATE(QmUSBMode);
 
     // The OviSuite, MassStorage, ChargingOnly and Ask modes can be requested
-    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || MTP == mode || Adb == mode || Diag == mode || Ask == mode)) {
+    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || 
+	  MTP == mode || Adb == mode || Diag == mode || Ask == mode || ConnectionSharing == mode)) {
         return false;
     }
 
@@ -313,6 +315,8 @@ QString QmUSBModePrivate::modeToString(QmUSBMode::Mode mode) {
 	return MODE_DIAG;
     case QmUSBMode::Developer:
 	return MODE_DEVELOPER;
+    case QmUSBMode::ConnectionSharing:
+	return MODE_CONNECTION_SHARING;
     default:
         return "";
     }
@@ -347,6 +351,8 @@ QmUSBMode::Mode QmUSBModePrivate::stringToMode(const QString &str) {
 	return QmUSBMode::Diag;
     } else if (str == MODE_DEVELOPER) {
 	return QmUSBMode::Developer;
+    } else if (str == MODE_CONNECTION_SHARING) {
+	return QmUSBMode::ConnectionSharing;
     } else {
         return QmUSBMode::Undefined;
     }

@@ -99,6 +99,7 @@
     #define MODE_MTP                        "mtp_mode"
     #define MODE_ADB                        "adb_mode"
     #define MODE_DIAG                       "diag_mode"
+    #define MODE_CONNECTION_SHARING	    "connection_sharing"
 #endif /* HAVE_USB_MODED_DEV */
 
 #endif // MSYSTEMDBUS_P_H
