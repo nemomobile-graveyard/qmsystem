@@ -61,7 +61,8 @@ public:
         Warning,    //!< Warning state
         Alert,      //!< Alert state
         Unknown,    //!< State not known, just ignore !
-        Error       //!< State could not be retrieved (for get method only)
+        Error,      //!< State could not be retrieved (for get method only)
+        LowTemperatureWarning     //!< Low temperature warning state
     };
 
 

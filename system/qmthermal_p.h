@@ -40,6 +40,7 @@
 #define NORMAL  "normal"
 #define ALERT   "alert"
 #define WARNING "warning"
+#define LOW_TEMP_WARNING "low-temp-warning"
 
 #define SIGNAL_THERMAL_STATE 0
 
@@ -74,6 +75,8 @@ namespace MeeGo
                 mState = QmThermal::Warning;
             } else if (state == ALERT) {
                 mState = QmThermal::Alert;
+            } else if (state == LOW_TEMP_WARNING) {
+                mState = QmThermal::LowTemperatureWarning;
             }
             return mState;
         }
