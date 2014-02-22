@@ -194,7 +194,7 @@ bool QmUSBMode::setMode(QmUSBMode::Mode mode) {
 
     // The OviSuite, MassStorage, ChargingOnly and SDK modes can be requested
     if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || 
-	  MTP == mode || Adb == mode || Diag == mode || ConnectionSharing == mode)) {
+	  MTP == mode || Adb == mode || Diag == mode || Host == mode || ConnectionSharing == mode)) {
         return false;
     }
 
@@ -215,7 +215,7 @@ bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode) {
 
     // The OviSuite, MassStorage, ChargingOnly and Ask modes can be requested
     if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || 
-	  MTP == mode || Adb == mode || Diag == mode || Ask == mode || ConnectionSharing == mode)) {
+	  MTP == mode || Adb == mode || Diag == mode || Host == mode || Ask == mode || ConnectionSharing == mode)) {
         return false;
     }
 
@@ -313,6 +313,8 @@ QString QmUSBModePrivate::modeToString(QmUSBMode::Mode mode) {
 	return MODE_ADB;
     case QmUSBMode::Diag:
 	return MODE_DIAG;
+    case QmUSBMode::Host:
+	return MODE_HOST;
     case QmUSBMode::Developer:
 	return MODE_DEVELOPER;
     case QmUSBMode::ConnectionSharing:
@@ -349,6 +351,8 @@ QmUSBMode::Mode QmUSBModePrivate::stringToMode(const QString &str) {
 	return QmUSBMode::Adb;
     } else if (str == MODE_DIAG) {
 	return QmUSBMode::Diag;
+    } else if (str == MODE_HOST) {
+	return QmUSBMode::Host;
     } else if (str == MODE_DEVELOPER) {
 	return QmUSBMode::Developer;
     } else if (str == MODE_CONNECTION_SHARING) {
