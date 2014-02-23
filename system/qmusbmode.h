@@ -84,7 +84,8 @@ public:
 	MTP,		  //!< MTP mode. Allows for generic MTP
 	Adb,		  //!< adb mode. Allows Android Debug Bridge
 	Diag,		  //!< diag mode. Allows Qualcomm Diag
-	ConnectionSharing //!< Cellular connection sharing/tethering. 
+	ConnectionSharing, //!< Cellular connection sharing/tethering.
+	Host,		  //!< host mode. Allows switching to host mode
     };
 
     /*!
