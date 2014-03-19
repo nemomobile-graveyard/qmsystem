@@ -50,6 +50,7 @@
 
 #define SIGNAL_USB_MODE 0
 #define SIGNAL_USB_ERROR 1
+#define SIGNAL_USB_SUPPORTED_MODES 2
 
 namespace MeeGo {
 
@@ -59,6 +60,7 @@ QmUSBMode::QmUSBMode(QObject *parent) : QObject(parent) {
     connect(priv, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)), this, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)));
     connect(priv, SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)), this, SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)));
     connect(priv, SIGNAL(error(const QString&)), this, SIGNAL(error(const QString&)));
+    connect(priv, SIGNAL(supportedModesChanged(QList<MeeGo::QmUSBMode::Mode>)), this, SIGNAL(supportedModesChanged(QList<MeeGo::QmUSBMode::Mode>)));
 }
 
 QmUSBMode::~QmUSBMode() {
@@ -67,6 +69,7 @@ QmUSBMode::~QmUSBMode() {
     disconnect(priv, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)), this, SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode)));
     disconnect(priv, SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)), this, SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)));
     disconnect(priv, SIGNAL(error(const QString&)), this, SIGNAL(error(const QString&)));
+    disconnect(priv, SIGNAL(supportedModesChanged(QList<MeeGo::QmUSBMode::Mode>)), this, SIGNAL(supportedModesChanged(QList<MeeGo::QmUSBMode::Mode>)));
 
     MEEGO_UNINITIALIZE(QmUSBMode);
 }
@@ -111,6 +114,20 @@ void QmUSBMode::connectNotify(const char *signal) {
                                                  SLOT(didReceiveError(const QString&)));
         }
         priv->connectCount[SIGNAL_USB_ERROR]++;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    } else if (signal == QMetaMethod::fromSignal(&QmUSBMode::supportedModesChanged)) {
+#else
+    } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(supportedModesChanged(QList<MeeGo::QmUSBMode::Mode>))))) {
+#endif
+        if (0 == priv->connectCount[SIGNAL_USB_SUPPORTED_MODES]) {
+            QDBusConnection::systemBus().connect(USB_MODE_SERVICE,
+                                                 USB_MODE_OBJECT,
+                                                 USB_MODE_INTERFACE,
+                                                 USB_MODE_SUPPORTED_MODES_SIGNAL_NAME,
+                                                 priv,
+                                                 SLOT(supportedModesChanged(const QString&)));
+        }
+        priv->connectCount[SIGNAL_USB_SUPPORTED_MODES]++;
     }
 }
 
@@ -155,6 +172,21 @@ void QmUSBMode::disconnectNotify(const char *signal) {
                                                     USB_MODE_ERROR_SIGNAL_NAME,
                                                     priv,
                                                     SLOT(didReceiveError(const QString&)));
+        }
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    } else if (signal == QMetaMethod::fromSignal(&QmUSBMode::supportedModesChanged)) {
+#else
+    } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(supportedModesChanged(QList<MeeGo::QmUSBMode::Mode>))))) {
+#endif
+        priv->connectCount[SIGNAL_USB_SUPPORTED_MODES]++;
+
+        if (0 == priv->connectCount[SIGNAL_USB_SUPPORTED_MODES]) {
+            QDBusConnection::systemBus().disconnect(USB_MODE_SERVICE,
+                                                    USB_MODE_OBJECT,
+                                                    USB_MODE_INTERFACE,
+                                                    USB_MODE_SUPPORTED_MODES_SIGNAL_NAME,
+                                                    priv,
+                                                    SLOT(supportedModesChanged(const QString&)));
         }
     }
 }
@@ -378,6 +410,18 @@ void QmUSBModePrivate::modeChanged(const QString &mode) {
     } else {
         emit modeChanged(stringToMode(mode));
     }
+}
+
+void QmUSBModePrivate::supportedModesChanged(const QString &usbModeReply) {
+    QList<MeeGo::QmUSBMode::Mode> supportedModes;
+    foreach (const QString &usbModeString, usbModeReply.split(", ")) {
+        QmUSBMode::Mode usbMode = stringToMode(usbModeString);
+        if (usbMode != QmUSBMode::Undefined) {
+            supportedModes.append(usbMode);
+        }
+    }
+
+    emit supportedModesChanged(supportedModes);
 }
 
 } // namespace MeeGo

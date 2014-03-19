@@ -53,9 +53,16 @@ public slots:
         signalReceived = true;
     }
 
+    void supportedModesChanged(QList<MeeGo::QmUSBMode::Mode> modes) {
+        qDebug() << "Received a supportedModesChanged signal: " << modes;
+        supportedModes = modes;
+        signalReceived = true;
+    }
+
 private:
     QmUSBMode *mode;
     QmUSBMode::Mode currentMode;
+    QList<QmUSBMode::Mode> supportedModes;
     bool signalReceived;
 
     void setGetDefaultMode(QmUSBMode::Mode newMode) {
@@ -71,6 +78,8 @@ private slots:
                         this, SLOT(modeChanged(MeeGo::QmUSBMode::Mode))));
         QVERIFY(connect(mode, SIGNAL(error(const QString)),
                         this, SLOT(error(const QString))));
+        QVERIFY(connect(mode, SIGNAL(supportedModesChanged(QList<MeeGo::QmUSBMode::Mode>)),
+                        this, SLOT(supportedModesChanged(QList<MeeGo::QmUSBMode::Mode>))));
     }
 
     void testSetGetDefaultModes() {

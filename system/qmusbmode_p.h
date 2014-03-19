@@ -44,7 +44,7 @@ public:
     MEEGO_DECLARE_PUBLIC(QmUSBMode);
 
     QMutex connectMutex;
-    size_t connectCount[2];
+    size_t connectCount[3];
 
     QmUSBModePrivate(QObject *parent = 0);
     ~QmUSBModePrivate();
@@ -56,10 +56,12 @@ Q_SIGNALS:
     void modeChanged(MeeGo::QmUSBMode::Mode mode);
     void fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath mountPath);
     void error(const QString &errorCode);
+    void supportedModesChanged(QList<MeeGo::QmUSBMode::Mode> supportedModes);
 
 public Q_SLOTS:
     void didReceiveError(const QString &errorCode);
     void modeChanged(const QString &mode);
+    void supportedModesChanged(const QString &supportedModes);
 };
 
 } // namespace MeeGo

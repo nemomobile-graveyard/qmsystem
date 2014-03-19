@@ -184,6 +184,12 @@ Q_SIGNALS:
      */
     void error(const QString &errorCode);
 
+    /*!
+     * @brief This signal is emitted when the supported USB modes have changed.
+     * @param supportedModes The currently supported modes.
+     */
+    void supportedModesChanged(QList<MeeGo::QmUSBMode::Mode> supportedModes);
+
 protected:
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     void connectNotify(const QMetaMethod &signal);
