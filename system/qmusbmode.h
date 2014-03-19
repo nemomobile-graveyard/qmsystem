@@ -86,6 +86,7 @@ public:
 	Diag,		  //!< diag mode. Allows Qualcomm Diag
 	ConnectionSharing, //!< Cellular connection sharing/tethering.
 	Host,		  //!< host mode. Allows switching to host mode
+        Charger,         //!<Dedicated charger is connected.
     };
 
     /*!
