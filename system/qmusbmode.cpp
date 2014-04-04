@@ -312,7 +312,7 @@ out:
 // private class
 
 QmUSBModePrivate::QmUSBModePrivate(QObject *parent) : QObject(parent) {
-    connectCount[SIGNAL_USB_MODE] = connectCount[SIGNAL_USB_ERROR] = 0;
+    memset(connectCount, 0x0, sizeof (connectCount));
 }
 
 QmUSBModePrivate::~QmUSBModePrivate() {
