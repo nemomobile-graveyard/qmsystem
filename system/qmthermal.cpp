@@ -65,7 +65,7 @@ void QmThermal::connectNotify(const char *signal) {
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(thermalChanged(MeeGo::QmThermal::ThermalState))))) {
 #endif
         if (0 == priv->connectCount[SIGNAL_THERMAL_STATE]) {
-            QDBusConnection::systemBus().connect(SYS_THERMALMANAGER_SERVICE,
+            QDBusConnection::systemBus().connect("",
                                                  SYS_THERMALMANAGER_PATH,
                                                  SYS_THERMALMANAGER_INTERFACE,
                                                  SYS_THERMALMANAGER_STATE_SIG,
@@ -93,7 +93,7 @@ void QmThermal::disconnectNotify(const char *signal) {
         priv->connectCount[SIGNAL_THERMAL_STATE]--;
 
         if (0 == priv->connectCount[SIGNAL_THERMAL_STATE]) {
-            QDBusConnection::systemBus().disconnect(SYS_THERMALMANAGER_SERVICE,
+            QDBusConnection::systemBus().disconnect("",
                                                     SYS_THERMALMANAGER_PATH,
                                                     SYS_THERMALMANAGER_INTERFACE,
                                                     SYS_THERMALMANAGER_STATE_SIG,
