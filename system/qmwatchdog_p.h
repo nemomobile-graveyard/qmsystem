@@ -27,6 +27,9 @@
 #ifndef QMWATCHDOG_P_H
 #define QMWATCHDOG_P_H
 
+#include <unistd.h>
+#include <sys/types.h>
+
 #include "qmwatchdog.h"
 #include <QSocketNotifier>
 #include <dsme/processwd.h>
