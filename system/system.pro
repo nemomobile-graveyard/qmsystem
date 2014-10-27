@@ -105,17 +105,8 @@ SOURCES += qmactivity.cpp \
     qmrotation.cpp \
     qmmagnetometer.cpp \
     qmwatchdog.cpp \
-    qmusbmode.cpp
-
-linux-g++-maemo {
-    message("Compiling with bmeipc support")
-    PKGCONFIG += bmeipc
-    HEADERS += qmbattery_p.h
-    SOURCES += qmbattery.cpp
-} else {
-    message("Compiling without bmeipc support")
-    SOURCES += qmbattery_stub.cpp 
-}
+    qmusbmode.cpp \
+    qmbattery_stub.cpp
 
 contextsubscriber { 
     DEFINES += PROVIDE_CONTEXT_INFO

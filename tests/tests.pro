@@ -42,11 +42,6 @@ SUBDIRS = accelerometer \
           usbmode \
 	  powerontime
 
-linux-g++-maemo {
-    SUBDIRS += battery \
-               thermal
-}
-
 # Test definition installation
 testdefinition.files = tests.xml
 equals(QT_MAJOR_VERSION, 4): testdefinition.path = /usr/share/qmsystem-tests
