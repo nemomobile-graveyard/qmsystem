@@ -38,13 +38,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#if HAVE_USB_MODED_DEV
-    #include <usb_moded-dbus.h>
-    #include <usb_moded-modes.h>
-#else
-    /* Use QmSystem D-Bus i/f declarations because usb-moded-dev is not available */
-    #include "msystemdbus_p.h"
-#endif
+#include <usb_moded-dbus.h>
+#include <usb_moded-modes.h>
 
 #define SIGNAL_USB_MODE 0
 #define SIGNAL_USB_ERROR 1
@@ -188,8 +183,8 @@ QmUSBMode::Mode QmUSBMode::getMode() {
 bool QmUSBMode::setMode(QmUSBMode::Mode mode) {
     MEEGO_PRIVATE(QmUSBMode);
 
-    // The OviSuite, MassStorage, ChargingOnly and SDK modes can be requested
-    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || 
+    // The OviSuite, MassStorage and ChargingOnly modes can be requested
+    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || Developer == mode || 
          MTP == mode || Adb == mode || Diag == mode || Host == mode || ConnectionSharing == mode || Charger == mode)) {
         return false;
     }
@@ -210,7 +205,7 @@ bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode) {
     MEEGO_PRIVATE(QmUSBMode);
 
     // The OviSuite, MassStorage, ChargingOnly and Ask modes can be requested
-    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || 
+    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || Developer == mode || 
          MTP == mode || Adb == mode || Diag == mode || Host == mode || Ask == mode || ConnectionSharing == mode ||
          Charger == mode )) {
         return false;
@@ -302,12 +297,10 @@ QString QmUSBModePrivate::modeToString(QmUSBMode::Mode mode) {
         return MODE_UNDEFINED;
     case QmUSBMode::ModeRequest:
         return USB_CONNECTED_DIALOG_SHOW;
-    case QmUSBMode::SDK:
-        return MODE_WINDOWS_NET;
     case QmUSBMode::MTP:
 	return MODE_MTP;
-    case QmUSBMode::Adb:
-	return MODE_ADB;
+//    case QmUSBMode::Adb:
+//	return MODE_ADB;
     case QmUSBMode::Diag:
 	return MODE_DIAG;
     case QmUSBMode::Developer:
@@ -342,12 +335,10 @@ QmUSBMode::Mode QmUSBModePrivate::stringToMode(const QString &str) {
         return QmUSBMode::Undefined;
     } else if (str == USB_CONNECTED_DIALOG_SHOW) {
         return QmUSBMode::ModeRequest;
-    } else if (str == MODE_WINDOWS_NET) {
-        return QmUSBMode::SDK;
     } else if (str == MODE_MTP) {
 	return QmUSBMode::MTP;
-    } else if (str == MODE_ADB) {
-	return QmUSBMode::Adb;
+//    } else if (str == MODE_ADB) {
+//	return QmUSBMode::Adb;
     } else if (str == MODE_DIAG) {
 	return QmUSBMode::Diag;
     } else if (str == MODE_DEVELOPER) {

@@ -14,13 +14,7 @@ PKGCONFIG += timed-qt5 sensord-qt5
 message("Compiling with mce support")
 DEFINES += HAVE_MCE
 
-linux-g++-maemo {
-    message("Compiling with usb-moded-dev support")
-    DEFINES += HAVE_USB_MODED_DEV
-    PKGCONFIG += usb_moded
-} else {
-    message("Compiling without usb-moded-dev support")
-}
+PKGCONFIG += usb_moded
 
 # Input
 HEADERS += mainpage.h \

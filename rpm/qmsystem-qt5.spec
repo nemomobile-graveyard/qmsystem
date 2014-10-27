@@ -23,6 +23,7 @@ BuildRequires:  pkgconfig(Qt5Network)
 BuildRequires:  pkgconfig(Qt5Test)
 BuildRequires:  pkgconfig(sensord-qt5) >= 0.6.33
 BuildRequires:  pkgconfig(timed-qt5) >= 2.31
+BuildRequires:  pkgconfig(usb_moded) >= 0.80.7
 BuildRequires:  fdupes
 
 %description

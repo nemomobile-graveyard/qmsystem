@@ -79,7 +79,6 @@ public:
         ModeRequest,      //!< Signaled as an indication that the USB mode should be set with setMode(QmUSBMode::Mode).
         Ask,              //!< Waiting for the USB mode to be set with setMode(QmUSBMode::Mode).
         Undefined,        //!< Unknown/error.
-        SDK,              //!< Windows network mode. Allows USB networking on the device.
 	Developer,	  //!< Developer mode. Allows USB networking
 	MTP,		  //!< MTP mode. Allows for generic MTP
 	Adb,		  //!< adb mode. Allows Android Debug Bridge
