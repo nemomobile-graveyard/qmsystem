@@ -20,13 +20,8 @@ linux-g++-maemo {
     message("Compiling with usb-moded-dev support")
     DEFINES += HAVE_USB_MODED_DEV
     PKGCONFIG += usb_moded
-
-    message("Compiling with sysinfo support")
-    DEFINES += HAVE_SYSINFO
-    PKGCONFIG += sysinfo
 } else {
     message("Compiling without usb-moded-dev support")
-    message("Compiling without sysinfo support")
 }
 
 # Input

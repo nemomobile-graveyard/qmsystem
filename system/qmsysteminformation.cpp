@@ -37,50 +37,16 @@ namespace MeeGo
 
 QmSystemInformationPrivate::QmSystemInformationPrivate()
 {
-    #if HAVE_SYSINFO
-    systemConfig = 0;
-    if (sysinfo_init(&systemConfig) != 0) {
-        /* Failed to initialize the system configuration object */
-        if (systemConfig) {
-            sysinfo_finish(systemConfig), systemConfig = 0;
-        }
-    }
-    #endif /* HAVE_SYSINFO */
 }
 
 QmSystemInformationPrivate::~QmSystemInformationPrivate()
 {
-    #if HAVE_SYSINFO
-    if (systemConfig) {
-        sysinfo_finish(systemConfig), systemConfig = 0;
-    }
-    #endif /* HAVE_SYSINFO */
 }
 
 QString QmSystemInformationPrivate::valueForKey(const QString &key) const
 {
     QString value("");
     uint8_t *data = 0;
-    #if HAVE_SYSINFO
-    unsigned long size = 0;
-
-    if (!systemConfig) {
-        goto EXIT;
-    }
-
-    if (sysinfo_get_value(systemConfig, key.toStdString().c_str(), &data, &size) != 0) {
-        /* Failed to read the key from the system configuration */
-        goto EXIT;
-    }
-
-    for (unsigned long k=0; k < size; k++) {
-        /* Values can contain non-ascii data -> escape those */
-        int c = data[k];
-        if (c < 32 || c > 126)
-            continue;
-        value += (char)c;
-    }
-    #endif /* HAVE_SYSINFO */
     EXIT:
     /* Free allocation done by sysinfo_get_value() */
     if (data) {
