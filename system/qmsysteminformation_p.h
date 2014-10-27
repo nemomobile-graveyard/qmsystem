@@ -29,27 +29,18 @@
 #include "system_global.h"
 #include "qmsysteminformation.h"
 
-#if HAVE_SYSINFO
-    #include <sysinfo.h>
-#endif
-
 namespace MeeGo
 {
 
 class QmSystemInformationPrivate : public QObject
 {
     Q_OBJECT;
-    MEEGO_DECLARE_PUBLIC(QmSystemInformation)
+    MEEGO_DECLARE_PUBLIC(QmSystemInformation);
 
 public:
     QmSystemInformationPrivate();
     ~QmSystemInformationPrivate();
     QString valueForKey(const QString &key) const;
-
-#if HAVE_SYSINFO
-private:
-    struct system_config *systemConfig;
-#endif
 };
 
 } //MeeGo namespace

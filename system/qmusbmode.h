@@ -79,7 +79,6 @@ public:
         ModeRequest,      //!< Signaled as an indication that the USB mode should be set with setMode(QmUSBMode::Mode).
         Ask,              //!< Waiting for the USB mode to be set with setMode(QmUSBMode::Mode).
         Undefined,        //!< Unknown/error.
-        SDK,              //!< Windows network mode. Allows USB networking on the device.
 	Developer,	  //!< Developer mode. Allows USB networking
 	MTP,		  //!< MTP mode. Allows for generic MTP
 	Adb,		  //!< adb mode. Allows Android Debug Bridge
@@ -191,13 +190,8 @@ Q_SIGNALS:
     void supportedModesChanged(QList<MeeGo::QmUSBMode::Mode> supportedModes);
 
 protected:
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     void connectNotify(const QMetaMethod &signal);
     void disconnectNotify(const QMetaMethod &signal);
-#else
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-#endif
 
 private:
     Q_DISABLE_COPY(QmUSBMode);

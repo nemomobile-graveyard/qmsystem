@@ -30,9 +30,7 @@
 #include <QDBusMessage>
 #include <QDBusReply>
 #include <QDBusInterface>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QMetaMethod>
-#endif
 
 #include <QDebug>
 
@@ -40,13 +38,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#if HAVE_USB_MODED_DEV
-    #include <usb_moded-dbus.h>
-    #include <usb_moded-modes.h>
-#else
-    /* Use QmSystem D-Bus i/f declarations because usb-moded-dev is not available */
-    #include "msystemdbus_p.h"
-#endif
+#include <usb_moded-dbus.h>
+#include <usb_moded-modes.h>
 
 #define SIGNAL_USB_MODE 0
 #define SIGNAL_USB_ERROR 1
@@ -74,23 +67,14 @@ QmUSBMode::~QmUSBMode() {
     MEEGO_UNINITIALIZE(QmUSBMode);
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 void QmUSBMode::connectNotify(const QMetaMethod &signal) {
-#else
-void QmUSBMode::connectNotify(const char *signal) {
-#endif
     MEEGO_PRIVATE(QmUSBMode)
 
     /* QObject::connect() needs to be thread-safe */
     QMutexLocker locker(&priv->connectMutex);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     if (signal == QMetaMethod::fromSignal(&QmUSBMode::modeChanged) ||
         signal == QMetaMethod::fromSignal(&QmUSBMode::fileSystemWillUnmount)) {
-#else
-    if ((QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode))))) ||
-        (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)))))) {
-#endif
         if (0 == priv->connectCount[SIGNAL_USB_MODE]) {
             QDBusConnection::systemBus().connect(USB_MODE_SERVICE,
                                                  USB_MODE_OBJECT,
@@ -100,11 +84,7 @@ void QmUSBMode::connectNotify(const char *signal) {
                                                  SLOT(modeChanged(const QString&)));
         }
         priv->connectCount[SIGNAL_USB_MODE]++;
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     } else if (signal == QMetaMethod::fromSignal(&QmUSBMode::error)) {
-#else
-    } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(error(const QString&))))) {
-#endif
         if (0 == priv->connectCount[SIGNAL_USB_ERROR]) {
             QDBusConnection::systemBus().connect(USB_MODE_SERVICE,
                                                  USB_MODE_OBJECT,
@@ -114,11 +94,7 @@ void QmUSBMode::connectNotify(const char *signal) {
                                                  SLOT(didReceiveError(const QString&)));
         }
         priv->connectCount[SIGNAL_USB_ERROR]++;
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     } else if (signal == QMetaMethod::fromSignal(&QmUSBMode::supportedModesChanged)) {
-#else
-    } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(supportedModesChanged(QList<MeeGo::QmUSBMode::Mode>))))) {
-#endif
         if (0 == priv->connectCount[SIGNAL_USB_SUPPORTED_MODES]) {
             QDBusConnection::systemBus().connect(USB_MODE_SERVICE,
                                                  USB_MODE_OBJECT,
@@ -131,23 +107,14 @@ void QmUSBMode::connectNotify(const char *signal) {
     }
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 void QmUSBMode::disconnectNotify(const QMetaMethod &signal) {
-#else
-void QmUSBMode::disconnectNotify(const char *signal) {
-#endif
     MEEGO_PRIVATE(QmUSBMode)
 
     /* QObject::disconnect() needs to be thread-safe */
     QMutexLocker locker(&priv->connectMutex);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     if (signal == QMetaMethod::fromSignal(&QmUSBMode::modeChanged) ||
         signal == QMetaMethod::fromSignal(&QmUSBMode::fileSystemWillUnmount)) {
-#else
-    if ((QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(modeChanged(MeeGo::QmUSBMode::Mode))))) ||
-        (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(fileSystemWillUnmount(MeeGo::QmUSBMode::MountPath)))))) {
-#endif
         priv->connectCount[SIGNAL_USB_MODE]--;
 
         if (0 == priv->connectCount[SIGNAL_USB_MODE]) {
@@ -158,11 +125,7 @@ void QmUSBMode::disconnectNotify(const char *signal) {
                                                     priv,
                                                     SLOT(modeChanged(const QString&)));
         }
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     } else if (signal == QMetaMethod::fromSignal(&QmUSBMode::error)) {
-#else
-    } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(error(const QString&))))) {
-#endif
         priv->connectCount[SIGNAL_USB_ERROR]--;
 
         if (0 == priv->connectCount[SIGNAL_USB_ERROR]) {
@@ -173,11 +136,7 @@ void QmUSBMode::disconnectNotify(const char *signal) {
                                                     priv,
                                                     SLOT(didReceiveError(const QString&)));
         }
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     } else if (signal == QMetaMethod::fromSignal(&QmUSBMode::supportedModesChanged)) {
-#else
-    } else if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(supportedModesChanged(QList<MeeGo::QmUSBMode::Mode>))))) {
-#endif
         priv->connectCount[SIGNAL_USB_SUPPORTED_MODES]++;
 
         if (0 == priv->connectCount[SIGNAL_USB_SUPPORTED_MODES]) {
@@ -224,8 +183,8 @@ QmUSBMode::Mode QmUSBMode::getMode() {
 bool QmUSBMode::setMode(QmUSBMode::Mode mode) {
     MEEGO_PRIVATE(QmUSBMode);
 
-    // The OviSuite, MassStorage, ChargingOnly and SDK modes can be requested
-    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || 
+    // The OviSuite, MassStorage and ChargingOnly modes can be requested
+    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || Developer == mode || 
          MTP == mode || Adb == mode || Diag == mode || Host == mode || ConnectionSharing == mode || Charger == mode)) {
         return false;
     }
@@ -246,7 +205,7 @@ bool QmUSBMode::setDefaultMode(QmUSBMode::Mode mode) {
     MEEGO_PRIVATE(QmUSBMode);
 
     // The OviSuite, MassStorage, ChargingOnly and Ask modes can be requested
-    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || SDK == mode || Developer == mode || 
+    if (!(OviSuite == mode || MassStorage == mode || ChargingOnly == mode || Developer == mode || 
          MTP == mode || Adb == mode || Diag == mode || Host == mode || Ask == mode || ConnectionSharing == mode ||
          Charger == mode )) {
         return false;
@@ -338,12 +297,10 @@ QString QmUSBModePrivate::modeToString(QmUSBMode::Mode mode) {
         return MODE_UNDEFINED;
     case QmUSBMode::ModeRequest:
         return USB_CONNECTED_DIALOG_SHOW;
-    case QmUSBMode::SDK:
-        return MODE_WINDOWS_NET;
     case QmUSBMode::MTP:
 	return MODE_MTP;
-    case QmUSBMode::Adb:
-	return MODE_ADB;
+//    case QmUSBMode::Adb:
+//	return MODE_ADB;
     case QmUSBMode::Diag:
 	return MODE_DIAG;
     case QmUSBMode::Developer:
@@ -378,12 +335,10 @@ QmUSBMode::Mode QmUSBModePrivate::stringToMode(const QString &str) {
         return QmUSBMode::Undefined;
     } else if (str == USB_CONNECTED_DIALOG_SHOW) {
         return QmUSBMode::ModeRequest;
-    } else if (str == MODE_WINDOWS_NET) {
-        return QmUSBMode::SDK;
     } else if (str == MODE_MTP) {
 	return QmUSBMode::MTP;
-    } else if (str == MODE_ADB) {
-	return QmUSBMode::Adb;
+//    } else if (str == MODE_ADB) {
+//	return QmUSBMode::Adb;
     } else if (str == MODE_DIAG) {
 	return QmUSBMode::Diag;
     } else if (str == MODE_DEVELOPER) {

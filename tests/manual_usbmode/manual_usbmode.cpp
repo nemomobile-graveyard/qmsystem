@@ -115,8 +115,6 @@ private:
             return "ModeRequest";
         case QmUSBMode::Ask:
             return "Ask";
-        case QmUSBMode::SDK:
-            return "SDK";
         case QmUSBMode::Undefined:
             return "Undefined";
 	 case QmUSBMode::MTP:
@@ -219,22 +217,6 @@ private slots:
         printf("The test starts in 10 seconds...\n");
         QTest::qWait(10*1000);
         testFunc(QmUSBMode::OviSuite, QmUSBMode::Undefined);
-    }
-
-    void testAskSDK() {
-        printf("This test will ask you to plug the usb cable in and out.\n");
-        printf("This means that you will need to run this via serial cable. :)\n");
-        printf("The test starts in 10 seconds...\n");
-        QTest::qWait(10*1000);
-        testFunc(QmUSBMode::Ask, QmUSBMode::SDK);
-    }
-
-    void testSDKUndefined() {
-        printf("This test will ask you to plug the usb cable in and out.\n");
-        printf("This means that you will need to run this via serial cable. :)\n");
-        printf("The test starts in 10 seconds...\n");
-        QTest::qWait(10*1000);
-        testFunc(QmUSBMode::SDK, QmUSBMode::Undefined);
     }
 
     void testMountOptions() {

@@ -1,6 +1,5 @@
 TEMPLATE = lib
-equals(QT_MAJOR_VERSION, 4): TARGET = qmsystem2
-equals(QT_MAJOR_VERSION, 5): TARGET = qmsystem2-qt5
+TARGET = qmsystem2-qt5
 DEPENDPATH += .
 INCLUDEPATH += .
 DEFINES += SYSTEM_LIBRARY
@@ -10,27 +9,12 @@ QMAKE_CXXFLAGS += -Wall -Wno-psabi
 
 CONFIG += link_pkgconfig
 PKGCONFIG += dsme dsme_dbus_if libiphb
-equals(QT_MAJOR_VERSION, 4): PKGCONFIG += timed sensord
-equals(QT_MAJOR_VERSION, 5): PKGCONFIG += timed-qt5 sensord-qt5
+PKGCONFIG += timed-qt5 sensord-qt5
 
 message("Compiling with mce support")
 DEFINES += HAVE_MCE
 
-linux-g++-maemo {
-    message("Compiling with usb-moded-dev support")
-    DEFINES += HAVE_USB_MODED_DEV
-    PKGCONFIG += usb_moded
-
-    message("Compiling with sysinfo support")
-    DEFINES += HAVE_SYSINFO
-    PKGCONFIG += sysinfo
-} else {
-    message("Compiling without usb-moded-dev support")
-    message("Compiling without sysinfo support")
-}
-
-# DEFINES += HAVE_QMLOG
-message("Compiling without qmlog support")
+PKGCONFIG += usb_moded
 
 # Input
 HEADERS += mainpage.h \
@@ -108,24 +92,14 @@ SOURCES += qmactivity.cpp \
     qmrotation.cpp \
     qmmagnetometer.cpp \
     qmwatchdog.cpp \
-    qmusbmode.cpp
-
-linux-g++-maemo {
-    message("Compiling with bmeipc support")
-    PKGCONFIG += bmeipc
-    HEADERS += qmbattery_p.h
-    SOURCES += qmbattery.cpp
-} else {
-    message("Compiling without bmeipc support")
-    SOURCES += qmbattery_stub.cpp 
-}
+    qmusbmode.cpp \
+    qmbattery_stub.cpp
 
 contextsubscriber { 
     DEFINES += PROVIDE_CONTEXT_INFO
     LIBS += -lcontextsubscriber
 }
-equals(QT_MAJOR_VERSION, 4): targetheaders.path = /usr/include/qmsystem2
-equals(QT_MAJOR_VERSION, 5): targetheaders.path = /usr/include/qmsystem2-qt5
+targetheaders.path = /usr/include/qmsystem2-qt5
 targetheaders.files = $$HEADERS
 target.path = /usr/lib/
 INSTALLS += target \

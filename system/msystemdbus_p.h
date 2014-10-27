@@ -70,39 +70,4 @@
 
 #define SYS_POWERONTIMER_TIME_GET         "get_poweron_time"
 
-#if !defined(HAVE_USB_MODED_DEV)
-    #define USB_MODE_SERVICE                "com.meego.usb_moded"
-    #define USB_MODE_INTERFACE              "com.meego.usb_moded"
-    #define USB_MODE_OBJECT                 "/com/meego/usb_moded"
-    #define USB_MODE_SIGNAL_NAME            "sig_usb_state_ind"
-    #define USB_MODE_ERROR_SIGNAL_NAME      "sig_usb_state_error_ind"
-    #define USB_MODE_SUPPORTED_MODES_SIGNAL_NAME "sig_usb_supported_modes_ind"
-
-    #define USB_MODE_STATE_REQUEST          "mode_request"
-    #define USB_MODE_STATE_SET              "set_mode"
-    #define USB_MODE_CONFIG_SET             "set_config"
-    #define USB_MODE_CONFIG_GET             "get_config"
-    #define USB_MODE_LIST                   "get_modes"
-
-    #define USB_CONNECTED                   "USB connected"
-    #define USB_DISCONNECTED                "USB disconnected"
-    #define DATA_IN_USE                     "data_in_use"
-    #define USB_CONNECTED_DIALOG_SHOW       "mode_requested_show_dialog"
-    #define USB_PRE_UNMOUNT                 "pre-unmount"
-
-    #define MODE_MASS_STORAGE               "mass_storage"
-    #define MODE_OVI_SUITE                  "pc_suite"
-    #define MODE_CHARGING                   "charging_only"
-    #define MODE_UNDEFINED                  "undefined"
-    #define MODE_ASK                        "ask"
-    #define MODE_WINDOWS_NET                "windows_network"
-    #define MODE_DEVELOPER                  "developer_mode"
-    #define MODE_MTP                        "mtp_mode"
-    #define MODE_ADB                        "adb_mode"
-    #define MODE_DIAG                       "diag_mode"
-    #define MODE_HOST			    "host_mode"
-    #define MODE_CONNECTION_SHARING	    "connection_sharing"
-    #define MODE_CHARGER                    "dedicated_charger"
-#endif /* HAVE_USB_MODED_DEV */
-
 #endif // MSYSTEMDBUS_P_H
