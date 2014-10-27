@@ -1,6 +1,5 @@
 TEMPLATE = lib
-equals(QT_MAJOR_VERSION, 4): TARGET = qmsystem2
-equals(QT_MAJOR_VERSION, 5): TARGET = qmsystem2-qt5
+TARGET = qmsystem2-qt5
 DEPENDPATH += .
 INCLUDEPATH += .
 DEFINES += SYSTEM_LIBRARY
@@ -10,8 +9,7 @@ QMAKE_CXXFLAGS += -Wall -Wno-psabi
 
 CONFIG += link_pkgconfig
 PKGCONFIG += dsme dsme_dbus_if libiphb
-equals(QT_MAJOR_VERSION, 4): PKGCONFIG += timed sensord
-equals(QT_MAJOR_VERSION, 5): PKGCONFIG += timed-qt5 sensord-qt5
+PKGCONFIG += timed-qt5 sensord-qt5
 
 message("Compiling with mce support")
 DEFINES += HAVE_MCE
@@ -107,8 +105,7 @@ contextsubscriber {
     DEFINES += PROVIDE_CONTEXT_INFO
     LIBS += -lcontextsubscriber
 }
-equals(QT_MAJOR_VERSION, 4): targetheaders.path = /usr/include/qmsystem2
-equals(QT_MAJOR_VERSION, 5): targetheaders.path = /usr/include/qmsystem2-qt5
+targetheaders.path = /usr/include/qmsystem2-qt5
 targetheaders.files = $$HEADERS
 target.path = /usr/lib/
 INSTALLS += target \
