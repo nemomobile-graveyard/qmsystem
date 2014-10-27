@@ -63,19 +63,16 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc debian/copyright
 %{_libdir}/libqmsystem2-qt5.so.*
 %{_sbindir}/qmkeyd2-qt5
 
 %files tests
 %defattr(-,root,root,-)
-%doc debian/copyright
 /opt/tests/qmsystem-qt5-tests/*-test
 %{_datadir}/%{name}-tests/tests.xml
 
 %files devel
 %defattr(-,root,root,-)
-%doc debian/copyright
 %{_includedir}/qmsystem2-qt5/*.h
 %{_libdir}/libqmsystem2-qt5.so
 %{_libdir}/pkgconfig/qmsystem2-qt5.pc
