@@ -31,16 +31,12 @@
 #include <QDebug>
 #include <QDateTime>
 
-#if !defined(HAVE_QMLOG)
-    #define log_debug(...) do {} while (0)
-    #define log_info(...) do {} while (0)
-    #define log_notice(...) do {} while (0)
-    #define log_warning(...) do {} while (0)
-    #define log_error(...) do {} while (0)
-    #define log_critical(...) do {} while (0)
-#else
-    #include <qmlog>
-#endif
+#define log_debug(...) do {} while (0)
+#define log_info(...) do {} while (0)
+#define log_notice(...) do {} while (0)
+#define log_warning(...) do {} while (0)
+#define log_error(...) do {} while (0)
+#define log_critical(...) do {} while (0)
 
 #include "qmtime.h"
 #include "qmtime_p.h"

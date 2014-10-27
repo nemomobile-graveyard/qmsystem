@@ -29,9 +29,6 @@ linux-g++-maemo {
     message("Compiling without sysinfo support")
 }
 
-# DEFINES += HAVE_QMLOG
-message("Compiling without qmlog support")
-
 # Input
 HEADERS += mainpage.h \
     msystemdbus_p.h \
